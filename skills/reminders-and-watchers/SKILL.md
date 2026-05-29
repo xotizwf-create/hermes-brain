@@ -14,8 +14,9 @@ there; from a workstation use the `_deploy_helper.py new "<cmd>"` transport).
 hermes cron create <schedule> "<prompt>" [--name N] [--deliver telegram] [--repeat K] \
                    [--skill S] [--script F --no-agent] [--workdir DIR]
 ```
-- **schedule**: relative `30m` / `every 2h`, or cron `M H * * *` (server TZ). Confirm the timezone
-  with the user; the prod box may not be on Europe/Moscow.
+- **schedule**: relative `30m` / `every 2h`, or cron `M H * * *`. **The prod server is on UTC**
+  (verified 2026-05-30), so a Moscow time = UTC−3 in the cron: "18:00 МСК" → `0 15 * * *`,
+  "10:00 МСК" → `0 7 * * *`. Always confirm the user means Moscow time, then convert.
 - **--deliver telegram**: send the result to the owner's Telegram chat (default target). Use
   `platform:chat_id` for a specific chat.
 - **--repeat 1**: fire once then stop (one-shot reminder).

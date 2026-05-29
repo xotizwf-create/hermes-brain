@@ -11,6 +11,11 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Activation: (1) verified reminders → Telegram live (test cron fired + `delivered to telegram:…`);
+  (2) **two-way git**: server brain converted to a git clone via a repo-scoped read-write deploy key
+  (`hermes_brain_deploy`), identity `hermes-server`; round-trip verified (server commit `651473c`
+  pushed → pulled locally). Server is **UTC** → reminders use UTC−3 for Moscow times. Updated
+  `update-knowledge` + `reminders-and-watchers` skills with the deployed reality.
 - Phase B (teach Hermes): added skills `project-onboarding` (repo + prod/git/env access via secure
   store, then code per standards) and `reminders-and-watchers` (`hermes cron` one-shot/recurring +
   `himalaya` mail watcher → Telegram, grounded in the live `hermes cron create` interface). Reworked

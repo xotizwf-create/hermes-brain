@@ -39,13 +39,19 @@ server brain (`/root/.hermes/agent-knowledge`, a **git clone**) are checkouts of
 - Hermes `config.yaml` system_prompt points only at `…/agent-knowledge/INDEX.md`; knowledge files
   are read on demand, so **no gateway restart** is needed after a content sync.
 
-One-time setup to convert the server mirror into a clone (needs GitHub read/write on the server via
-the `github-auth` skill or a fine-grained PAT; the repo is private):
-```bash
-mv /root/.hermes/agent-knowledge /root/.hermes/agent-knowledge.pre-git.bak
-git clone https://github.com/xotizwf-create/hermes-brain.git /root/.hermes/agent-knowledge
-```
-(Bootstrap transport before the clone exists = tar via `_deploy_helper.py new --put`, see git history.)
+**Deployed 2026-05-30.** The server brain is a clone authenticated by a repo-scoped **read-write
+deploy key**:
+- key: `/root/.ssh/hermes_brain_deploy` (ed25519); registered on the GitHub repo as deploy key
+  `hermes-server-rw` (read_only=false).
+- `/root/.ssh/config` routes `github.com` through that key; the clone also pins
+  `core.sshCommand`. Remote: `git@github.com:xotizwf-create/hermes-brain.git`.
+- commit identity: `hermes-server <hermes-server@users.noreply.github.com>`.
+- Verified round-trip: server `pull` + `push` work; local `pull` picks up server commits.
+
+To rebuild from scratch (e.g. new server): generate the key, add it as a read-write deploy key
+(`gh api repos/<owner>/hermes-brain/keys -f key=... -F read_only=false`), write `~/.ssh/config`, then
+`git clone git@github.com:xotizwf-create/hermes-brain.git /root/.hermes/agent-knowledge`. Bootstrap
+transport before any clone exists = tar via `_deploy_helper.py new --put` (see git history).
 
 ## Self-scaling: Hermes edits its own brain (autonomous, still approval-gated)
 When Hermes (on the server) needs to add/update an instruction or skill:
