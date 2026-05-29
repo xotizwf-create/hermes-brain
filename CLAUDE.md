@@ -39,18 +39,28 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
 - `new-repo` — create a git repo + private GitHub repo (gh CLI is installed & authed as `xotizwf-create`).
 - `secure-access`, `postgres-production` — credentials & Postgres ops.
 
-## Current state (2026-05-29)
-- Brain scaffolded and committed; pushed to GitHub.
-- `albery` migrated as the first project. Full legacy reference imported from the old `agent.md`
-  into `projects/albery/server-context.md` (nginx, systemd, https, postgres, cron, backups,
-  VPN/AmneziaWG gateway, Hermes agent, Codex, Bitrix MCP tools).
+## Current state (2026-05-30)
+- Brain scaffolded, committed, pushed to GitHub, and **mirrored to prod** `217.198.12.236:/root/.hermes/agent-knowledge`.
+- `albery` is the first project. The legacy `agent.md` import was **de-mojibaked** and **split** into
+  `projects/albery/{server-context,vpn-gateway,hermes}.md`.
+- Single source of truth established: legacy `agent.md` + `agent-knowledge/` in the "Сайт мой" repo
+  archived to `_legacy_agent_archive/`; Hermes `config.yaml` system_prompt points at our `INDEX.md`.
+- Server connection (no SSH key on PC): `python _deploy_helper.py new "<cmd>"` from the "Сайт мой"
+  repo (Paramiko, password from `.env.local`, never printed). Targets: new=217.198.12.236, estonia=95.85.243.43, prod(old)=186.246.7.32.
+
+## Done (2026-05-30)
+1. ✅ Split `server-context.md` → `vpn-gateway.md` + `hermes.md` (+ encoding repair).
+2. ✅ Synced brain to the server (backup at `agent-knowledge.bak.<ts>`).
+3. ✅ Switched pointer / archived legacy `agent.md` + `agent-knowledge/` in the site repo.
 
 ## Open tasks (next steps, not yet done)
-1. Split big blocks out of `projects/albery/server-context.md` into clean focused docs
-   (`projects/albery/vpn-gateway.md`, `projects/albery/hermes.md`).
-2. Sync this brain to the server at `/root/.hermes/agent-knowledge` (see `skills/update-knowledge/`).
-3. Switch the Hermes / site `agent.md` pointer to this repo, then remove the old `agent-knowledge/`
-   and `agent.md` from the "Сайт мой" repo so there is a single source of truth.
-4. Add the user's second project (they chose 1–2 projects on start) via the `add-project` skill.
+- **Phase B — teach Hermes 3 capabilities** (the active goal; agent lives in the user's Telegram):
+  1. `project-onboarding` skill — create/run repos with per-project env + prod access (ip/user/pass)
+     + git access, write code guided by the brain's skills/standards.
+  2. `reminders-and-watchers` skill — one-shot & recurring reminders and watchers via `hermes cron`
+     (e.g. "remind me tomorrow 18:00", "every day 10:00", "watch mail every 2h, flag important non-newsletter").
+  3. Finalize `update-knowledge` so Hermes can update/create instructions and scale itself.
+- Reconcile legacy `186.246.7.32` references in `vpn-gateway.md`/`hermes.md` against the live host.
+- Task 4 (deferred): add the user's second project via the `add-project` skill.
 
 Keep this section current as tasks complete.

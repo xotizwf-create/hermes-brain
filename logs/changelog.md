@@ -11,6 +11,10 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Task 3 (single source of truth): in the "Сайт мой" repo, the legacy `agent.md` (186 KB) and old
+  `agent-knowledge/` were untracked; archived both into `_legacy_agent_archive/` (chosen over delete)
+  with a README pointing to hermes-brain. No tracked file referenced them; Hermes system_prompt
+  already reads our `INDEX.md`. Updated CLAUDE.md state/tasks.
 - Task 2 (sync): mirrored the brain to prod `217.198.12.236:/root/.hermes/agent-knowledge` via
   tar + `_deploy_helper.py` (per `update-knowledge`). Backed up the old structure to
   `agent-knowledge.bak.20260529_210928` first. New tree (profile/engineering/projects/…, 65 files)
