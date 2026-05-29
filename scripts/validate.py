@@ -80,8 +80,8 @@ def main() -> int:
     for md in ROOT.rglob("*.md"):
         if ".git" in md.parts or "archive" in md.parts:
             continue
-        if md.name in {"README.md"}:
-            continue  # readme is a landing file, not a knowledge doc
+        if md.name in {"README.md", "CLAUDE.md"}:
+            continue  # landing / agent-instruction files, not knowledge docs
         if "skills" in md.parts:
             # Skills (and their bundled reference docs) use the skill format; only SKILL.md is checked.
             if md.name == "SKILL.md":
