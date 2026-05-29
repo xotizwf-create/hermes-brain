@@ -51,19 +51,26 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
 - Server connection (no SSH key on PC): `python _deploy_helper.py new "<cmd>"` from the "Сайт мой"
   repo (Paramiko, password from `.env.local`, never printed). Targets: new=217.198.12.236, estonia=95.85.243.43, prod(old)=186.246.7.32.
 
-## Done (2026-05-30)
+## Done (2026-05-30) — full session retrospective in `logs/session-2026-05-30.md`
 1. ✅ Split `server-context.md` → `vpn-gateway.md` + `hermes.md` (+ encoding repair).
-2. ✅ Synced brain to the server (backup at `agent-knowledge.bak.<ts>`).
+2. ✅ Synced brain to the server.
 3. ✅ Switched pointer / archived legacy `agent.md` + `agent-knowledge/` in the site repo.
+4. ✅ Phase B skills written: `project-onboarding`, `reminders-and-watchers`, `update-knowledge` (v2).
+5. ✅ **Two-way git self-scaling live** — server brain is a git clone with a read-write deploy key;
+   Hermes edits → validate → approve in Telegram → commit/push; local pulls. Telegram toolsets enabled.
+6. ✅ **Automations live:** reminders → Telegram; `mail-watch` (himalaya, every 2h); `chatgpt-sub-watch`
+   (daily 10:00 МСК, warns + auto-removes expired ChatGPT accounts). Clean deliveries (`cron.wrap_response=false`).
+7. ✅ Prefs in `profile/`: max-brevity-by-default; no technical text in auto-deliveries; default TZ = MSK.
+8. ✅ Security: removed leaked `.env` copies from server backups; secrets only in local `.env` + `/root/.hermes/secure/`.
+
+## Live cron automations (server)
+- `mail-watch` — every 2h, important non-newsletter Gmail → Telegram.
+- `chatgpt-sub-watch` — daily, ChatGPT subscription expiry warnings + auto-disable; dates in
+  `/root/.hermes/chatgpt_accounts.json`.
 
 ## Open tasks (next steps, not yet done)
-- **Phase B — teach Hermes 3 capabilities** (the active goal; agent lives in the user's Telegram):
-  1. `project-onboarding` skill — create/run repos with per-project env + prod access (ip/user/pass)
-     + git access, write code guided by the brain's skills/standards.
-  2. `reminders-and-watchers` skill — one-shot & recurring reminders and watchers via `hermes cron`
-     (e.g. "remind me tomorrow 18:00", "every day 10:00", "watch mail every 2h, flag important non-newsletter").
-  3. Finalize `update-knowledge` so Hermes can update/create instructions and scale itself.
 - Reconcile legacy `186.246.7.32` references in `vpn-gateway.md`/`hermes.md` against the live host.
 - Task 4 (deferred): add the user's second project via the `add-project` skill.
+- Optional: re-wire Albery MCP (Hermes currently has 0 MCP servers → no Bitrix/Zoom hands).
 
 Keep this section current as tasks complete.

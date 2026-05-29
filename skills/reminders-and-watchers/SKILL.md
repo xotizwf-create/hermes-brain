@@ -73,14 +73,17 @@ hermes cron create "every 2h" \
   important non-newsletter human mail, dedupes via `memory`, returns `[SILENT]` when nothing matters.
   Smoke-tested with `hermes cron run <id>`: 5 tool turns, returned `[SILENT]`, no spam.
 
-## ChatGPT subscription watcher (deployed 2026-05-30)
-Warns before a ChatGPT/Codex account subscription expires so a new one can be bought in time.
-Subscription end-dates aren't in the OAuth tokens → kept manually in a registry.
+## ChatGPT subscription watcher + auto-disable (deployed 2026-05-30)
+Warns before a ChatGPT/Codex account subscription expires AND auto-removes the account the day after
+it expires. Subscription end-dates aren't in the OAuth tokens → kept manually in a registry.
 - Registry: `/root/.hermes/chatgpt_accounts.json` (server, not in git) — `{lead_days, accounts:[{label,
-  expires:"YYYY-MM-DD", note}]}`. Update a date from chat: edit this file (terminal tool).
-- Script: `/root/.hermes/scripts/chatgpt_sub_watch.py` (no LLM) — for each account computes days left
-  (MSK); prints `⏰ Подписка ChatGPT` + a line per account expiring within `lead_days` (🟠) or expired
-  (🔴 «срочно купи и подключи новый аккаунт»); empty = silent.
+  auth_id, expires:"YYYY-MM-DD", removed, note}]}`. `auth_id` = id from `hermes auth list`. Update a
+  date from chat by editing this file (terminal tool); when a new account is bought, add it + set the
+  old one's date.
+- Script: `/root/.hermes/scripts/chatgpt_sub_watch.py` (no LLM). Per account (MSK days left):
+  `>0 ≤lead_days` → 🟠 warn; `=0` → 🔴 «заканчивается сегодня»; `<0` (expired) → run
+  `hermes auth remove openai-codex <auth_id>`, mark `removed`, report 🔴 «аккаунт ОТКЛЮЧЁН». Guard:
+  never removes the **last alive** account (instead screams to add a new one). Empty output = silent.
 - Cron `chatgpt-sub-watch`: `0 7 * * *` (10:00 МСК), `--script chatgpt_sub_watch.py --no-agent
   --deliver telegram`. Accounts pool: `hermes auth list`.
 

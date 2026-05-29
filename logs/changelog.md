@@ -11,6 +11,13 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Added `chatgpt-sub-watch` (daily 10:00 МСК, no-agent): warns before each ChatGPT account expires and
+  **auto-removes** it the day after expiry (`hermes auth remove openai-codex <id>`), keeping the last
+  account as a safety net. Dates registry `/root/.hermes/chatgpt_accounts.json` (acct #1 13.06, acct #2
+  abc9@btwwin.sbs 30.05). Fixed the remove-call to pass the provider arg.
+- Added `logs/session-2026-05-30.md` — session retrospective + "how Hermes is trained / how it scales
+  itself" + a map of where everything lives. Refreshed `CLAUDE.md` state and `INDEX.md` so both the
+  next Claude session and Hermes itself find it.
 - Activation (mail watcher): installed `himalaya` v1.2.0 on prod, configured the Gmail account
   (App Password in `/root/.hermes/secure/gmail_app_password`, 600, referenced via `auth.cmd` — not in
   repo/config). Created cron `mail-watch` (every 2h, `--skill himalaya`, deliver telegram). IMAP
