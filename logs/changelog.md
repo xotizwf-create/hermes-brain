@@ -11,6 +11,12 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Activation (mail watcher): installed `himalaya` v1.2.0 on prod, configured the Gmail account
+  (App Password in `/root/.hermes/secure/gmail_app_password`, 600, referenced via `auth.cmd` — not in
+  repo/config). Created cron `mail-watch` (every 2h, `--skill himalaya`, deliver telegram). IMAP
+  verified (folder list) and a live run returned `[SILENT]` (no important mail → no spam). Updated
+  `reminders-and-watchers` skill with the deployed setup. Also corrected the stale telegram-toolset
+  note in `hermes.md` (toolsets are enabled, not disabled).
 - Activation: (1) verified reminders → Telegram live (test cron fired + `delivered to telegram:…`);
   (2) **two-way git**: server brain converted to a git clone via a repo-scoped read-write deploy key
   (`hermes_brain_deploy`), identity `hermes-server`; round-trip verified (server commit `651473c`

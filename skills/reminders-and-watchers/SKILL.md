@@ -51,8 +51,20 @@ hermes cron create "every 2h" \
    (ничего не присылай)." \
   --name mail-watch --deliver telegram --skill himalaya
 ```
-- Empty output = silent (no Telegram spam on quiet ticks). State the silence rule in the prompt.
+- Empty / `[SILENT]` output = no delivery (verified: the scheduler logs `agent returned [SILENT] —
+  skipping delivery`). Always tell a watcher to return `[SILENT]` when nothing is relevant, else spam.
 - Same pattern works for other watchers (calendar, a URL, CI) — swap the skill/prompt.
+
+### Deployed mail watcher (2026-05-30, live)
+- `himalaya` v1.2.0 at `/usr/local/bin/himalaya`; config `/root/.config/himalaya/config.toml`
+  (account `gmail`, IMAP `imap.gmail.com:993` tls, SMTP `smtp.gmail.com:465`).
+- App Password stored at `/root/.hermes/secure/gmail_app_password` (600 root:root), referenced from
+  the config via `backend.auth.cmd = "cat /root/.hermes/secure/gmail_app_password"` — **no secret in
+  the config or the brain**. Gmail App Passwords: create at myaccount.google.com/apppasswords, store
+  without spaces.
+- Cron `mail-watch` (`every 2h`, `--skill himalaya`, `--deliver telegram`) reads INBOX, filters
+  important non-newsletter human mail, dedupes via `memory`, returns `[SILENT]` when nothing matters.
+  Smoke-tested with `hermes cron run <id>`: 5 tool turns, returned `[SILENT]`, no spam.
 
 ## Manage
 ```
