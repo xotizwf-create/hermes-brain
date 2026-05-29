@@ -437,13 +437,15 @@ PY
 systemctl restart hermes-gateway
 ```
 
-Чтобы Telegram-агент не сжигал лимит Codex на нерелевантных инструментах, для
-платформы `telegram` отключены встроенные toolsets:
-`web`, `browser`, `terminal`, `file`, `code_execution`, `vision`, `image_gen`,
-`tts`, `skills`, `todo`, `session_search`, `delegation`, `cronjob`,
-`computer_use`, `messaging`. Оставлены `memory`, `clarify` и MCP `albery`.
-Это важно: бизнес-команды из Telegram должны идти через Albery MCP, а не через
-поиск по файлам/терминал. Проверка:
+**Telegram toolset — обновлено 2026-05-30 (раньше было наоборот).** Прежнее ограничение снято: для
+платформы `telegram` теперь **включены** `terminal`, `file`, `code_execution`, `skills`, `cronjob`,
+`web`, `browser`, `vision`, `image_gen`, `tts`, `todo`, `memory`, `session_search`, `delegation`,
+`messaging`, `computer_use`, `clarify`. Отключены только `video`, `video_gen`, `x_search`, `moa`,
+`context_engine`, `homeassistant`, `spotify`, `yuanbao`. То есть через TG-чат у агента полноценные
+«руки»: править свой мозг (git-клон, см. `skills/update-knowledge`) и код проектов, заводить cron,
+писать себе скиллы — **под approval-gate** (показать дифф → дождаться «да» → commit/push). Изначально
+эти toolset'ы отключали ради экономии 5-часового лимита Codex после инцидента с раздуванием контекста
+(см. ниже) — следи за бюджетом и дроби крупные задачи. Проверка:
 
 ```bash
 hermes tools list --platform telegram
