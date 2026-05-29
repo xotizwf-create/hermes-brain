@@ -31,3 +31,9 @@ Flask backend + React/Vite frontend, plus an MCP context server that exposes com
 ## Current state
 Active. Near-realtime Bitrix task sync (outgoing webhook), incremental Zoom recording sync,
 Zoom webhooks. Big external sync cron runs daily 18:00 Europe/Moscow.
+
+## Full reference
+`server-context.md` — complete legacy operational reference (imported from `agent.md`):
+nginx, systemd, HTTPS, PostgreSQL, env, cron sync, backups, FAQ MCP, Google Apps Script,
+VPN gateway (AmneziaWG), Hermes agent, Codex, Bitrix MCP tools, known fixes. The docs in this
+folder are the curated summary; consult `server-context.md` for full detail.

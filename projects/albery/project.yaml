@@ -36,3 +36,4 @@ links:
   - runbook.md
   - decisions.md
   - incidents.md
+  - server-context.md   # full legacy reference (imported from agent.md)
