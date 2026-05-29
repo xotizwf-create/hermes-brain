@@ -1,0 +1,29 @@
+# Frontmatter contract for every Markdown doc in the brain.
+# Validated by scripts/validate.py. Keep it small and stable — these fields are the
+# retrieval hooks (today: grep/tags; later: vector index) and must not churn.
+
+required:
+  id:        # stable, kebab-case, unique within the repo. Never rename — add aliases instead.
+    type: string
+    pattern: "^[a-z0-9][a-z0-9-]*$"
+  type:      # which area this doc belongs to
+    type: enum
+    values: [profile, engineering, project, connector, personal, skill, log, schema]
+  updated:   # ISO date of last meaningful change
+    type: date
+    format: YYYY-MM-DD
+
+optional:
+  tags:      # free-form lowercase keywords for routing/search
+    type: list[string]
+  secret_refs:   # references ONLY, never values. Namespace: proj/<slug>/<service>/<credential>
+    type: list[string]
+  aliases:   # previous ids, so links never break after a rename
+    type: list[string]
+  project:   # for project-scoped docs, the project slug
+    type: string
+
+rules:
+  - Frontmatter is the first thing in the file, fenced by --- ... ---.
+  - secret_refs may contain names only. A real secret value in any committed file is a hard error.
+  - When you change a doc's meaning, bump `updated` and add a changelog entry.

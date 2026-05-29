@@ -1,0 +1,4 @@
+interface:
+  display_name: "Postgres Production"
+  short_description: "Install, harden, back up, and operate PostgreSQL safely."
+  default_prompt: "Use this skill when setting up, securing, backing up, or operating PostgreSQL in production."

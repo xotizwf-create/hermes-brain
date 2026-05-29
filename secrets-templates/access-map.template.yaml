@@ -1,0 +1,16 @@
+# Copy to /root/.hermes/secure/access-map.yaml on the server.
+# This file may include credential names and scopes, but not raw secret values.
+
+projects:
+  example-project:
+    name: Example Project
+    repo: git@github.com:owner/example-project.git
+    production_host: 217.198.12.236
+    working_dir: /var/www/example-project
+    services:
+      github:
+        credential: example_github_deploy_key
+        allowed_actions: [clone, pull, push, create_pr]
+      database:
+        credential: example_database_url
+        allowed_actions: [backup, migrate, read, write]

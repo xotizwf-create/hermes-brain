@@ -1,0 +1,4 @@
+interface:
+  display_name: "Secure Access"
+  short_description: "Use credentials without exposing secrets."
+  default_prompt: "Use this skill when credentials, tokens, SSH, GitHub, service logins, or production access are needed."

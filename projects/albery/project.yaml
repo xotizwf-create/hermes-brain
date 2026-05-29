@@ -1,0 +1,38 @@
+id: albery
+name: Albery (m4s.ru)
+status: active
+summary: Flask + React app with an MCP context server (Bitrix tasks/chats, Zoom transcripts, company knowledge) served at m4s.ru / mcp.m4s.ru.
+tags: [web, flask, react, postgres, mcp, bitrix, zoom]
+
+github:
+  repo: https://github.com/xotizwf-create/Albery.git
+  default_branch: main
+
+production:
+  host_alias: prod-albery
+  host: 217.198.12.236
+  working_dir: /var/www/albery
+  deploy: see deploy.md
+
+mcp:
+  name: albery-mcp
+  endpoint: https://mcp.m4s.ru/mcp        # secret path segment omitted on purpose
+
+connectors: [gmail, google-calendar, google-drive, bitrix, zoom]
+
+secret_refs:
+  - proj/albery/ssh/root           # SSH to 217.198.12.236 (local .env.local: Host_IP/User/Password)
+  - proj/albery/database/url       # production DATABASE_URL (server .env)
+  - proj/albery/mcp/shared-secret  # MCP_SHARED_SECRET
+  - proj/albery/mcp/faq-secret     # MCP_FAQ_SHARED_SECRET
+  - proj/albery/bitrix/event-secret
+  - proj/albery/zoom/event-secret
+  - proj/albery/zoom/webhook-token
+
+links:
+  - overview.md
+  - servers.md
+  - deploy.md
+  - runbook.md
+  - decisions.md
+  - incidents.md

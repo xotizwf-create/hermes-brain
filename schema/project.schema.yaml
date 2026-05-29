@@ -1,0 +1,40 @@
+# Contract for projects/<slug>/project.yaml — the machine-readable manifest of a project.
+# registry.yaml is GENERATED from these manifests (scripts/build_registry.py), never hand-edited.
+
+required:
+  id:        # stable project slug, kebab-case, unique. Matches the folder name.
+    type: string
+    pattern: "^[a-z0-9][a-z0-9-]*$"
+  name:      # human-readable name
+    type: string
+  status:
+    type: enum
+    values: [active, paused, archived]
+  summary:   # one line: what this project is
+    type: string
+
+optional:
+  tags:
+    type: list[string]
+  github:
+    repo:        { type: string }   # git@github.com:owner/repo.git
+    default_branch: { type: string }
+  production:
+    host_alias:  { type: string }   # alias, NOT raw credentials
+    host:        { type: string }   # ip/domain ok (not a secret)
+    working_dir: { type: string }
+    deploy:      { type: string }   # short how-deploy note or pointer to deploy.md
+  mcp:
+    name:        { type: string }
+    endpoint:    { type: string }   # url without secret path segments
+  secret_refs:   # names only -> resolved via /root/.hermes/secure/access-map.yaml
+    type: list[string]
+  connectors:    # connector ids this project uses (see connectors/)
+    type: list[string]
+  links:         # docs in this project folder
+    type: list[string]
+
+rules:
+  - No secret values here. Only host aliases, public hosts, and secret reference names.
+  - Changing `id` is forbidden; mark the project archived and create a new one if truly needed.
+  - After editing any manifest, regenerate registry.yaml.

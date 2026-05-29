@@ -1,0 +1,37 @@
+# Manifest of a project. Copy this folder to projects/<slug>/ and fill in.
+# registry.yaml is GENERATED from these files — do not hand-edit the registry.
+# NO secret values here. Only host aliases, public hosts, and secret reference NAMES.
+
+id: example-project          # stable kebab-case slug == folder name. Never rename.
+name: Example Project
+status: active               # active | paused | archived
+summary: One line — what this project is.
+tags: [web, backend]
+
+github:
+  repo: git@github.com:owner/example-project.git
+  default_branch: main
+
+production:
+  host_alias: prod-example   # alias only
+  host: 0.0.0.0              # ip/domain is not a secret; ok to store
+  working_dir: /var/www/example
+  deploy: see deploy.md
+
+mcp:
+  name: ""
+  endpoint: ""               # url without secret path segments
+
+connectors: []               # connector ids from connectors/, e.g. [gmail, bitrix]
+
+secret_refs:                 # NAMES only -> resolved via /root/.hermes/secure/access-map.yaml
+  - proj/example-project/github/deploy-key
+  - proj/example-project/database/url
+
+links:
+  - overview.md
+  - servers.md
+  - deploy.md
+  - runbook.md
+  - decisions.md
+  - incidents.md

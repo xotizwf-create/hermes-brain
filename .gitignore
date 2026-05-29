@@ -1,0 +1,23 @@
+# Secrets must never enter this repository.
+# Canonical knowledge = files in git. Real secret values = server only (/root/.hermes/secure).
+
+# Secret value files / scratch
+secrets.yaml
+access-map.yaml
+agent-secrets/
+*.secret.*
+*.secrets.*
+*.vault.*
+*.key
+*.pem
+.env
+.env.*
+
+# OS / tooling noise
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+tmp_*
