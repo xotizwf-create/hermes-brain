@@ -44,6 +44,8 @@ current task — never load the whole brain unless asked for a full audit.
 - **Project work / "connect to X" / deploy X** → read `projects/registry.yaml`, find the project,
   load only `projects/<slug>/`. For credentials use the `secure-access` skill.
 - **Add a new project** → use skill `skills/add-project/`.
+- **Onboard a project to work in** (repo + prod access + git access + env, then write code) → skill `skills/project-onboarding/`.
+- **Reminders / recurring tasks / watch mail** → skill `skills/reminders-and-watchers/`.
 - **Add/manage a GitHub repo** → use skill `skills/new-repo/`.
 - **Credentials, SSH, tokens, DB URLs** → `engineering/secrets-access.md` + skill `secure-access`.
 - **Database / migrations / Postgres** → `engineering/database.md` + skill `postgres-production`.

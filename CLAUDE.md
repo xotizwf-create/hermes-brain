@@ -35,7 +35,10 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
 
 ## Key skills
 - `add-project` — register a new project safely (no secrets, refs only).
-- `update-knowledge` — the workflow for changing the brain + syncing to Hermes.
+- `project-onboarding` — make a project workable by the agent: repo + prod access + git access + env
+  (via the server secure store), then write code per the brain's standards.
+- `reminders-and-watchers` — one-shot/recurring reminders & watchers (mail, etc.) via `hermes cron` → Telegram.
+- `update-knowledge` — the workflow for changing the brain + two-way git sync (Hermes self-scaling).
 - `new-repo` — create a git repo + private GitHub repo (gh CLI is installed & authed as `xotizwf-create`).
 - `secure-access`, `postgres-production` — credentials & Postgres ops.
 

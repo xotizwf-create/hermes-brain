@@ -1,0 +1,70 @@
+---
+name: reminders-and-watchers
+description: Use when the user wants one-off or recurring reminders, or a periodic watcher (e.g. "remind me tomorrow 18:00 to text Dasha", "every day at 10:00 remind me to send the archive", "check my mail every 2 hours and tell me only the important non-newsletter stuff"). Implemented with Hermes' built-in cron scheduler, delivering to Telegram.
+---
+
+# Skill: reminders-and-watchers
+
+Hermes runs 24/7 on prod with a built-in cron scheduler (`hermes cron`) and delivers to the owner's
+Telegram. Reminders and watchers are just cron jobs. Run these on the server (the agent already runs
+there; from a workstation use the `_deploy_helper.py new "<cmd>"` transport).
+
+## The one command
+```
+hermes cron create <schedule> "<prompt>" [--name N] [--deliver telegram] [--repeat K] \
+                   [--skill S] [--script F --no-agent] [--workdir DIR]
+```
+- **schedule**: relative `30m` / `every 2h`, or cron `M H * * *` (server TZ). Confirm the timezone
+  with the user; the prod box may not be on Europe/Moscow.
+- **--deliver telegram**: send the result to the owner's Telegram chat (default target). Use
+  `platform:chat_id` for a specific chat.
+- **--repeat 1**: fire once then stop (one-shot reminder).
+- **--skill / --script --no-agent**: give the job tools, or run a pure script watchdog.
+
+## One-shot reminder — "напомни завтра в 18:00 написать Даше"
+Compute tomorrow's date; fire once:
+```
+hermes cron create "0 18 30 5 *" "Напомни владельцу: написать Даше." \
+  --name remind-dasha --deliver telegram --repeat 1
+```
+(`M H DOM MON *` pins an exact date; `--repeat 1` removes it after firing. For "через 2 часа" just
+use `2h --repeat 1`.)
+
+## Recurring reminder — "каждый день в 10:00 напоминай скинуть архив"
+```
+hermes cron create "0 10 * * *" "Напомни владельцу: нужно скинуть архив." \
+  --name daily-archive --deliver telegram
+```
+Weekly example: `"0 10 * * 1"` (Mondays). Monthly: `"0 10 1 * *"` (1st of month).
+
+## Watcher — "смотри мою почту каждые 2 часа, говори только про важное (не рассылки)"
+Mail backend = Hermes built-in **`himalaya`** skill (IMAP). One-time prereq: configure himalaya with
+the Gmail account + an **App Password** (Gmail → Security → App passwords; IMAP enabled). Store it in
+the server secure store, never in the brain.
+```
+hermes cron create "every 2h" \
+  "Через himalaya проверь новые письма Gmail с момента прошлой проверки. \
+   Покажи ТОЛЬКО важные личные/рабочие письма: отправитель-человек, адресовано мне, требует ответа \
+   или действия. ОТФИЛЬТРУЙ рассылки, промо, уведомления сервисов, соцсети, автоматические письма. \
+   Формат: '✉️ <отправитель> — <тема> — <1 строка сути>'. Если важного нет — ответь пустой строкой \
+   (ничего не присылай)." \
+  --name mail-watch --deliver telegram --skill himalaya
+```
+- Empty output = silent (no Telegram spam on quiet ticks). State the silence rule in the prompt.
+- Same pattern works for other watchers (calendar, a URL, CI) — swap the skill/prompt.
+
+## Manage
+```
+hermes cron list                 # all jobs + ids
+hermes cron run <id>             # run on next tick (test it now)
+hermes cron edit <id> --prompt "..."   # change the instruction/schedule
+hermes cron pause/resume <id>
+hermes cron remove <id>
+```
+Always `hermes cron run <id>` once after creating, to confirm it fires and delivers to Telegram.
+
+## Rules
+- Confirm exact time + timezone with the user before creating a dated reminder.
+- Watchers must define a "stay silent when nothing relevant" rule, or they become noise.
+- Secrets (App Password, IMAP creds) live only in `/root/.hermes/secure/`, never in the cron prompt
+  or the brain. See `secure-access`.

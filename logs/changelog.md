@@ -11,6 +11,12 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Phase B (teach Hermes): added skills `project-onboarding` (repo + prod/git/env access via secure
+  store, then code per standards) and `reminders-and-watchers` (`hermes cron` one-shot/recurring +
+  `himalaya` mail watcher → Telegram, grounded in the live `hermes cron create` interface). Reworked
+  `update-knowledge` to a two-way git model (server brain = clone; Hermes self-edits → approve in
+  Telegram → commit/push). Added INDEX routing + CLAUDE.md key-skills + decisions.md ADR. Grounded in
+  server inspection: Hermes v0.15.0, builtin skills (himalaya/github-auth/codex), currently 0 MCP servers.
 - Task 3 (single source of truth): in the "Сайт мой" repo, the legacy `agent.md` (186 KB) and old
   `agent-knowledge/` were untracked; archived both into `_legacy_agent_archive/` (chosen over delete)
   with a README pointing to hermes-brain. No tracked file referenced them; Hermes system_prompt

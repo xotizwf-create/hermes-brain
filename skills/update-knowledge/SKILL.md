@@ -28,15 +28,37 @@ Evolve the brain safely: classify → edit → validate → show diff → confir
    for lessons, `logs/learning-log.md`; for errors, `logs/mistakes.md`.
 7. Sync to Hermes server.
 
-## Sync to Hermes
-```powershell
-# from the brain repo root (C:\hermes-brain)
-tar -cf tmp_brain.tar --exclude=.git .
-python _deploy_helper.py new --put tmp_brain.tar /tmp/agent-knowledge.tar
-python _deploy_helper.py new "rm -rf /root/.hermes/agent-knowledge && mkdir -p /root/.hermes/agent-knowledge && tar -xf /tmp/agent-knowledge.tar -C /root/.hermes/agent-knowledge && rm -f /tmp/agent-knowledge.tar"
-Remove-Item -LiteralPath tmp_brain.tar
+## Sync model: two-way git (single source of truth)
+Canonical = the GitHub repo `hermes-brain`. Both the local working copy (`C:\hermes-brain`) and the
+server brain (`/root/.hermes/agent-knowledge`, a **git clone**) are checkouts of it. Sync = git.
+
+- **Local edit → everywhere:** commit locally → `git push` → on the server `git -C
+  /root/.hermes/agent-knowledge pull --ff-only`.
+- **Server/Hermes edit → everywhere:** Hermes commits+pushes on the server (see self-scaling) →
+  locally `git pull`.
+- Hermes `config.yaml` system_prompt points only at `…/agent-knowledge/INDEX.md`; knowledge files
+  are read on demand, so **no gateway restart** is needed after a content sync.
+
+One-time setup to convert the server mirror into a clone (needs GitHub read/write on the server via
+the `github-auth` skill or a fine-grained PAT; the repo is private):
+```bash
+mv /root/.hermes/agent-knowledge /root/.hermes/agent-knowledge.pre-git.bak
+git clone https://github.com/xotizwf-create/hermes-brain.git /root/.hermes/agent-knowledge
 ```
-(_deploy_helper.py lives in the albery working copy; run from there, or adapt to your transport.)
+(Bootstrap transport before the clone exists = tar via `_deploy_helper.py new --put`, see git history.)
+
+## Self-scaling: Hermes edits its own brain (autonomous, still approval-gated)
+When Hermes (on the server) needs to add/update an instruction or skill:
+1. Edit the file under `/root/.hermes/agent-knowledge/` (or add a new doc with valid frontmatter).
+2. `python scripts/validate.py` in that dir — must pass. If a manifest changed, `build_registry.py`.
+3. **Show the diff to the owner in Telegram and wait for "да/ок"** — this is the approval gate in the
+   autonomous context (same rule, different channel). No silent self-edits.
+4. After approval: `git add -A && git commit` (end message with the Co-Authored-By trailer) and
+   `git push`. Append one line to `logs/changelog.md`.
+5. Tell the owner it's live; the local copy picks it up on the next `git pull`.
+
+If unsure whether a change is warranted, drop a note in `inbox/unsorted.md` and ask the owner instead
+of editing core docs.
 
 ## Rule
-No silent edits. Diff + approval + changelog every time.
+No silent edits. Validate + diff + owner approval + changelog every time — locally or on the server.
