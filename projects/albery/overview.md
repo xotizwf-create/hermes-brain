@@ -33,7 +33,10 @@ Active. Near-realtime Bitrix task sync (outgoing webhook), incremental Zoom reco
 Zoom webhooks. Big external sync cron runs daily 18:00 Europe/Moscow.
 
 ## Full reference
-`server-context.md` — complete legacy operational reference (imported from `agent.md`):
-nginx, systemd, HTTPS, PostgreSQL, env, cron sync, backups, FAQ MCP, Google Apps Script,
-VPN gateway (AmneziaWG), Hermes agent, Codex, Bitrix MCP tools, known fixes. The docs in this
-folder are the curated summary; consult `server-context.md` for full detail.
+The legacy `agent.md` import (now de-mojibaked) is split into focused docs; the docs in this
+folder are the curated summary, consult these for full detail:
+- [server-context.md](server-context.md) — prod server: nginx, systemd, HTTPS, PostgreSQL, env,
+  cron sync, backups, FAQ MCP, Google Apps Script, Bitrix MCP tools, known fixes.
+- [vpn-gateway.md](vpn-gateway.md) — AmneziaWG outbound-via-Estonia gateway.
+- [hermes.md](hermes.md) — Hermes autonomous agent: setup, Codex provider, cron, Telegram,
+  sessions, training, roadmap.

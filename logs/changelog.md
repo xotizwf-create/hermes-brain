@@ -10,6 +10,14 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 
+## 2026-05-30
+- Task 1 (split): extracted two big subsystems out of `projects/albery/server-context.md` into
+  focused docs — `vpn-gateway.md` (AmneziaWG outbound-via-Estonia) and `hermes.md` (Hermes agent:
+  Codex provider, cron, Telegram, sessions, training, RBAC roadmap). `server-context.md` now holds
+  the app/server reference + Bitrix MCP tools + fetch_url/bug notes. Updated its frontmatter/intro,
+  `overview.md` "Full reference", added cross-links. IP `186.246.7.32` left in legacy commands with a
+  banner (current prod `217.198.12.236`) — to reconcile live during brain sync (Task 2).
+
 ## 2026-05-29
 - Fixed mojibake in `projects/albery/server-context.md`: 771 legacy lines were double-encoded
   (UTF-8 bytes read as CP1251 then re-encoded). Repaired in place via per-line round-trip
