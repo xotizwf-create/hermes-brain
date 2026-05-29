@@ -22,6 +22,13 @@ hermes cron create <schedule> "<prompt>" [--name N] [--deliver telegram] [--repe
 - **--repeat 1**: fire once then stop (one-shot reminder).
 - **--skill / --script --no-agent**: give the job tools, or run a pure script watchdog.
 
+## Delivery format — clean, no technical text
+`cron.wrap_response: false` is set in `config.yaml`, so deliveries are the agent's raw output only
+(no `Cronjob Response`/`job_id`/management footer). Write reminder prompts so the agent replies with
+**just**: an emoji header, blank line, the point — nothing else. E.g. the prompt:
+`Ответь ровно так и ничего больше: "⏰ Напоминание\n\nПора почистить зубы".`
+Watchers: header optional; on nothing-to-report return `[SILENT]`.
+
 ## One-shot reminder — "напомни завтра в 18:00 написать Даше"
 Compute tomorrow's date; fire once:
 ```
