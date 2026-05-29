@@ -11,6 +11,11 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Task 2 (sync): mirrored the brain to prod `217.198.12.236:/root/.hermes/agent-knowledge` via
+  tar + `_deploy_helper.py` (per `update-knowledge`). Backed up the old structure to
+  `agent-knowledge.bak.20260529_210928` first. New tree (profile/engineering/projects/…, 65 files)
+  in place; `INDEX.md` preserved (the only path Hermes `config.yaml` system_prompt references).
+  Confirmed prod outbound IP = `95.85.243.43` (VPN/Estonia active on 217).
 - Task 1 (split): extracted two big subsystems out of `projects/albery/server-context.md` into
   focused docs — `vpn-gateway.md` (AmneziaWG outbound-via-Estonia) and `hermes.md` (Hermes agent:
   Codex provider, cron, Telegram, sessions, training, RBAC roadmap). `server-context.md` now holds
