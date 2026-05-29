@@ -1,0 +1,6 @@
+# The brain is synced to a Linux server (/root/.hermes/agent-knowledge).
+# Keep LF in the repo to avoid CRLF churn and cross-platform diffs.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary
