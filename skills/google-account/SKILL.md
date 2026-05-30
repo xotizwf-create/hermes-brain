@@ -24,6 +24,8 @@ it sees everything the owner can. Set up 2026-05-30.
 - Scopes (read-only): `drive.readonly`, `spreadsheets.readonly`, `calendar.readonly`, `gmail.readonly`.
 - The reader code resolves creds in `read-links/scripts/gauth_read.py` and
   `google-account/scripts/gcal_read.py`.
+- Some Hermes Google Workspace tools instead expect a compatibility token at
+  `/root/.hermes/google_token.json`; see the fallback section below.
 
 ## How it was set up (the procedure, for the future)
 Google Cloud project `gen-lang-client-0802797266` (owner's). One-time:
@@ -42,6 +44,40 @@ Google Cloud project `gen-lang-client-0802797266` (owner's). One-time:
    Gotcha: Git-Bash mangles `/root/...` args (MSYS path conversion) — prefix `MSYS_NO_PATHCONV=1`, or
    stream the file via base64 over the SSH channel. Never paste the token into chat or commit it.
 6. After that the agent works **headless** — google-auth refreshes the access token itself.
+
+
+## Hermes Google Workspace compatibility token
+Some bundled Hermes Google Workspace commands (for example `productivity/google-workspace/scripts/setup.py`
+and `google_api.py`) look for the OAuth token at the legacy/default path:
+
+```text
+/root/.hermes/google_token.json
+```
+
+If the secure Google OAuth token already exists at `/root/.hermes/secure/google_oauth_token.json`, do **not**
+make the owner redo OAuth just because `setup.py --check` says `NOT_AUTHENTICATED: No token at
+/root/.hermes/google_token.json`. First verify the secure token exists and inspect only non-secret metadata
+(scopes/field names, never token values). If it has the needed scopes, install it into the compatibility path:
+
+```bash
+install -m 600 /root/.hermes/secure/google_oauth_token.json /root/.hermes/google_token.json
+python /root/.hermes/skills/productivity/google-workspace/scripts/setup.py --check
+```
+
+Read-only scopes (`drive.readonly`, `spreadsheets.readonly`, `calendar.readonly`, `gmail.readonly`) are enough
+for listing/searching Drive, reading Docs/Sheets/Gmail metadata/content, and Calendar reads. They are not enough
+for creating, editing, deleting, sending, sharing, or label modifications.
+
+If the Google Workspace scripts fail with `ModuleNotFoundError` and system Python has no usable `pip`, install the
+Google API client deps with `uv`:
+
+```bash
+uv pip install --system google-api-python-client google-auth-oauthlib google-auth-httplib2
+```
+
+Then verify again with `setup.py --check` and use `google_api.py drive search "" --max 10` (or a narrower query)
+to confirm Drive access. Keep `/root/.hermes/google_token.json` out of git and treat it as a secret-bearing local
+compatibility copy.
 
 ## ⚠ Keep the token alive — publish the app to Production
 If the OAuth app stays in **Testing**, refresh tokens for sensitive scopes (Drive/Gmail/Calendar)

@@ -6,7 +6,11 @@ description: Use when changing the brain itself — adding/editing knowledge, cl
 # Skill: update-knowledge
 
 ## Goal
-Evolve the brain safely: classify → edit → validate → show diff → confirm → commit → log → sync.
+Evolve the brain safely: classify → edit → validate → confirm if needed → commit → log → sync.
+
+Owner standing preference (2026-05-30): when the agent discovers or performs a new non-trivial
+procedure that is not yet documented, it should update the closest matching instruction/skill on its
+own; if none exists, create a new instruction. Do not ask separately whether to document it.
 
 ## Classify new information into one area
 - **profile** — user, preferences, communication, hard rules.
@@ -23,7 +27,9 @@ Evolve the brain safely: classify → edit → validate → show diff → confir
 2. Make the edit. Bump `updated`. Never write secret values — references only.
 3. If a project manifest changed: `python scripts/build_registry.py`.
 4. `python scripts/validate.py` — must pass.
-5. **Show the diff to the user. Apply (commit) only after confirmation.**
+5. Approval gate: if the owner has not already explicitly authorized the documentation update, show the
+   diff and wait for confirmation. If the owner explicitly says to add/update without showing the diff
+   (for example, "ничего не надо показывать, просто добавляй"), treat that as approval and proceed.
 6. Append a line to `logs/changelog.md`. For architectural choices, add to `logs/decisions.md`;
    for lessons, `logs/learning-log.md`; for errors, `logs/mistakes.md`.
 7. Sync to Hermes server.
@@ -57,8 +63,8 @@ transport before any clone exists = tar via `_deploy_helper.py new --put` (see g
 When Hermes (on the server) needs to add/update an instruction or skill:
 1. Edit the file under `/root/.hermes/agent-knowledge/` (or add a new doc with valid frontmatter).
 2. `python scripts/validate.py` in that dir — must pass. If a manifest changed, `build_registry.py`.
-3. **Show the diff to the owner in Telegram and wait for "да/ок"** — this is the approval gate in the
-   autonomous context (same rule, different channel). No silent self-edits.
+3. Approval gate in Telegram: show the diff and wait for "да/ок" unless the owner already explicitly
+   authorized this exact update without a diff in the current conversation.
 4. After approval: `git add -A && git commit` (end message with the Co-Authored-By trailer) and
    `git push`. Append one line to `logs/changelog.md`.
 5. Tell the owner it's live; the local copy picks it up on the next `git pull`.
@@ -67,4 +73,5 @@ If unsure whether a change is warranted, drop a note in `inbox/unsorted.md` and 
 of editing core docs.
 
 ## Rule
-No silent edits. Validate + diff + owner approval + changelog every time — locally or on the server.
+No silent unapproved edits. Validate + owner approval + changelog every time — locally or on the server.
+Showing a diff is the default approval path, but explicit owner instructions to update without showing it are valid approval.

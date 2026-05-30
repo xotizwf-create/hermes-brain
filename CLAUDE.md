@@ -26,7 +26,8 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
 
 ## Hard rules
 1. **Approval-gated mutations.** To change the brain: propose the edit → show a diff → wait for the
-   user's confirmation → commit → append one line to `logs/changelog.md`. No silent edits.
+   user's confirmation → commit → append one line to `logs/changelog.md`. If the owner explicitly says
+   to update without showing the diff, that counts as approval. No silent unapproved edits.
 2. **No secrets in any committed file.** References only. `scripts/validate.py` enforces this.
 3. **Every doc needs valid frontmatter.** Skills use the `name`/`description` format instead.
 4. **`projects/registry.yaml` is generated** — run `python scripts/build_registry.py`, never hand-edit.
@@ -44,7 +45,9 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   export), via `fetch_url.py`; native `browser`/`web_search` for JS/search.
 - `google-account` — the agent's Google profile (owner's account, OAuth read-only): Calendar/Drive/
   Docs/Sheets/Gmail; how it was connected, keep-alive (publish to Production), rotation, adding write.
-- `update-knowledge` — the workflow for changing the brain + two-way git sync (Hermes self-scaling).
+- `update-knowledge` — the workflow for changing the brain + two-way git sync (Hermes self-scaling);
+  includes the standing preference to document new non-trivial procedures in the nearest instruction,
+  or create one if none exists.
 - `new-repo` — create a git repo + private GitHub repo (gh CLI is installed & authed as `xotizwf-create`).
 - `secure-access`, `postgres-production` — credentials & Postgres ops.
 

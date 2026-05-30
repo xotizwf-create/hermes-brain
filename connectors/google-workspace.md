@@ -19,10 +19,14 @@ Used by `read-links/scripts/gauth_read.py` (Docs/Sheets/Drive) and `google-accou
 - One-time browser consent on the **owner's PC** (Google blocks the consent screen from datacenter
   IPs — same issue as Codex), which yields a **refresh token**. We copy it to the server; after that
   the agent works headless, refreshing access tokens itself, no further logins.
-- Token file: `/root/.hermes/secure/google_oauth_token.json` (mode 600, root-only). **Never in git**
+- Canonical token file: `/root/.hermes/secure/google_oauth_token.json` (mode 600, root-only). **Never in git**
   (gitignored) — referenced by name only (`agent/google/oauth-token`). Scopes (read-only):
   `drive.readonly`, `spreadsheets.readonly`, `calendar.readonly`, `gmail.readonly` — the agent cannot
   edit, send, or delete anything.
+- Compatibility token path for the bundled Hermes Google Workspace skill: `/root/.hermes/google_token.json`.
+  If that tool reports `NOT_AUTHENTICATED` but the secure token exists, copy it with
+  `install -m 600 /root/.hermes/secure/google_oauth_token.json /root/.hermes/google_token.json`, then run
+  `python /root/.hermes/skills/productivity/google-workspace/scripts/setup.py --check`.
 - Reads via the Drive/Sheets/Calendar APIs: Docs/Slides → text, Sheets → all tabs as CSV, Calendar →
   agenda. Gmail scope is granted but mail is watched via himalaya (`reminders-and-watchers`).
 - **Keep alive:** if the OAuth app stays in *Testing*, refresh tokens expire in ~7 days → publish the
@@ -43,6 +47,14 @@ Used by `read-links/scripts/gauth_read.py` (Docs/Sheets/Drive) and `google-accou
 
 **C. Deliver to the server:**
 - `token.json` → `/root/.hermes/secure/google_oauth_token.json` (chmod 600). Then private docs work.
+
+
+**D. Enable bundled Google Workspace commands if needed:**
+- If `~/.hermes/skills/productivity/google-workspace/scripts/setup.py --check` says `NOT_AUTHENTICATED` because
+  `/root/.hermes/google_token.json` is absent, copy the canonical secure token to that compatibility path:
+  `install -m 600 /root/.hermes/secure/google_oauth_token.json /root/.hermes/google_token.json`.
+- If `google_api.py` or `setup.py` lacks Google Python packages and there is no normal `pip`, install them via
+  `uv pip install --system google-api-python-client google-auth-oauthlib google-auth-httplib2`.
 
 ## Daily use
 - Just paste any Google Doc/Sheet/Slides link to the agent — it reads it (yours, no sharing needed).
