@@ -2,7 +2,7 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-05-29
+updated: 2026-05-30
 secret_refs: []
 ---
 
@@ -11,6 +11,10 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Added `markitdown-docs`: local PDF/Word/Excel/PowerPoint files now route through Microsoft
+  MarkItDown into compact Markdown first (`convert_document.py` writes `.markitdown.md` + short
+  preview), reducing token spend and improving document context before analysis. INDEX + CLAUDE routing
+  updated.
 - **Hermes Vault — web UI for per-project secrets** (`skills/secure-access/vault/`). Dependency-free
   stdlib app (`secrets_ui.py`): lists the owner's GitHub repos (REST), stores/edits a `.env` per project,
   tied to repos. Live at `https://www.andigital.ru/andigital/secret/<token>/` over the existing

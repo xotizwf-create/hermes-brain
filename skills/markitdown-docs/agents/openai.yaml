@@ -1,0 +1,4 @@
+interface:
+  display_name: "MarkItDown Docs"
+  short_description: "Convert office files to compact Markdown"
+  default_prompt: "Use $markitdown-docs to convert an attached PDF, Word, Excel, or PowerPoint file to Markdown before analysis."

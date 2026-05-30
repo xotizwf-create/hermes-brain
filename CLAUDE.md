@@ -43,6 +43,8 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   edits its own `config.yaml`, restarts gateway, records a secret-free entry in `connectors/registry.yaml`).
 - `read-links` — read the content behind a link: web pages + Google Docs/Sheets/Slides (share-link →
   export), via `fetch_url.py`; native `browser`/`web_search` for JS/search.
+- `markitdown-docs` — convert local PDF/Word/Excel/PowerPoint files to compact Markdown with
+  Microsoft MarkItDown before analysis, so binary documents do not burn model context.
 - `google-account` — the agent's Google profile (owner's account, OAuth read-only): Calendar/Drive/
   Docs/Sheets/Gmail; how it was connected, keep-alive (publish to Production), rotation, adding write.
 - `update-knowledge` — the workflow for changing the brain + two-way git sync (Hermes self-scaling);

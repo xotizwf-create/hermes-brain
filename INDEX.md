@@ -2,7 +2,7 @@
 id: index
 type: schema
 tags: [root, routing, entrypoint]
-updated: 2026-05-29
+updated: 2026-05-30
 secret_refs: []
 ---
 
@@ -52,6 +52,8 @@ current task — never load the whole brain unless asked for a full audit.
 - **Connect / switch / remove an MCP server (owner pastes a URL)** → skill `skills/connect-mcp/`;
   model in `connectors/mcp-servers.md`; what's connected in `connectors/registry.yaml`.
 - **Read a link / web page / Google Doc / Sheet / Slides (owner pastes a URL)** → skill `skills/read-links/`.
+- **Read local PDF / Word / Excel / PowerPoint files** → skill `skills/markitdown-docs/`;
+  convert with Microsoft MarkItDown first, then inspect the generated Markdown.
 - **Google account access (Calendar / Drive / Docs / Sheets / Gmail), re-auth, scopes** → skill
   `skills/google-account/`; connector ref `connectors/google-workspace.md`.
 - **Add/manage a GitHub repo** → use skill `skills/new-repo/`.
