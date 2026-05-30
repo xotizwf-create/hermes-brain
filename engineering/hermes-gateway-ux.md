@@ -1,0 +1,47 @@
+---
+id: hermes-gateway-ux
+type: engineering
+tags: [hermes, gateway, telegram, ux, config, display, reasoning, progress]
+updated: 2026-05-30
+secret_refs: []
+---
+
+# Hermes gateway UX — indicator, live progress, tone
+
+How the owner-facing behaviour ("Думаю…", live step updates, language, honesty) is controlled.
+**It's config, not code** — these are built-in gateway features toggled in `~/.hermes/config.yaml`
+(`gateway/run.py`), so never patch `run.py` for them. Config is server-only (600); the brain just
+documents what's set.
+
+## What was wrong (2026-05-30)
+- "Странные/обрывистые сообщения" on "обнови" = the gateway restarting itself **mid-turn** (the MCP
+  refresh ran `systemctl restart` in-process). Fixed in `skills/connect-mcp` — restart is now
+  detached (`detached_restart()` via `systemd-run --on-active`). See `connectors/mcp-servers.md`.
+- No visible "what is it doing": on Telegram **tool progress was off**
+  (`display.platforms.telegram.tool_progress: false`).
+
+## The knobs (in `config.yaml` → `display:` unless noted)
+| Want | Knob | Set to |
+|---|---|---|
+| "Печатает…" indicator | native Telegram `send_chat_action("typing")` — always on, auto-resumes during a reply | (built-in, nothing to set) |
+| Live step bubbles ("что делаю сейчас") | `platforms.telegram.tool_progress` | **`new`** (report only when the tool changes; `all` = every call; `off` = silent) |
+| Natural mid-turn updates in RU | `interim_assistant_messages` | `true` (already) — model narrates briefly; driven by the system prompt |
+| Busy ack when a msg arrives mid-work | `busy_ack_detail` / env `HERMES_GATEWAY_BUSY_ACK_ENABLED` | on (already) |
+| Long-task "⏳ Working — N min" bubble | `long_running_notifications` | `true` (already) |
+| Show raw model reasoning | `show_reasoning` | **`false`** — deliberately OFF: it prepends an English `💭 Reasoning:` block (raw chain-of-thought, may be EN + technical), which fights the Russian-only rule. The clean substitute is `interim_assistant_messages` + tool progress. |
+| UI language of gateway strings | `language` | `en` — **no `ru` locale ships**, so leave it; don't expect RU from this knob. RU comes from the system prompt, not here. |
+
+## Tone / behaviour
+- The hard rules (only Russian; narrate steps briefly; honest "не нашёл" instead of made-up answers;
+  no technical/English system strings in chat) live in **`config.yaml` `agent.system_prompt`** (read
+  every turn) *and* in `profile/communication.md` (loaded via `INDEX.md`). The system_prompt is the
+  reliable lever; the profile is the canonical long form.
+- `display.personality` was `kawaii` (a cutesy persona). If the tone ever feels off / сюсюкающим,
+  switch it to a neutral persona (e.g. `concise`) or empty. Left as-is 2026-05-30 — the system_prompt
+  "деловой тон, без сюсюканья" line should dominate.
+
+## Applying changes
+Edit `config.yaml` (back it up first), then restart the gateway **from outside it** (SSH / systemd),
+never from a chat turn: `systemctl restart hermes-gateway`. Most `display.*` settings are re-read per
+turn; `system_prompt` and a few init-time ones need the restart. Verify: `systemctl is-active
+hermes-gateway` + check the new process PID is fresh in `systemctl status`.

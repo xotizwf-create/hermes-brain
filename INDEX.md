@@ -60,6 +60,7 @@ current task — never load the whole brain unless asked for a full audit.
 - **Performance** → `engineering/optimization.md`.
 - **Code style / review** → `engineering/coding-standards.md`, `engineering/code-review.md`.
 - **How the agent should answer/communicate** → `profile/`.
+- **Hermes UX: "Думаю…"/typing, live step progress, reasoning, tone — config knobs** → `engineering/hermes-gateway-ux.md`.
 - **Change the brain itself / how Hermes scales itself** → skill `skills/update-knowledge/`.
 - **How Hermes was built & how it's taught (orientation)** → `logs/session-2026-05-30.md`.
 

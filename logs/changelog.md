@@ -11,6 +11,15 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Hermes UX made visible & honest (config, not code — no run.py patch). Telegram **tool progress
+  turned on** (`display.platforms.telegram.tool_progress: new`) so the owner sees live step bubbles;
+  native Telegram "typing…" indicator already auto-resumes = the "Думаю…" cue. **system_prompt
+  expanded** with hard rules: only Russian, narrate steps briefly, honest "не нашёл" instead of
+  made-up answers, no English/technical system strings in chat, business tone. `show_reasoning` left
+  OFF on purpose (English `💭 Reasoning` block + raw CoT fights Russian-only); no `ru` UI locale ships
+  so `language` stays `en`. Noted `display.personality: kawaii` as a tone risk (left as-is). Config
+  backed up server-side; gateway restarted from SSH (external) and verified healthy. New brain doc
+  `engineering/hermes-gateway-ux.md` + INDEX route.
 - MCP "обнови" fix: refresh/restart no longer kills the active chat turn. `hermes_mcp.py` gained
   `detached_restart()` (restart dispatched to a separate `systemd-run --on-active` transient unit so
   the reply flushes first); `cmd_refresh` + `apply_live` route through it. Was the root cause of the
