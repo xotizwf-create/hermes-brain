@@ -71,14 +71,23 @@ context budget, avoids tool-name clashes). Keep `enabled:` in `registry.yaml` ma
 
 If a connection breaks the gateway: `hermes_mcp.py rollback` restores the last good config + restarts.
 
-## Refreshing tools (infra-level, no LLM)
+## Refreshing tools — owner says "обнови" (no LLM reasoning)
 Hermes discovers each server's tools at gateway **startup**. To pick up tools a server added upstream,
-the gateway must re-discover them → it must restart. That's an infra action, **not** something the
-model should reason about: `hermes_mcp.py refresh --apply` (= `systemctl restart hermes-gateway`),
-runned daily by the **systemd timer** `hermes-mcp-refresh.timer` (`skills/connect-mcp/systemd/`,
-default 04:10 UTC). It's a systemd timer rather than a `hermes cron` job on purpose — the cron
-scheduler runs *inside* the gateway and would be killed by its own restart. `/reload-mcp` (in chat)
-is the on-demand, no-restart equivalent for a single change.
+the gateway must re-discover them → it must restart. When the owner says "обнови" / "подтяни новые
+инструменты", run `hermes_mcp.py refresh --apply`, relay its Russian line, and stop.
+
+**Why the restart is detached.** Restarting the gateway directly from a chat turn kills the cgroup
+that includes the process answering the owner — the turn dies mid-reply ("Gateway shutting down —
+task interrupted") and the answer is garbage. That was the old bug behind "обнови" producing weird
+messages. `refresh --apply` now dispatches the restart to a **separate transient unit**
+(`systemd-run --on-active`, a few seconds' delay) so the reply is delivered first and nothing is cut
+off. The model must **never** add its own `systemctl restart` / `systemd-run` / post-restart check —
+the script owns that.
+
+The same command also runs daily via the **systemd timer** `hermes-mcp-refresh.timer`
+(`skills/connect-mcp/systemd/`, default 04:10 UTC) — its own unit, so it never races the in-process
+cron scheduler. `/reload-mcp` (in chat) is the on-demand, no-restart equivalent for a single config
+change.
 
 ## Native CLI parity
 `hermes mcp {list,add,remove,test,configure,login,catalog,install}` is the underlying CLI (used

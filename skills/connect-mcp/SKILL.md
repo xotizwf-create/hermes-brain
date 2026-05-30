@@ -1,6 +1,6 @@
 ---
 name: connect-mcp
-description: Use when the owner wants to connect, switch, or remove an MCP server for Hermes — e.g. pastes an MCP URL ("подключи этот mcp <url>", "добавь коннектор"), asks to switch connectors on/off ("включи albery", "выключи research mcp"), or list what's connected. Hermes writes the canonical mcp_servers entry into its own ~/.hermes/config.yaml via the bundled hermes_mcp.py, validates with `hermes mcp test`, applies live with /reload-mcp, and records the connector secret-free in connectors/registry.yaml.
+description: Use when the owner wants to connect, switch, remove, or REFRESH an MCP server for Hermes — e.g. pastes an MCP URL ("подключи этот mcp <url>", "добавь коннектор"), asks to switch connectors on/off ("включи albery", "выключи research mcp"), says "обнови" / "обнови коннектор" / "подтяни новые инструменты" (→ refresh, pick up new upstream tools), or list what's connected. Hermes writes the canonical mcp_servers entry into its own ~/.hermes/config.yaml via the bundled hermes_mcp.py, validates with `hermes mcp test`, applies live (auto-reload), and records the connector secret-free in connectors/registry.yaml.
 ---
 
 # Skill: connect-mcp
@@ -126,15 +126,27 @@ systemctl restart hermes-gateway
 grep -c _connect_mcp_autoreload /usr/local/lib/hermes-agent/gateway/run.py   # 1 = applied
 ```
 
-## Refresh tools — infra-level, NOT via the AI
+## Refresh tools — owner says "обнови" (and the daily timer)
 When a connected MCP server gains new tools upstream, Hermes only sees them after it **re-discovers**
-them, which happens on gateway start. So "refresh" = restart the gateway — an infra action that costs
-**zero model tokens**:
+them, which happens on gateway start. So "refresh" = restart the gateway and re-read every server.
+
+**Owner trigger:** when the owner says "обнови" / "обнови коннектор «Простые поставки»" / "подтяни
+новые инструменты", run:
 ```bash
-python3 .../hermes_mcp.py refresh --apply      # = systemctl restart hermes-gateway → re-discover all tools
+python3 .../hermes_mcp.py refresh --apply
 ```
-This runs automatically every day via a **systemd timer** (independent of the gateway process, so it
-never races with the in-process cron scheduler). Install it once on prod:
+Relay its Russian line as-is ("🔄 Обновляю инструменты — несколько секунд…") and **stop** — you're
+done. New tools appear by themselves on the owner's next message.
+
+**CRITICAL — never restart the gateway in-process from a chat turn.** `systemctl restart
+hermes-gateway` tears down the cgroup that includes the turn answering the owner → the reply is cut
+off ("Gateway shutting down — task interrupted") and looks like garbage. `refresh --apply` already
+avoids this: it dispatches the restart to a **separate transient unit** (`systemd-run --on-active`,
+see `detached_restart()`), delayed a few seconds so the reply flushes first. Do **not** "help" by
+adding your own `systemctl restart`, `systemd-run`, or a post-restart check — the script handles it.
+
+The same `refresh --apply` also runs automatically every day via a **systemd timer** (its own unit,
+so it never races the in-process cron scheduler). Install it once on prod:
 ```bash
 cp /root/.hermes/agent-knowledge/skills/connect-mcp/systemd/hermes-mcp-refresh.{service,timer} /etc/systemd/system/
 systemctl daemon-reload && systemctl enable --now hermes-mcp-refresh.timer

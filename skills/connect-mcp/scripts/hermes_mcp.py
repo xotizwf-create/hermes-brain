@@ -114,20 +114,34 @@ def write(data: dict) -> None:
     os.replace(tmp, CONFIG)
 
 
+def detached_restart(delay: int = 4) -> bool:
+    """Restart the gateway OUT of its own cgroup, after a short delay.
+
+    Restarting hermes-gateway synchronously from inside a gateway turn is self-defeating:
+    `systemctl restart` tears down the whole service cgroup, which includes THIS process —
+    the one currently answering the owner. The turn dies mid-reply ("Gateway shutting down")
+    and the owner gets garbage. `systemd-run` launches the restart as a SEPARATE transient
+    unit (run by PID 1, outside our cgroup), so it survives our death, and `--on-active`
+    delays it a few seconds — long enough for the current reply to be delivered first.
+    """
+    unit = f"hermes-gateway-refresh-{dt.datetime.now():%H%M%S}"
+    cmd = ["systemd-run", "--collect", f"--unit={unit}",
+           f"--on-active={delay}", "systemctl", "restart", GATEWAY_UNIT]
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True)
+    except OSError:
+        return False
+    return r.returncode == 0
+
+
 def apply_live(restart: bool) -> None:
     if not restart:
         print(RELOAD_HINT)
         return
-    print("Перезапускаю Hermes…")
-    try:
-        r = subprocess.run(["systemctl", "restart", GATEWAY_UNIT], capture_output=True, text=True)
-    except OSError:
-        print("⚠️ Не получилось перезапустить Hermes автоматически — перезапусти вручную.")
-        return
-    if r.returncode == 0:
-        print("✅ Готово. Напиши /reset в чате, чтобы подхватить изменения.")
+    if detached_restart():
+        print("🔄 Перезапускаюсь, чтобы применить — несколько секунд, секунду не пиши.")
     else:
-        print("⚠️ Не удалось перезапустить Hermes.")
+        print("⚠️ Не получилось перезапуститься автоматически. Скажи ещё раз чуть позже.")
 
 
 # ----------------------------------------------------------------------- redact
@@ -309,18 +323,15 @@ def cmd_test(a) -> int:
 
 def cmd_refresh(a) -> int:
     if not a.apply:
-        print("Обновление перезапустит Hermes и заново соберёт инструменты со всех серверов.")
+        print("Обновлю инструменты — заново подключусь ко всем серверам и подтяну новые. Несколько секунд.")
         return 0
-    stamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{stamp}] обновляю инструменты (перезапуск Hermes)…")
-    try:
-        r = subprocess.run(["systemctl", "restart", GATEWAY_UNIT], capture_output=True, text=True)
-    except OSError:
-        fail("Не удалось перезапустить Hermes.")
-    if r.returncode != 0:
-        fail("Не удалось перезапустить Hermes.")
-    print(f"[{stamp}] ✅ инструменты обновлены.")
-    return 0
+    # NB: the daily systemd timer runs this same command from its OWN unit, where a direct
+    # restart is fine. From a chat turn it is NOT — see detached_restart(). Always detach.
+    if detached_restart():
+        print("🔄 Обновляю инструменты — несколько секунд. Новые подтянутся сами, "
+              "секунду не пиши: я перезапускаюсь.")
+        return 0
+    fail("Не получилось запустить обновление. Попробуй ещё раз чуть позже.")
 
 
 def cmd_registry_snippet(a) -> int:

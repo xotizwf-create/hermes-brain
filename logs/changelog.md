@@ -11,6 +11,12 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- MCP "обнови" fix: refresh/restart no longer kills the active chat turn. `hermes_mcp.py` gained
+  `detached_restart()` (restart dispatched to a separate `systemd-run --on-active` transient unit so
+  the reply flushes first); `cmd_refresh` + `apply_live` route through it. Was the root cause of the
+  garbled "Gateway shutting down — task interrupted" replies on "обнови". Made "обнови" an explicit
+  trigger in `connect-mcp` (→ `refresh --apply`); reinforced in `connectors/mcp-servers.md`. Profile:
+  Russian-only in chat, honest "не нашёл" instead of made-up answers, never restart the gateway mid-turn.
 - Google Workspace compatibility documented: when bundled Hermes Google tools expect `/root/.hermes/google_token.json`, reuse the existing secure OAuth token at `/root/.hermes/secure/google_oauth_token.json` via `install -m 600 ...`, verify with `setup.py --check`, and install missing Google API deps with `uv pip install --system ...` if normal `pip` is unavailable. Updated `google-account`, `connectors/google-workspace`, and `update-knowledge` with the owner preference to auto-document new non-trivial procedures.
 - Google account CONNECTED (OAuth, owner's account, read-only). Added skill `google-account` (the
   full instruction: how it was set up, usage, keep-alive, rotation, adding write) +
