@@ -11,6 +11,19 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- MCP connectors subsystem (grounded in the live Hermes source on prod). Added skill `connect-mcp` +
+  manager `skills/connect-mcp/scripts/hermes_mcp.py`. Hermes' native `hermes mcp add` is interactive
+  (TTY prompts), so the manager writes the **same canonical `mcp_servers` schema** (`{url, headers?,
+  enabled}`, from the bundled `native-mcp` skill) non-interactively into `~/.hermes/config.yaml` — so
+  the owner can paste a URL to the bot and Hermes connects itself. Switching = the **native `enabled`
+  flag** (not a custom park key). Apply live via **`/reload-mcp`** in Telegram (reconnect, no restart,
+  no lost session); `--restart` is the heavy fallback. Default dry-run; every write backs up config;
+  `rollback` restores it. Secrets (URL path / bearer token) stay only in `config.yaml`/`~/.hermes/.env`
+  (600), redacted everywhere else; registry gets a secret-free `url_template`. Added
+  `connectors/registry.yaml` + `connectors/mcp-servers.md` (model). INDEX + CLAUDE updated.
+  **Discovered prod had 0 MCP servers** (`mcp_servers: {}` on 217 — Albery hands were missing); re-wired
+  Albery as the live test (URL built server-side from `/var/www/albery/.env`, `hermes mcp test` =
+  tools discovered).
 - Added `chatgpt-sub-watch` (daily 10:00 МСК, no-agent): warns before each ChatGPT account expires and
   **auto-removes** it the day after expiry (`hermes auth remove openai-codex <id>`), keeping the last
   account as a safety net. Dates registry `/root/.hermes/chatgpt_accounts.json` (acct #1 13.06, acct #2

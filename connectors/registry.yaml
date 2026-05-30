@@ -1,0 +1,18 @@
+# MCP connector registry — what Hermes can connect to. Hand-maintained (approval-gated).
+#
+# This is the brain's MEMORY of MCP servers: the agent reads it to know what exists and
+# whether it is on. The LIVE state is /root/.hermes/config.yaml on the server; keep this in
+# sync when you add/enable/disable via skills/connect-mcp.
+#
+# NEVER put a real secret here. `url_template` carries the secret as a reference placeholder
+# `{proj/<slug>/<service>/secret}` only. The real URL (with secret) lives in config.yaml (600).
+
+connectors:
+- slug: albery
+  url_template: "https://mcp.m4s.ru/mcp/{proj/albery/mcp/shared-secret}"
+  transport: http
+  auth: none            # secret embedded in the URL path
+  enabled: true
+  scope: "Albery context server — Bitrix tasks/chats, Zoom transcripts, company knowledge, owner/zoom reports (~38 tools)."
+  doc: connectors/bitrix.md
+  project: albery

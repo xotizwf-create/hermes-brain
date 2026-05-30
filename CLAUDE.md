@@ -38,6 +38,8 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
 - `project-onboarding` — make a project workable by the agent: repo + prod access + git access + env
   (via the server secure store), then write code per the brain's standards.
 - `reminders-and-watchers` — one-shot/recurring reminders & watchers (mail, etc.) via `hermes cron` → Telegram.
+- `connect-mcp` — connect/switch/remove MCP servers for Hermes safely (owner pastes a URL → Hermes
+  edits its own `config.yaml`, restarts gateway, records a secret-free entry in `connectors/registry.yaml`).
 - `update-knowledge` — the workflow for changing the brain + two-way git sync (Hermes self-scaling).
 - `new-repo` — create a git repo + private GitHub repo (gh CLI is installed & authed as `xotizwf-create`).
 - `secure-access`, `postgres-production` — credentials & Postgres ops.

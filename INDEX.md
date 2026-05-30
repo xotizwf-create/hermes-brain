@@ -32,7 +32,7 @@ current task — never load the whole brain unless asked for a full audit.
 | Profile | `profile/` | Who the user is, preferences, communication, hard rules |
 | Engineering | `engineering/` | Universal how-to-build: standards, security, testing, db, deploy, optimization |
 | Projects | `projects/` | One isolated folder per project + machine-readable `registry.yaml` |
-| Connectors | `connectors/` | MCP connectors (Gmail, Calendar, Drive, Bitrix…) + usage rules |
+| Connectors | `connectors/` | MCP connectors (Gmail, Calendar, Drive, Bitrix…) + `registry.yaml` + usage rules |
 | Personal | `personal/` | Education, side-jobs, life knowledge that helps the agent act |
 | Skills | `skills/` | Repeatable procedures the agent executes |
 | Logs | `logs/` | changelog, decisions (ADR), learning-log, mistakes |
@@ -46,6 +46,8 @@ current task — never load the whole brain unless asked for a full audit.
 - **Add a new project** → use skill `skills/add-project/`.
 - **Onboard a project to work in** (repo + prod access + git access + env, then write code) → skill `skills/project-onboarding/`.
 - **Reminders / recurring tasks / watch mail** → skill `skills/reminders-and-watchers/`.
+- **Connect / switch / remove an MCP server (owner pastes a URL)** → skill `skills/connect-mcp/`;
+  model in `connectors/mcp-servers.md`; what's connected in `connectors/registry.yaml`.
 - **Add/manage a GitHub repo** → use skill `skills/new-repo/`.
 - **Credentials, SSH, tokens, DB URLs** → `engineering/secrets-access.md` + skill `secure-access`.
 - **Database / migrations / Postgres** → `engineering/database.md` + skill `postgres-production`.
