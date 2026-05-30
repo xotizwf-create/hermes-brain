@@ -1,0 +1,37 @@
+# Hermes Vault — secret-manager web UI. Runs unprivileged (hermesvault), bound to 127.0.0.1,
+# exposed by nginx over TLS. Install (as root):
+#   cp .../vault/hermes-vault.service /etc/systemd/system/
+#   systemctl daemon-reload && systemctl enable --now hermes-vault
+[Unit]
+Description=Hermes Vault (per-project secret manager)
+After=network.target
+
+[Service]
+Type=simple
+User=hermesvault
+Group=hermessec
+UMask=0007
+Environment=VAULT_CONFIG=/opt/hermes/vault/data/config.json
+Environment=VAULT_GH_TOKEN=/opt/hermes/vault/data/gh_token
+ExecStart=/usr/bin/python3 /opt/hermes/vault/secrets_ui.py serve
+Restart=on-failure
+RestartSec=3
+
+# --- hardening: least privilege ---
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/hermes/secure /opt/hermes/vault/data
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+[Install]
+WantedBy=multi-user.target

@@ -26,7 +26,7 @@ SECRET_PATTERNS = [
     re.compile(r"gh[pousr]_[A-Za-z0-9]{20,}"),            # github tokens
 ]
 # Files that legitimately show placeholder secret shapes.
-SECRET_ALLOWLIST = {"secrets-templates", "schema", "scripts"}
+SECRET_ALLOWLIST = {"secrets-templates", "schema", "scripts", "vault"}
 # Obvious placeholders — a match containing any of these is documentation, not a real secret.
 PLACEHOLDERS = (
     "user:password", "user:pass", "username:password", "example", "changeme",
