@@ -11,6 +11,15 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- New capability **store-project-secrets**: owner pastes a project's `.env` (or prod-server password)
+  → Hermes finds the repo via `gh`, locks the values into the secure zone
+  `/root/.hermes/secure/projects/<slug>/` (`.env`/`server_password`/`server_key` 600, dir 700, root-only,
+  never echoed/committed), confirms with variable **NAMES only**, and remembers the project secret-free
+  in `projects/<slug>/` (repo, prod host/user, var names, refs `proj/<slug>/env`, `proj/<slug>/ssh/root`).
+  Helper `skills/secure-access/scripts/save_project_secrets.py` (stdin/`--from`, shreds the temp paste,
+  value-free Russian output) — tested end-to-end on prod (save-env/save-server/show, perms 600/700, no
+  leaks). Documents the deliberate "pasted-secret" exception in `engineering/secrets-access.md`. INDEX +
+  CLAUDE updated. ⚠ The paste still lives in Telegram → Hermes reminds the owner to delete it.
 - Google OAuth app **published to Production** (owner did it) → re-ran the PC consent once and
   re-minted the token, so the refresh token is now **long-lived** (no more ~7-day Testing expiry).
   Delivered to the secure store + compat path (600, old backed up); read re-verified. The durability
