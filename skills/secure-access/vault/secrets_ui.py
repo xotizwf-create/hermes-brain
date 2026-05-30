@@ -213,50 +213,88 @@ def github_repos(cfg: dict) -> list[dict]:
 
 # --------------------------------------------------------------------------- HTML
 
-# Design language matched to the andidigital site: light theme, slate ink, bright-lime accent.
+# Design language matched to the approved Vault screenshots: quiet, white, narrow, animated.
 CSS = """
-:root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--line2:#cbd5e1;--card:#fff;
- --lime:#c0fc41;--lime2:#a3e635;--olive:#6f9e2a;--shadow:0 8px 24px rgba(15,23,42,.06);
- --shadow2:0 16px 34px rgba(148,163,184,.22)}
+:root{--ink:#101828;--muted:#66748a;--soft:#8a99af;--line:#dbe5f0;--line2:#cfd9e6;
+ --card:#fff;--bg:#fbfcff;--blue:#2563eb;--blue2:#4f6cff;--blueLine:#b9ccff;
+ --orange:#c75a00;--orangeLine:#fed29b;--red:#ff1f2d;--shadow:0 2px 7px rgba(15,23,42,.04);
+ --shadow2:0 12px 32px rgba(91,111,151,.13);--ring:0 0 0 4px rgba(83,104,255,.12)}
 *{box-sizing:border-box}
-body{margin:0;color:var(--ink);background:linear-gradient(180deg,#f8fafc 0%,#f3f8ff 100%);
- min-height:100vh;-webkit-font-smoothing:antialiased;
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;
  font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
-a{color:var(--olive);text-decoration:none;font-weight:600} a:hover{text-decoration:underline}
-.wrap{max-width:1000px;margin:0 auto;padding:26px 20px 64px}
-.brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em;color:var(--ink)}
-.brand .dot{width:12px;height:12px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(192,252,65,.28)}
-.topbar{display:flex;justify-content:space-between;align-items:center;margin:4px 0 20px;gap:12px;flex-wrap:wrap}
-h1{font-size:26px;font-weight:800;letter-spacing:-.025em;margin:0 0 2px}
-h2{font-size:15px;font-weight:700;margin:0}
-.muted{color:var(--muted);font-size:13px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:14px 0;box-shadow:var(--shadow)}
-.repo{display:flex;justify-content:space-between;align-items:center;gap:14px;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease}
-.repo:hover{transform:translateY(-2px);box-shadow:var(--shadow2);border-color:#dbe7c4}
-.row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;background:#f1f5f9;color:#64748b;border:1px solid var(--line)}
-.badge.priv{background:#fff7ed;color:#b45309;border-color:#fed7aa}
-.badge.has{background:#f2ffd6;color:#4d7c0f;border-color:#d6f29a}
-input,textarea{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line2);background:#fff;color:var(--ink);font:inherit;outline:none}
-input:focus,textarea:focus{border-color:var(--lime2);box-shadow:0 0 0 4px rgba(163,230,53,.18)}
-textarea{min-height:260px;font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.55}
-button{cursor:pointer;border:0;border-radius:12px;padding:11px 18px;font-weight:700;font-size:14px;color:#1a2e05;
- background:var(--lime);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 6px 16px rgba(146,200,40,.35);
- transition:transform .1s ease,box-shadow .1s ease,background .1s ease}
-button:hover{background:var(--lime2);transform:translateY(-1px)} button:active{transform:translateY(0)}
-button.sec{background:#fff;color:var(--ink);border:1px solid var(--line2);box-shadow:var(--shadow)}
-button.sec:hover{background:#f8fafc}
-button.danger{background:#fee2e2;color:#b91c1c;box-shadow:none} button.danger:hover{background:#fecaca}
-table{width:100%;border-collapse:collapse} td{padding:8px 4px;border-bottom:1px solid var(--line);font-size:14px}
-code{background:#f1f5f9;border:1px solid var(--line);padding:2px 7px;border-radius:7px;font-size:12.5px;color:#334155}
-.note{font-size:12px;color:var(--muted);margin-top:8px}
-.login{max-width:430px;margin:7vh auto 0}
-.search{margin-bottom:4px}
-.empty{color:var(--muted);font-size:14px}
+a{color:inherit;text-decoration:none} a:hover{text-decoration:none}
+.wrap{max-width:834px;margin:0 auto 0 clamp(60px,12.7vw,182px);padding:42px 0 74px;animation:pageIn .34s ease both}
+.brand{display:inline-flex;align-items:center;gap:9px;color:#69788f;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:#10b981}
+.hero{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:30px}
+.hero-copy{min-width:0}.hero h1{margin:8px 0 4px}
+h1{font-size:36px;line-height:1.05;font-weight:800;letter-spacing:-.02em;margin:0;color:var(--ink)}
+h2{font-size:16px;line-height:1.25;font-weight:800;margin:0;color:var(--ink)}
+.meta{display:flex;align-items:center;gap:10px;color:#5d6d84;font-size:14px;font-weight:600}
+.num{display:inline-flex;align-items:center;min-width:30px;height:22px;justify-content:center;border:1px solid var(--line);
+ border-radius:7px;background:#fff;color:#1f2a44;box-shadow:var(--shadow);font-size:13px}
+.muted{color:var(--muted);font-size:14px;line-height:1.35}.muted.ital{font-style:italic;color:#8b9aaf}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.repo-list{display:grid;gap:12px;margin-top:30px}
+.repo{min-height:92px;padding:21px 22px 20px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;
+ color:inherit;animation:itemIn .32s ease both;transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+.repo:hover,.repo:focus-visible{border-color:var(--blueLine);box-shadow:var(--shadow2),inset 4px 0 0 var(--blue2);transform:translateY(-1px);outline:0}
+.repo-info{display:grid;gap:10px;min-width:0}.repo-badges{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.stack{display:grid;gap:18px}
+.badge{height:26px;display:inline-flex;align-items:center;gap:6px;border-radius:6px;border:1px solid var(--line);
+ background:#f8fbff;color:#40506a;font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:0 9px;white-space:nowrap}
+.badge.priv{background:#fffaf3;color:var(--orange);border-color:var(--orangeLine)}
+.badge.pub{background:#f5f9ff;color:#1763ff;border-color:#b8d2ff}
+.badge.secret{background:#f8fbff;color:#40506a;border-color:var(--line)}
+.badge svg,.btn svg,.section-title svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9}
+.searchbox{position:relative;margin-top:26px}
+.searchbox input{height:54px;padding:0 68px 0 44px}
+.searchbox:before{content:'';position:absolute;left:24px;top:50%;width:6px;height:6px;border:2px solid #8fa0b8;border-radius:50%;transform:translateY(-58%);z-index:1}
+.searchbox:after{content:'';position:absolute;left:32px;top:31px;width:7px;height:2px;background:#8fa0b8;transform:rotate(45deg);border-radius:3px;z-index:1}
+.kbd{position:absolute;right:16px;top:50%;transform:translateY(-50%);height:20px;padding:0 8px;border:1px solid var(--line);
+ border-radius:5px;background:#fff;box-shadow:var(--shadow);color:#8090a7;font-size:11px;font-weight:800;line-height:18px}
+input,textarea{width:100%;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;outline:none;
+ box-shadow:inset 0 1px 2px rgba(15,23,42,.02);transition:border-color .16s ease,box-shadow .16s ease}
+input{height:46px;padding:0 14px}input::placeholder,textarea::placeholder{color:#92a0b5}
+input:focus,textarea:focus{border-color:#aebeff;box-shadow:var(--ring),inset 0 1px 2px rgba(15,23,42,.03)}
+textarea{min-height:256px;padding:18px 16px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+ font-size:13px;line-height:1.55;color:#29354b}
+.btn,button{height:42px;display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:12px;border:1px solid transparent;
+ padding:0 22px;font-weight:800;font-size:14px;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,background .16s ease,border-color .16s ease}
+.btn:hover,button:hover{transform:translateY(-1px)}.btn:active,button:active{transform:translateY(0)}
+.btn.primary,button.primary{background:#10172a;color:#fff;box-shadow:0 8px 18px rgba(16,23,42,.18)}
+.btn.secondary,button.secondary{background:#fff;color:#43536d;border-color:var(--line);box-shadow:var(--shadow)}
+.btn.secondary:hover,button.secondary:hover{border-color:#cdd9e8;box-shadow:0 7px 16px rgba(15,23,42,.08)}
+.btn.danger,button.danger{background:#fff;color:var(--red);border-color:#ffb8bd;box-shadow:0 7px 16px rgba(255,31,45,.08)}
+.btn.danger:hover,button.danger:hover{background:#fff7f7;border-color:#ff9ca4}
+.btn.ghost{background:#fff;color:#4b5c76;border-color:var(--line);box-shadow:var(--shadow);height:42px}
+button{background:#10172a;color:#fff}
+.section-title{display:flex;align-items:center;gap:10px;margin:30px 0 22px;color:var(--ink)}
+.section-title h2{font-size:19px}.panel{padding:26px 24px;min-height:72px}.actions-card{padding:12px;margin-top:26px}
+.editor-card{padding:26px 24px 24px;margin-top:20px}.editor-hint{margin:0 0 16px;color:#66748a;font-size:14px}
+.editor-actions{justify-content:flex-start;margin-top:24px}.empty{color:#63748e;font-size:16px}
+table{width:100%;border-collapse:collapse}td{padding:11px 4px;border-bottom:1px solid var(--line);font-size:14px}
+code{background:#f4f7fb;border:1px solid #e4ebf4;padding:4px 8px;border-radius:6px;font-size:12px;color:#42526c;font-weight:700}
+.note{font-size:13px;color:var(--muted);margin-top:10px}.login{max-width:430px;margin:7vh auto 0}
+.manual{margin-top:20px;padding:20px 22px}.manual h2{margin-bottom:12px}
+.toast{position:fixed;right:28px;top:24px;z-index:20;background:#10172a;color:#fff;border-radius:14px;padding:13px 16px;
+ box-shadow:0 18px 48px rgba(16,23,42,.22);font-size:14px;font-weight:700;animation:toastIn .28s ease both}
+.modal{position:fixed;inset:0;background:rgba(16,24,40,.28);display:none;align-items:center;justify-content:center;padding:20px;z-index:30}
+.modal.open{display:flex;animation:fadeIn .16s ease both}.modal-box{width:min(420px,100%);background:#fff;border:1px solid var(--line);
+ border-radius:18px;padding:24px;box-shadow:0 24px 80px rgba(15,23,42,.24);animation:modalIn .2s ease both}
+.modal-box p{margin:10px 0 22px;color:#66748a;line-height:1.5}.modal-actions{display:flex;justify-content:flex-end;gap:10px}
+@keyframes pageIn{from{opacity:0}to{opacity:1}}
+@keyframes itemIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes modalIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+@media (max-width:980px){.wrap{width:calc(100vw - 32px);margin:0 auto;padding-top:34px}.hero{align-items:flex-start}.repo{padding:19px 18px}}
+@media (max-width:700px){h1{font-size:32px}.hero{display:grid}.repo{align-items:flex-start}.repo-badges{flex-wrap:wrap;justify-content:flex-end}
+ .actions-card .row,.editor-actions,.manual .row{display:grid;grid-template-columns:1fr}.btn,button{width:100%}}
 """
 
 
-BRAND = "<a class=brand href='#'><span class=dot></span>andidigital · Vault</a>"
+BRAND = "<div class=brand><span class=dot></span>andidigital vault</div>"
 
 
 def page(title: str, body: str) -> bytes:
@@ -270,6 +308,28 @@ def page(title: str, body: str) -> bytes:
 
 def esc(s: str) -> str:
     return html.escape(s or "")
+
+
+ICON_LOCK = "<svg viewBox='0 0 24 24'><rect x='5' y='10' width='14' height='10' rx='2'></rect><path d='M8 10V7a4 4 0 0 1 8 0v3'></path></svg>"
+ICON_GLOBE = "<svg viewBox='0 0 24 24'><circle cx='12' cy='12' r='9'></circle><path d='M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18'></path></svg>"
+ICON_SHIELD = "<svg viewBox='0 0 24 24'><path d='M12 3 19 6v5c0 4.5-2.8 8-7 10-4.2-2-7-5.5-7-10V6l7-3Z'></path><path d='m9.5 12 1.7 1.7 3.7-4'></path></svg>"
+ICON_LOGOUT = "<svg viewBox='0 0 24 24'><path d='M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4'></path><path d='M10 17l5-5-5-5M15 12H3'></path></svg>"
+ICON_BACK = "<svg viewBox='0 0 24 24'><path d='m15 18-6-6 6-6'></path><path d='M9 12h12'></path></svg>"
+ICON_KEY = "<svg viewBox='0 0 24 24'><circle cx='7.5' cy='15.5' r='4.5'></circle><path d='m11 12 8-8 3 3-2 2-2-2-2 2 2 2-2 2'></path></svg>"
+ICON_EDIT = "<svg viewBox='0 0 24 24'><path d='M12 20h9'></path><path d='M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z'></path></svg>"
+ICON_TRASH = "<svg viewBox='0 0 24 24'><path d='M3 6h18'></path><path d='M8 6V4h8v2'></path><path d='M19 6l-1 14H6L5 6'></path><path d='M10 11v5M14 11v5'></path></svg>"
+
+
+def visibility_badge(private: bool | None) -> str:
+    if private is None:
+        return ""
+    if private:
+        return f"<span class='badge priv'>{ICON_LOCK} PRIVATE</span>"
+    return f"<span class='badge pub'>{ICON_GLOBE} PUBLIC</span>"
+
+
+def secret_badge(count: int) -> str:
+    return f"<span class='badge secret'>{ICON_SHIELD} {count} секретов</span>"
 
 
 # --------------------------------------------------------------------------- server
@@ -362,7 +422,7 @@ class Handler(BaseHTTPRequestHandler):
         if not self.session():
             return self.view_login()
         if sub in ("/", ""):
-            return self.view_dashboard()
+            return self.view_dashboard(q)
         if sub.startswith("/project/"):
             return self.view_project(sub[len("/project/"):], q)
         return self.not_found()
@@ -445,7 +505,7 @@ class Handler(BaseHTTPRequestHandler):
         self._record_fail(ip)
         self.view_login("Неверный пароль.")
 
-    def view_dashboard(self):
+    def view_dashboard(self, q: dict):
         repos = github_repos(self.cfg)
         secrets_map = list_secret_slugs(self.cfg)
         pre = self.prefix()
@@ -455,38 +515,42 @@ class Handler(BaseHTTPRequestHandler):
             slug = slugify_repo(r["name"])
             seen.add(slug)
             cnt = secrets_map.get(slug)
-            badge = (f"<span class='badge has'>секретов: {cnt}</span>" if cnt
-                     else "<span class=badge>нет секретов</span>")
-            vis = "<span class='badge priv'>private</span>" if r["private"] else "<span class=badge>public</span>"
+            desc = esc(r["description"]) if r["description"] else "Нет описания"
+            desc_class = "muted" if r["description"] else "muted ital"
             rows.append(
                 f"<a class='card repo' data-name='{esc(r['name'].lower())}' "
-                f"href='{pre}/project/{esc(slug)}' style='color:inherit'><div>"
+                f"href='{pre}/project/{esc(slug)}'><div class=repo-info>"
                 f"<h2>{esc(r['name'])}</h2>"
-                f"<div class=muted>{esc(r['description']) or '—'}</div></div>"
-                f"<div class=row style='gap:8px'>{vis} {badge}</div></a>")
+                f"<div class='{desc_class}'>{desc}</div></div>"
+                f"<div class=repo-badges>{visibility_badge(r['private'])}{secret_badge(cnt or 0)}</div></a>")
         # secret stores that don't match a repo (manual projects)
         extra = [s for s in secrets_map if s not in seen]
         extra_html = ""
         if extra:
             items = "".join(f"<div class=row><a href='{pre}/project/{esc(s)}'>{esc(s)}</a>"
-                            f"<span class='badge has'>секретов: {secrets_map[s]}</span></div>" for s in extra)
-            extra_html = f"<div class=card><h2>Прочие проекты (без репозитория)</h2>{items}</div>"
-        nogh = "" if repos else "<div class=card class=empty>Не удалось получить список репозиториев GitHub (проверь токен).</div>"
-        top = (f"{BRAND}"
-               f"<div class=topbar><div><h1>Секреты проектов</h1>"
-               f"<div class=muted>{len(repos)} репозиториев · {len(secrets_map)} с секретами</div></div>"
+                            f"{secret_badge(secrets_map[s])}</div>" for s in extra)
+            extra_html = f"<div class='card manual'><h2>Прочие проекты</h2>{items}</div>"
+        nogh = "" if repos else "<div class='card panel empty'>Не удалось получить список репозиториев GitHub.</div>"
+        toast = "<div class=toast>Секреты проекта удалены</div>" if q.get("deleted") else ""
+        top = (f"{toast}<header class=hero><div class=hero-copy>{BRAND}<h1>Секреты проектов</h1>"
+               f"<div class=meta><span class=num>{len(repos)}</span><span>репозиториев</span><span>·</span>"
+               f"<span class=num>{len(secrets_map)}</span><span>с секретами</span></div></div>"
                f"<form method=post action='{pre}/logout' style='margin:0'>{self._csrf()}"
-               f"<button class=sec>Выйти</button></form></div>")
-        search = ("<input class=search id=q type=text placeholder='Поиск по репозиториям…' autocomplete=off>"
+               f"<button class='btn secondary'>{ICON_LOGOUT} Выйти</button></form></header>")
+        search = ("<div class=searchbox><input id=q type=text placeholder='Поиск по репозиториям...' autocomplete=off>"
+                  "<span class=kbd>⌘ K</span></div>"
                   if repos else "")
-        manual = (f"<div class=card><h2>Добавить проект вручную</h2>"
+        manual = (f"<div class='card manual'><h2>Добавить проект вручную</h2>"
                   f"<form method=post action='{pre}/link-repo'>{self._csrf()}"
                   f"<div class=row style='margin-top:10px'><input type=text name=slug placeholder='имя-проекта (slug)' required>"
-                  f"<button class=sec style='white-space:nowrap'>Создать</button></div></form></div>")
+                  f"<button class='btn secondary' style='white-space:nowrap'>Создать</button></div></form></div>")
         script = ("<script>const q=document.getElementById('q');q&&q.addEventListener('input',()=>{"
                   "const v=q.value.toLowerCase();document.querySelectorAll('.repo').forEach(e=>"
-                  "{e.style.display=e.dataset.name.includes(v)?'':'none'})});</script>")
-        self.send_html(page("Vault", top + nogh + search + "".join(rows) + extra_html + manual + script))
+                  "{e.style.display=e.dataset.name.includes(v)?'':'none'})});"
+                  "document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){"
+                  "e.preventDefault();q&&q.focus()}});"
+                  "setTimeout(()=>document.querySelector('.toast')?.remove(),3200);</script>")
+        self.send_html(page("Vault", top + nogh + search + "<div class=repo-list>" + "".join(rows) + "</div>" + extra_html + manual + script))
 
     def view_project(self, slug: str, q: dict):
         if not SLUG_RE.match(slug):
@@ -495,25 +559,39 @@ class Handler(BaseHTTPRequestHandler):
         content = read_env(self.cfg, slug)
         names = var_names(content)
         editing = q.get("edit") == "1"
+        repos = github_repos(self.cfg)
+        repo = next((r for r in repos if slugify_repo(r["name"]) == slug), None)
+        privacy = visibility_badge(repo["private"]) if repo else ""
+        toast = "<div class=toast>Секреты сохранены</div>" if q.get("saved") else ""
         names_html = ("<table>" + "".join(f"<tr><td><code>{esc(n)}</code></td></tr>" for n in names) + "</table>"
-                      if names else "<div class=muted>Пока ни одной переменной.</div>")
+                      if names else "<div class=empty>Пока ни одной переменной.</div>")
         if editing:
             editor = (
                 f"<form method=post action='{pre}/project-save'>{self._csrf()}"
                 f"<input type=hidden name=slug value='{esc(slug)}'>"
-                f"<p class=muted>Формат: <code>KEY=VALUE</code>, по одной на строку. Значения видны только тебе здесь.</p>"
-                f"<textarea name=content spellcheck=false>{esc(content)}</textarea>"
-                f"<div class=row style='margin-top:10px'><button>Сохранить</button>"
-                f"<a href='{pre}/project/{esc(slug)}'><button type=button class=sec>Отмена</button></a></div></form>")
+                f"<p class=editor-hint>Формат: <code>KEY=VALUE</code>, по одной на строку. Значения видны только тебе здесь.</p>"
+                f"<textarea name=content spellcheck=false placeholder='API_KEY=your_secret_key&#10;PORT=3000'>{esc(content)}</textarea>"
+                f"<div class='row editor-actions'><a class='btn secondary' href='{pre}/project/{esc(slug)}'>Отмена</a>"
+                f"<button class=primary>Сохранить</button></div></form>")
         else:
-            editor = (f"<div class=row><a href='{pre}/project/{esc(slug)}?edit=1'><button>✏️ Редактировать значения</button></a>"
-                      f"<form method=post action='{pre}/project-delete' onsubmit=\"return confirm('Удалить все секреты проекта?')\" style='margin:0'>"
+            editor = (f"<div class=row><button type=button class='btn danger' data-open-delete>{ICON_TRASH} Удалить секреты проекта</button>"
+                      f"<a class='btn primary' href='{pre}/project/{esc(slug)}?edit=1'>{ICON_EDIT} Редактировать значения</a></div>"
+                      f"<div class=modal id=deleteModal aria-hidden=true><div class=modal-box role=dialog aria-modal=true>"
+                      f"<h2>Удалить секреты проекта?</h2><p>Будет удален файл с переменными для проекта {esc(slug)}. Это действие нельзя отменить.</p>"
+                      f"<div class=modal-actions><button type=button class='btn secondary' data-close-delete>Отмена</button>"
+                      f"<form method=post action='{pre}/project-delete' style='margin:0'>"
                       f"{self._csrf()}<input type=hidden name=slug value='{esc(slug)}'>"
-                      f"<button class=danger>Удалить</button></form></div>")
-        body = (f"{BRAND}"
-                f"<div class=topbar><h1>{esc(slug)}</h1><a href='{pre}/'>← все проекты</a></div>"
-                f"<div class=card><h2>Переменные ({len(names)})</h2><div style='margin-top:8px'>{names_html}</div></div>"
-                f"<div class=card>{editor}</div>")
+                      f"<button class='btn danger'>{ICON_TRASH} Удалить</button></form></div></div></div>")
+        body = (f"{toast}<header class=hero><div class=hero-copy>{BRAND}<h1>{esc(slug)}</h1>{privacy}</div>"
+                f"<a class='btn ghost' href='{pre}/'>{ICON_BACK} Все проекты</a></header>"
+                f"<div class=section-title>{ICON_KEY}<h2>Переменные ({len(names)})</h2></div>"
+                f"<div class='card panel'>{names_html}</div>"
+                f"<div class='card {'editor-card' if editing else 'actions-card'}'>{editor}</div>"
+                f"<script>const m=document.getElementById('deleteModal');document.querySelector('[data-open-delete]')?.addEventListener('click',()=>m.classList.add('open'));"
+                f"document.querySelector('[data-close-delete]')?.addEventListener('click',()=>m.classList.remove('open'));"
+                f"m?.addEventListener('click',e=>{{if(e.target===m)m.classList.remove('open')}});"
+                f"document.addEventListener('keydown',e=>{{if(e.key==='Escape')m?.classList.remove('open')}});"
+                f"setTimeout(()=>document.querySelector('.toast')?.remove(),3200);</script>")
         self.send_html(page(f"Vault — {slug}", body))
 
     # ---- actions
@@ -522,13 +600,13 @@ class Handler(BaseHTTPRequestHandler):
         if not SLUG_RE.match(slug):
             return self.not_found()
         write_env(self.cfg, slug, p.get("content", ""))
-        self.redirect(self.prefix() + "/project/" + slug)
+        self.redirect(self.prefix() + "/project/" + slug + "?saved=1")
 
     def act_delete(self, p):
         slug = p.get("slug", "")
         if SLUG_RE.match(slug):
             delete_project(self.cfg, slug)
-        self.redirect(self.prefix() + "/")
+        self.redirect(self.prefix() + "/?deleted=1")
 
     def act_link(self, p):
         slug = slugify_repo(p.get("slug", ""))
