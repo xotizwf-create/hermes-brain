@@ -1,6 +1,6 @@
 ---
 name: store-project-secrets
-description: Use when the owner wants Hermes to securely take a project's secrets and remember the project — "найди на гитхабе проект X", store its .env / prod-server password, connect later. PRIMARY secure intake is the owner running secret_push.py on their PC to SFTP the .env straight into the server secure zone (never through Telegram or any LLM); pasting into chat is a discouraged fallback that exposes the secret (rotate after). Secrets land in /root/.hermes/secure/projects/<slug>/ (600, never echoed/committed) via save_project_secrets.py; Hermes records secret-free memory (repo, prod host/user, variable NAMES, refs) in projects/<slug>/.
+description: Use when the owner wants Hermes to securely take a project's secrets and remember the project — "найди на гитхабе проект X", store its .env / prod-server password, connect later. PRIMARY secure intake is the owner running secret_push.py on their PC to SFTP the .env straight into the server secure zone (never through Telegram or any LLM); pasting into chat is a discouraged fallback that exposes the secret (rotate after). Secrets land in /opt/hermes/secure/projects/<slug>/ (600, never echoed/committed) via save_project_secrets.py; Hermes records secret-free memory (repo, prod host/user, variable NAMES, refs) in projects/<slug>/.
 ---
 
 # Skill: store-project-secrets
@@ -16,8 +16,10 @@ Helper: `skills/secure-access/scripts/save_project_secrets.py` → on prod
 ## Golden rules (HARD)
 1. **Never show a secret value** — not the `.env`, not a password/key, not a DB URL. Confirm with
    variable **NAMES only** (the helper prints exactly that). Never paste the value back "to double-check".
-2. **Secrets only in the secure zone** `/root/.hermes/secure/projects/<slug>/` (dir 700, files 600,
-   root-only). **Never** in the brain/git, never in a chat reply, never in a command-line argument.
+2. **Secrets only in the secure zone** `/opt/hermes/secure/projects/<slug>/` (dir 2770, files 660,
+   group `hermessec` — root agent + `hermesvault` web-UI user only). **Never** in the brain/git, never
+   in a chat reply, never in a command-line argument. There is also a browser UI for the same store —
+   `skills/secure-access/vault/` (README) — tied to the owner's GitHub repos.
 3. **Brain = secret-free memory.** `projects/<slug>/project.yaml` holds repo, prod host/user, working
    dir, variable **NAMES**, and `secret_refs` — never values.
 4. The owner pasted the secret into Telegram, so it exists in that chat. Hermes can't delete the
@@ -43,7 +45,7 @@ secure zone over SSH**, bypassing the bot and the model entirely:
 # on the owner's PC:
 python skills/secure-access/scripts/secret_push.py <slug> <path-to-.env>
 ```
-`secret_push.py` SFTPs the file into `/root/.hermes/secure/projects/<slug>/.env` (600) via the server
+`secret_push.py` SFTPs the file into `/opt/hermes/secure/projects/<slug>/.env` (600) via the server
 helper and prints variable **NAMES only**. The value never touches Telegram or any LLM. Tell the owner
 this is the way; you (Hermes) only get told the slug + names afterwards and then do step 4 (memory).
 
@@ -69,8 +71,8 @@ repo URL, `production.host`/user/working_dir, the env variable **NAMES** (handy 
 exists — names only), and `secret_refs`:
 ```yaml
 secret_refs:
-  - proj/<slug>/env            # -> /root/.hermes/secure/projects/<slug>/.env
-  - proj/<slug>/ssh/root       # -> /root/.hermes/secure/projects/<slug>/server_password|server_key
+  - proj/<slug>/env            # -> /opt/hermes/secure/projects/<slug>/.env
+  - proj/<slug>/ssh/root       # -> /opt/hermes/secure/projects/<slug>/server_password|server_key
 ```
 Add a matching `access-map.yaml` entry server-side (service `env` → value_path the secure `.env`;
 service `server-root` → the secret name; `allowed_actions`). Regenerate registry, `scripts/validate.py`,

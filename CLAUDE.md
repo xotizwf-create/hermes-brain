@@ -50,8 +50,11 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   or create one if none exists.
 - `new-repo` — create a git repo + private GitHub repo (gh CLI is installed & authed as `xotizwf-create`).
 - `store-project-secrets` — owner pastes a project's `.env` / prod-server password → Hermes finds the
-  repo (gh), stores values in the secure zone (`/root/.hermes/secure/projects/<slug>/`, 600, never
+  repo (gh), stores values in the secure zone (`/opt/hermes/secure/projects/<slug>/`, 600, never
   echoed/committed), and remembers the project (repo + prod host) secret-free in `projects/<slug>/`.
+- `secure-access/vault/` — **Hermes Vault**: dependency-free web UI (scrypt password + URL-token + TLS)
+  to manage per-project secrets in a browser, tied to GitHub repos; runs as unprivileged `hermesvault`,
+  shared store `/opt/hermes/secure/projects`. Live at `www.andigital.ru/andigital/secret/<token>/`. Turnkey/resaleable (README).
 - `secure-access`, `postgres-production` — credentials & Postgres ops.
 
 ## Current state (2026-05-30)

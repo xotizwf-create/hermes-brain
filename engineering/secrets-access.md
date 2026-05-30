@@ -87,17 +87,22 @@ create repos (not just the `hermes-brain` deploy key). Setup:
   2026-05-30) or mint a dedicated fine-grained PAT. Consider narrowing to a dedicated token later.
 
 ## Owner-pasted secrets (the `.env` ingest exception)
-The base rule is "the agent does not type secrets — the owner places them in `secrets.yaml`". There is
+The base rule is "the agent does not type secrets — the owner places them in `secrets.yaml`". For
+project `.env`s there are two paths:
+
 **The secure way (primary):** the owner pushes the file from their PC straight into the secure zone over
 SSH — `skills/secure-access/scripts/secret_push.py <slug> <path>` — so the secret **never goes through
-Telegram or any LLM**. Hermes is only told the slug + variable NAMES.
+Telegram or any LLM**. Hermes is only told the slug + variable NAMES. There is also a **web UI**
+(`skills/secure-access/vault/`, live at `https://www.andigital.ru/andigital/secret/<token>/`) for
+managing these per-project secrets in a browser, tied to the owner's GitHub repos.
 
 **Discouraged fallback (the "pasted secret" exception):** if the owner *pastes* a `.env`/password into
 chat, Hermes may **receive and store** it (never **echo, repeat, commit, or invent** it) via
 `save_project_secrets.py`, confirm with NAMES only — but a chat-pasted secret has hit Telegram + the LLM,
 so **treat it as exposed and rotate it**. Both paths use skill `store-project-secrets`.
-- Secure zone layout: `/root/.hermes/secure/projects/<slug>/` — `.env` (600), `server_password`/
-  `server_key` (600), `server.txt` (non-secret host/user/port note). Dir 700, root-only.
+- Secure zone layout: `/opt/hermes/secure/projects/<slug>/` — `.env` (660), `server_password`/
+  `server_key` (660), `server.txt` (non-secret host/user/port note). Dir `2770 hermesvault:hermessec`
+  (setgid) — shared by the root agent and the `hermesvault` web-UI user, no access for anyone else.
 - Reference names: `proj/<slug>/env`, `proj/<slug>/ssh/root`. Brain manifest keeps NAMES + refs only.
 - The pasted message lives in Telegram; Hermes can't delete the owner's DM messages → ask the owner to
   delete their paste. Guarantee = no *further* exposure (not echoed, not in git, 600), not that Telegram forgets.

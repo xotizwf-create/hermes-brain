@@ -11,6 +11,18 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- **Hermes Vault — web UI for per-project secrets** (`skills/secure-access/vault/`). Dependency-free
+  stdlib app (`secrets_ui.py`): lists the owner's GitHub repos (REST), stores/edits a `.env` per project,
+  tied to repos. Live at `https://www.andigital.ru/andigital/secret/<token>/` over the existing
+  Let's Encrypt TLS. Security: two factors (unguessable URL token in the path → 404 if wrong + scrypt
+  password), HMAC `httponly`/`Secure`/`SameSite` session, CSRF on forms, per-IP login lockout, token kept
+  out of nginx logs. **Runs unprivileged** (`hermesvault`, systemd-hardened, bound 127.0.0.1, nginx-proxied).
+  Secret store **relocated & unified** at `/opt/hermes/secure/projects` (`2770 hermesvault:hermessec`,
+  setgid) — shared by the root agent + the web UI; `save_project_secrets.py`/`secret_push.py` repointed
+  (660/2770). Deployed + tested end-to-end (wrong token→404, correct→setup page over public HTTPS).
+  URL token never went through chat/LLM (written server-side, SFTP-delivered to the owner's PC). Turnkey
+  for resale: all branding in `config.json`/nginx `base_path`, install steps in the vault README. systemd
+  unit + nginx snippet versioned in the brain. Validator allowlists the code-only `vault/` dir.
 - Secure secret **intake without chat/LLM exposure**. Owner's point: a secret pasted into Telegram has
   already left the server (Telegram + the LLM provider see it). Added `secret_push.py` (workstation tool):
   SFTPs a local `.env`/file straight into `/root/.hermes/secure/projects/<slug>/` over SSH via the server
