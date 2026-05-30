@@ -11,6 +11,17 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Google **Calendar upgraded to read/write** (owner asked Hermes to see AND edit). Changed the Calendar
+  scope in `read-links/scripts/google_oauth_login.py` (`calendar.readonly` → `calendar`), re-ran the
+  PC browser consent with the owner's existing Desktop OAuth client, minted a new token (refresh +
+  4 scopes: drive/sheets/gmail readonly + **calendar read/write**), delivered it over SFTP to
+  `/root/.hermes/secure/google_oauth_token.json` AND the bundled-tool compat path
+  `/root/.hermes/google_token.json` (both 600; old token backed up). Verified end-to-end with the
+  bundled `google_api.py calendar`: list (read) ✓, create ✓, delete ✓ (test event added then removed,
+  calendar left clean). Hermes now creates/edits/deletes events via `google_api.py calendar
+  create|delete` (ISO+TZ; edit = delete+create); keep writes behind owner confirmation. Updated
+  `skills/google-account`. ⚠ Still pending for durability: **publish the OAuth app to Production**
+  (Testing-mode refresh tokens for sensitive scopes expire ~7 days) — else weekly re-login.
 - GitHub account access for Hermes (prod). Before: server had only the single-repo `hermes-brain`
   deploy key + no `gh` → couldn't see/clone the owner's other repos. Now: installed `gh` CLI on prod
   (`/usr/bin/gh` 2.93.0) and authed it as **`xotizwf-create`** by **reusing this PC's gh OAuth token**

@@ -11,8 +11,12 @@ it sees everything the owner can. Set up 2026-05-30.
 ## What the agent can read & how
 - **Google Doc / Sheet / Slides / Drive file** — owner pastes a link → `read-links/fetch_url.py "<url>"`
   (uses the token automatically; Docs/Slides → text, Sheets → all tabs as CSV, `--gid N` for one tab).
-- **Google Calendar** — `skills/google-account/scripts/gcal_read.py [--days N] [--max N]` →
-  agenda for the next N days (Russian).
+- **Google Calendar (read + WRITE)** — read agenda via `skills/google-account/scripts/gcal_read.py
+  [--days N] [--max N]` (Russian) or the bundled `google_api.py calendar list`. **Create/delete events**
+  via the bundled tool: `python3 /root/.hermes/skills/productivity/google-workspace/scripts/google_api.py
+  calendar create --summary "…" --start "2026-05-31T12:00:00+03:00" --end "…+03:00" [--description/--location/--attendees]`
+  and `… calendar delete <event_id>`. Times are ISO 8601 **with** timezone (MSK = `+03:00`). Editing an
+  event = delete + create. Writes are outward-facing → confirm with the owner first (per `profile/`).
 - **Gmail** — the `gmail.readonly` scope is granted, but day-to-day mail watching already runs via
   **himalaya** (skill `reminders-and-watchers`, cron `mail-watch`). Add a Gmail-API reader only if the
   owner wants search over the whole mailbox; otherwise prefer himalaya.
@@ -21,7 +25,8 @@ it sees everything the owner can. Set up 2026-05-30.
 ## Where the credential lives (no secret in git)
 - Token file — `/root/.hermes/secure/google_oauth_token.json` (mode 600, root-only). Ref name
   `agent/google/oauth-token`. **Never** in git (gitignored). Holds the OAuth refresh token.
-- Scopes (read-only): `drive.readonly`, `spreadsheets.readonly`, `calendar.readonly`, `gmail.readonly`.
+- Scopes: `drive.readonly`, `spreadsheets.readonly`, **`calendar` (read/write)**, `gmail.readonly`.
+  Calendar was upgraded to read/write 2026-05-30 (re-consented on the PC). Drive/Sheets/Gmail stay read-only.
 - The reader code resolves creds in `read-links/scripts/gauth_read.py` and
   `google-account/scripts/gcal_read.py`.
 - Some Hermes Google Workspace tools instead expect a compatibility token at
@@ -64,9 +69,10 @@ install -m 600 /root/.hermes/secure/google_oauth_token.json /root/.hermes/google
 python /root/.hermes/skills/productivity/google-workspace/scripts/setup.py --check
 ```
 
-Read-only scopes (`drive.readonly`, `spreadsheets.readonly`, `calendar.readonly`, `gmail.readonly`) are enough
-for listing/searching Drive, reading Docs/Sheets/Gmail metadata/content, and Calendar reads. They are not enough
-for creating, editing, deleting, sending, sharing, or label modifications.
+Current scopes: `drive.readonly`, `spreadsheets.readonly`, **`calendar`** (read/write), `gmail.readonly`.
+Enough for listing/searching Drive, reading Docs/Sheets/Gmail, Calendar reads — **and creating/editing/
+deleting Calendar events**. Still NOT enough for sending Gmail, editing Docs/Sheets, or sharing (those
+would need their own write scopes — see "Adding write access later").
 
 If the Google Workspace scripts fail with `ModuleNotFoundError` and system Python has no usable `pip`, install the
 Google API client deps with `uv`:
@@ -87,18 +93,21 @@ single-user use). If the current token was minted in Testing, **re-run the PC lo
 publishing** to get a long-lived token.
 
 ## Security & rotation
-- Read-only scopes — the agent cannot edit, send, or delete anything.
-- The token grants **read of the owner's whole account**; it lives only in the server secure store
+- Scopes are read-only **except Google Calendar**, which is read/write (the agent can create/edit/delete
+  events — keep that behind owner confirmation). It still cannot send mail, edit Docs/Sheets, or delete Drive files.
+- The token grants **read of the owner's whole account** (+ Calendar write); it lives only in the server secure store
   (600). If the server is compromised, that read access is exposed.
 - **Revoke** anytime: myaccount.google.com → Security → **Your connections to third-party apps** →
   remove the app. Then re-run the PC login to reconnect.
 - Re-auth (new token): re-run step 4–5; overwrite `/root/.hermes/secure/google_oauth_token.json`.
 
 ## Adding write access later (separate trust step)
-To let the agent create calendar events, send mail, or edit docs: add the matching **write** scope
-(e.g. `calendar.events`, `gmail.send`, `drive.file`) to the SCOPES lists in `google_oauth_login.py`
-and the reader modules, re-run the PC login (re-consent), then build the action tool. Keep write
-behind explicit owner confirmation, like other outward-facing actions.
+Pattern (already done for Calendar 2026-05-30 — `calendar.readonly` → `calendar`): add the matching
+**write** scope to the SCOPES list in `read-links/scripts/google_oauth_login.py`, re-run the PC login
+(re-consent in the browser), deliver the new token to **both** `/root/.hermes/secure/google_oauth_token.json`
+and the bundled-tool compat path `/root/.hermes/google_token.json` (600), then use the action tool
+(`google_api.py`). For more: `gmail.send`, `drive.file`/`drive`, `spreadsheets`. Keep every write behind
+explicit owner confirmation, like other outward-facing actions.
 
 ## Pointers
 - Reading links/docs/sheets/web: skill `read-links`. Mail watcher: skill `reminders-and-watchers`.
