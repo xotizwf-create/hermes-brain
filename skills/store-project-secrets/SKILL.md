@@ -1,6 +1,6 @@
 ---
 name: store-project-secrets
-description: Use when the owner wants Hermes to securely take a project's secrets — e.g. "найди на гитхабе проект X", then pastes its .env, or gives a prod-server password/key — and remember the project so Hermes can connect/work on it later. Hermes finds the repo via gh, writes the pasted secrets into the server secure zone (/root/.hermes/secure/projects/<slug>/, 600, never echoed, never in git) via scripts/save_project_secrets.py, and records secret-free memory (repo, prod host/user, variable NAMES, refs) in projects/<slug>/.
+description: Use when the owner wants Hermes to securely take a project's secrets and remember the project — "найди на гитхабе проект X", store its .env / prod-server password, connect later. PRIMARY secure intake is the owner running secret_push.py on their PC to SFTP the .env straight into the server secure zone (never through Telegram or any LLM); pasting into chat is a discouraged fallback that exposes the secret (rotate after). Secrets land in /root/.hermes/secure/projects/<slug>/ (600, never echoed/committed) via save_project_secrets.py; Hermes records secret-free memory (repo, prod host/user, variable NAMES, refs) in projects/<slug>/.
 ---
 
 # Skill: store-project-secrets
@@ -35,15 +35,25 @@ gh repo view <owner>/<name> --json nameWithOwner,description,visibility,url
 Show the owner the match, agree on a stable **slug** (kebab-case, == repo name is fine). Don't invent
 a slug silently — confirm.
 
-### 2. Store the pasted `.env` (values never touch argv or chat)
-The owner pastes the `.env`. Write that pasted text to a temp file with your file tool (so the value is
-never in a shell command string), then hand the file to the helper, which moves it into the secure zone
-and **deletes the temp**:
-```bash
-python3 .../save_project_secrets.py save-env <slug> --from /tmp/_paste_<slug>     # temp is shredded
+### 2. Store the `.env` — secure intake (PRIMARY: never through chat/LLM)
+A secret pasted into Telegram has **already left the server** — it goes to Telegram *and* into the LLM
+provider's context. So the secure path is **the owner pushes the file from their PC straight into the
+secure zone over SSH**, bypassing the bot and the model entirely:
+```text
+# on the owner's PC:
+python skills/secure-access/scripts/secret_push.py <slug> <path-to-.env>
 ```
-(Equivalent: pipe via STDIN — `... save-env <slug> < tmpfile`.) Relay the helper's Russian line
-(“✅ Сохранил .env … N переменных: …”) **as-is** and stop. Then remind the owner to delete their paste.
+`secret_push.py` SFTPs the file into `/root/.hermes/secure/projects/<slug>/.env` (600) via the server
+helper and prints variable **NAMES only**. The value never touches Telegram or any LLM. Tell the owner
+this is the way; you (Hermes) only get told the slug + names afterwards and then do step 4 (memory).
+
+**Emergency fallback only (discouraged): owner pastes the `.env` into chat.** If the owner insists,
+write the pasted text to a temp file with your file tool (never into a shell command string), then:
+```bash
+python3 .../save_project_secrets.py save-env <slug> --from /tmp/_paste_<slug>   # temp is shredded
+```
+Relay the helper's names-only line, remind the owner to **delete their paste**, and **treat those
+secrets as exposed — schedule rotation** (they passed through Telegram + the LLM). Prefer `secret_push.py`.
 
 ### 3. Store prod-server access (so Hermes can connect later)
 Host + user are **not** secret → they go in the manifest. The password or private key **is** secret →

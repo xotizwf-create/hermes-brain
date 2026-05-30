@@ -11,6 +11,13 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Secure secret **intake without chat/LLM exposure**. Owner's point: a secret pasted into Telegram has
+  already left the server (Telegram + the LLM provider see it). Added `secret_push.py` (workstation tool):
+  SFTPs a local `.env`/file straight into `/root/.hermes/secure/projects/<slug>/` over SSH via the server
+  helper, confirms with variable NAMES only — the value never touches Telegram or any model. Made this the
+  **primary** path in `store-project-secrets`; demoted chat-paste to a discouraged fallback ("treat as
+  exposed, rotate"). Tested end-to-end (upload → 600/700 perms, staging shredded, names-only). Storage of
+  record stays the server secure zone (root-only). Updated `engineering/secrets-access.md`.
 - New capability **store-project-secrets**: owner pastes a project's `.env` (or prod-server password)
   → Hermes finds the repo via `gh`, locks the values into the secure zone
   `/root/.hermes/secure/projects/<slug>/` (`.env`/`server_password`/`server_key` 600, dir 700, root-only,

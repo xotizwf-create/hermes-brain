@@ -88,11 +88,14 @@ create repos (not just the `hermes-brain` deploy key). Setup:
 
 ## Owner-pasted secrets (the `.env` ingest exception)
 The base rule is "the agent does not type secrets — the owner places them in `secrets.yaml`". There is
-**one deliberate exception**: when the owner *pastes* a project's `.env` (or a prod-server password/key)
-to Hermes and asks it to remember the project. Then Hermes **receives and stores** it — it must never
-**echo, repeat, commit, or invent** a secret. Use skill `store-project-secrets` +
-`skills/secure-access/scripts/save_project_secrets.py`, which writes to the secure zone and confirms with
-variable **NAMES only**.
+**The secure way (primary):** the owner pushes the file from their PC straight into the secure zone over
+SSH — `skills/secure-access/scripts/secret_push.py <slug> <path>` — so the secret **never goes through
+Telegram or any LLM**. Hermes is only told the slug + variable NAMES.
+
+**Discouraged fallback (the "pasted secret" exception):** if the owner *pastes* a `.env`/password into
+chat, Hermes may **receive and store** it (never **echo, repeat, commit, or invent** it) via
+`save_project_secrets.py`, confirm with NAMES only — but a chat-pasted secret has hit Telegram + the LLM,
+so **treat it as exposed and rotate it**. Both paths use skill `store-project-secrets`.
 - Secure zone layout: `/root/.hermes/secure/projects/<slug>/` — `.env` (600), `server_password`/
   `server_key` (600), `server.txt` (non-secret host/user/port note). Dir 700, root-only.
 - Reference names: `proj/<slug>/env`, `proj/<slug>/ssh/root`. Brain manifest keeps NAMES + refs only.
