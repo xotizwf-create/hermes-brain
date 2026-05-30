@@ -11,6 +11,17 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Google account CONNECTED (OAuth, owner's account, read-only). Added skill `google-account` (the
+  full instruction: how it was set up, usage, keep-alive, rotation, adding write) +
+  `google-account/scripts/gcal_read.py` (Calendar agenda). Cloud project `gen-lang-client-0802797266`;
+  enabled Drive/Sheets/Calendar/Gmail APIs; OAuth Desktop client; PC browser login (token has
+  refresh_token + 4 read scopes); token delivered to `/root/.hermes/secure/google_oauth_token.json`
+  (600, gitignored, ref `agent/google/oauth-token`). Verified live on prod: Calendar API call
+  succeeded (auto-refresh works). Scopes widened to drive/sheets/calendar/gmail readonly (also in
+  `gauth_read.py` + `google_oauth_login.py`). Fixed login script's Windows-console print crash.
+  ⚠ Pending: owner should **publish the OAuth app to Production** (else sensitive-scope refresh tokens
+  expire ~7 days); re-auth after publishing. Transport gotcha noted: Git-Bash `/root` path mangling →
+  `MSYS_NO_PATHCONV=1` / base64-over-SSH.
 - read-links Google profile (owner chose **OAuth = own account, read-only**): `gauth_read.py` reads
   the owner's Google Docs/Sheets/Slides via an OAuth refresh token at
   `/root/.hermes/secure/google_oauth_token.json` (600, gitignored — ref `agent/google/oauth-token`,

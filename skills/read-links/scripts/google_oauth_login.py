@@ -16,9 +16,17 @@ file is a secret — it is gitignored; deliver it to the server as
 """
 import sys
 
+for _s in (sys.stdout, sys.stderr):  # Windows console may be cp125x; keep emoji/Cyrillic safe
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 SCOPES = [
     "https://www.googleapis.com/auth/drive.readonly",
     "https://www.googleapis.com/auth/spreadsheets.readonly",
+    "https://www.googleapis.com/auth/calendar.readonly",
+    "https://www.googleapis.com/auth/gmail.readonly",
 ]
 
 

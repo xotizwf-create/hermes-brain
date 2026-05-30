@@ -21,6 +21,8 @@ KEY = os.environ.get("HERMES_GOOGLE_SA", "/root/.hermes/secure/google_service_ac
 SCOPES = [
     "https://www.googleapis.com/auth/drive.readonly",
     "https://www.googleapis.com/auth/spreadsheets.readonly",
+    "https://www.googleapis.com/auth/calendar.readonly",
+    "https://www.googleapis.com/auth/gmail.readonly",
 ]
 _FILE = re.compile(r"/(document|spreadsheets|presentation)/d/([A-Za-z0-9_-]+)")
 _DRIVE = re.compile(r"(?:/file/d/|[?&]id=)([A-Za-z0-9_-]+)")

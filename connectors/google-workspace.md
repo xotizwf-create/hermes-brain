@@ -6,20 +6,27 @@ updated: 2026-05-30
 secret_refs: [agent/google/oauth-token]
 ---
 
-# Connector: Google (agent reads the owner's Drive, read-only)
+# Connector: Google (agent reads the owner's account, read-only)
 
 The agent's Google profile = **the owner's own Google account via OAuth, read-only**. The agent reads
-**everything the owner can access** — no per-document sharing. Used by skill `read-links`
-(`scripts/gauth_read.py`). Public-by-link docs work even without this.
+**everything the owner can access** — no per-document sharing. **Full instruction (setup we did, usage,
+keep-alive, rotation, adding write): skill `google-account`.** This file is the short connector ref.
+
+Used by `read-links/scripts/gauth_read.py` (Docs/Sheets/Drive) and `google-account/scripts/gcal_read.py`
+(Calendar). Connected 2026-05-30; Cloud project `gen-lang-client-0802797266`.
 
 ## How it works
 - One-time browser consent on the **owner's PC** (Google blocks the consent screen from datacenter
   IPs — same issue as Codex), which yields a **refresh token**. We copy it to the server; after that
   the agent works headless, refreshing access tokens itself, no further logins.
 - Token file: `/root/.hermes/secure/google_oauth_token.json` (mode 600, root-only). **Never in git**
-  (gitignored) — referenced by name only (`agent/google/oauth-token`). Scopes: `drive.readonly`,
-  `spreadsheets.readonly` (read-only — the agent cannot edit or delete anything).
-- Reads via the Drive/Sheets APIs: Docs/Slides → text, Sheets → all tabs as CSV.
+  (gitignored) — referenced by name only (`agent/google/oauth-token`). Scopes (read-only):
+  `drive.readonly`, `spreadsheets.readonly`, `calendar.readonly`, `gmail.readonly` — the agent cannot
+  edit, send, or delete anything.
+- Reads via the Drive/Sheets/Calendar APIs: Docs/Slides → text, Sheets → all tabs as CSV, Calendar →
+  agenda. Gmail scope is granted but mail is watched via himalaya (`reminders-and-watchers`).
+- **Keep alive:** if the OAuth app stays in *Testing*, refresh tokens expire in ~7 days → publish the
+  app to *Production* (Google Auth Platform → Audience → Publish app). See skill `google-account`.
 
 ## One-time setup
 **A. In Google Cloud Console (owner):**
