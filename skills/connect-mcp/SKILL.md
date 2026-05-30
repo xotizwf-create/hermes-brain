@@ -35,11 +35,13 @@ Default is **dry-run**; nothing is written until `--apply`. Every write backs up
 4. **No raw secret in `connectors/registry.yaml`** — only a redacted `url_template` with a
    `{proj/<slug>/<service>/secret}` reference. `scripts/validate.py` must pass.
 
-## Applying changes live — `/reload-mcp` (no restart)
-After any `--apply`, make Hermes pick up the change by sending **`/reload-mcp`** in the Telegram chat:
-the gateway reconnects servers and reports the new tool count, **without restarting and without
-losing the session**. The heavy fallback is `--restart` (systemctl restart hermes-gateway + `/reset`),
-only needed if `/reload-mcp` misbehaves.
+## Applying changes live — automatic (no `/reload-mcp` needed)
+After any `--apply`, the change is picked up **automatically**: a small gateway patch
+(`skills/connect-mcp/patches/mcp_autoreload_patch.py`) notices that `mcp_servers` changed and runs
+the same reload `/reload-mcp` does — so the live session sees the new/removed tools on the owner's
+**next message**. **Do not ask the owner to send `/reload-mcp`.** It stays as a manual fallback only
+if the patch is somehow not applied (then `/reload-mcp`, or `--restart`). See "Auto-reload" below for
+how it works and how to (re)install it.
 
 ## Connect a new MCP server — owner pastes a URL (the main flow)
 Strict order. **Step 2 is a hard stop — do not skip it.**
@@ -57,8 +59,9 @@ Strict order. **Step 2 is a hard stop — do not skip it.**
    python3 .../hermes_mcp.py add "<owner's name>" --url "<url>"           # preview
    python3 .../hermes_mcp.py add "<owner's name>" --url "<url>" --apply   # backup + write {url, enabled: true}
    ```
-4. **Apply live now:** tell the owner to send **`/reload-mcp`** in Telegram (tools appear without a
-   restart). `hermes_mcp.py test <name>` re-validates the connection if needed.
+4. **Готово — ничего больше делать не надо.** Tools are picked up automatically on the owner's next
+   message (auto-reload patch). Do **not** ask for `/reload-mcp`. `hermes_mcp.py test <name>`
+   re-validates the connection if you want to double-check.
 5. **Remember it in the brain:**
    ```bash
    python3 .../hermes_mcp.py registry-snippet <name>
@@ -101,6 +104,27 @@ python3 .../hermes_mcp.py rollback                   # restore last config + res
 ```
 Roll back first if a bad connector breaks the gateway (won't start / errors every message), then
 debug the URL/auth offline.
+
+## Auto-reload after a change (so the owner never types `/reload-mcp`)
+A gateway patch makes Hermes refresh its own MCP session whenever `mcp_servers` changes:
+- Source: `skills/connect-mcp/patches/mcp_autoreload_patch.py` — idempotent, anchor-based, never
+  breaks `run.py` (temp + py_compile + atomic replace; SKIP if anchors change on a Hermes upgrade).
+- Before each agent turn the gateway hashes the `mcp_servers` block; if it changed since last seen,
+  it calls the gateway's own `_execute_mcp_reload(event)` (the `/reload-mcp` path) — which also
+  refreshes cached agents so the **active** session gets the new tools on its next turn. Cheap on the
+  no-change path (a stat). Fires once per change → no prompt-cache thrash.
+- Self-heals across `hermes update` (which overwrites `run.py`) via the systemd drop-in
+  `skills/connect-mcp/systemd/20-mcp-autoreload.conf` (`ExecStartPre` re-applies it on every start).
+
+Install / re-install on prod:
+```bash
+mkdir -p /etc/systemd/system/hermes-gateway.service.d
+cp /root/.hermes/agent-knowledge/skills/connect-mcp/systemd/20-mcp-autoreload.conf /etc/systemd/system/hermes-gateway.service.d/
+systemctl daemon-reload
+/usr/local/lib/hermes-agent/venv/bin/python /root/.hermes/agent-knowledge/skills/connect-mcp/patches/mcp_autoreload_patch.py
+systemctl restart hermes-gateway
+grep -c _connect_mcp_autoreload /usr/local/lib/hermes-agent/gateway/run.py   # 1 = applied
+```
 
 ## Refresh tools — infra-level, NOT via the AI
 When a connected MCP server gains new tools upstream, Hermes only sees them after it **re-discovers**

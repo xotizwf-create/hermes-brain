@@ -17,9 +17,10 @@ The model behind the `connect-mcp` skill. Read once to understand *where* MCP co
   and injects them into every conversation as `mcp_<name>_<tool>`.
 - The brain (this repo) is the **memory**: `connectors/registry.yaml` lists every connector
   (secret-free). The **live truth** is `config.yaml` on the server. `connect-mcp` keeps them in sync.
-- Apply a config change live with **`/reload-mcp`** in Telegram (reconnects + reports tool count, no
-  restart, no lost session). The gateway also auto-reloads when `config.yaml`'s `mcp_servers` mtime
-  changes. A full `systemctl restart hermes-gateway` is the heavy fallback.
+- Config changes are picked up **automatically**: a gateway patch
+  (`skills/connect-mcp/patches/mcp_autoreload_patch.py`) detects a changed `mcp_servers` block and
+  runs the gateway's own MCP reload before the next turn, so the live session gets the new tools with
+  no `/reload-mcp` and no restart. `/reload-mcp` (manual) and `systemctl restart` remain fallbacks.
 
 ## Canonical entry schema (HTTP)
 The authoritative reference ships inside Hermes:

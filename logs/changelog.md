@@ -11,6 +11,16 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- connect-mcp auto-reload: after add/enable/disable/remove the live Telegram session now picks up the
+  tool changes **by itself** — the owner no longer needs to send `/reload-mcp`. Implemented as an
+  idempotent gateway patch (`skills/connect-mcp/patches/mcp_autoreload_patch.py`): before each agent
+  turn the gateway hashes the `mcp_servers` block and, if it changed since last seen, calls its own
+  `_execute_mcp_reload(event)` (the `/reload-mcp` path, which also refreshes cached agents so the
+  active session sees new tools next turn). Cheap on the no-change path (stat); fires once per change.
+  Self-heals across `hermes update` via systemd `ExecStartPre` drop-in
+  `skills/connect-mcp/systemd/20-mcp-autoreload.conf`. Manager message updated (no more «отправь
+  /reload-mcp»). Grounded in the live gateway source (anchors verified unique; patch validated by
+  py_compile; never breaks run.py).
 - connect-mcp fixes after the first real connection (`prostye_postavki` = "Простые поставки",
   miramed32, 19 tools). (1) **Hard rule: never auto-name a connector** — after `probe`, STOP and ask
   the owner; `probe` now ends with «Как назовём этот сервер?» and the skill forbids deriving a name

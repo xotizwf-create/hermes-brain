@@ -56,7 +56,7 @@ CONFIG = Path(os.environ.get("HERMES_CONFIG", "/root/.hermes/config.yaml"))
 KEY = "mcp_servers"
 GATEWAY_UNIT = os.environ.get("HERMES_GATEWAY_UNIT", "hermes-gateway")
 URL_RE = re.compile(r"^https?://", re.I)
-RELOAD_HINT = "Чтобы инструменты появились в чате — отправь /reload-mcp."
+RELOAD_HINT = "Изменения подхватятся автоматически — ничего больше делать не нужно."
 
 # Cyrillic → latin, for turning a human name ("Простые поставки") into a safe id.
 _TRANSLIT = {
