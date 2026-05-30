@@ -8,6 +8,15 @@
 # `{proj/<slug>/<service>/secret}` only. The real URL (with secret) lives in config.yaml (600).
 
 connectors:
+- slug: prostye_postavki
+  label: "Простые поставки"          # human name the owner uses; map it to `slug` when switching
+  url_template: "https://miramed32.ru/mcp/{proj/<slug>/prostye_postavki/secret}"
+  transport: http
+  auth: none                        # secret embedded in the URL path
+  enabled: true
+  scope: "Простые поставки (miramed32) — коммерческие предложения, остатки, договоры, поставки, входящие документы/организации (19 инструментов)."
+  doc: connectors/prostye-postavki.md
+
 - slug: albery
   url_template: "https://mcp.m4s.ru/mcp/{proj/albery/mcp/shared-secret}"
   transport: http

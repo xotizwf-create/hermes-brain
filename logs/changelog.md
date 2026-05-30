@@ -11,6 +11,15 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- connect-mcp fixes after the first real connection (`prostye_postavki` = "Простые поставки",
+  miramed32, 19 tools). (1) **Hard rule: never auto-name a connector** — after `probe`, STOP and ask
+  the owner; `probe` now ends with «Как назовём этот сервер?» and the skill forbids deriving a name
+  from the URL/domain. (2) **All owner-facing manager output is Russian, no technical noise** (no
+  paths/commands/ids/stack traces); errors print human Russian. Added the same rule globally to
+  `profile/communication.md`. (3) Manager now **slugifies a human name** ("Простые поставки" →
+  `prostye_postavki`) and echoes the human name in messages; enable/disable/remove accept the human
+  label. Recorded the live connector in `connectors/registry.yaml` (+ `label`) and added
+  `connectors/prostye-postavki.md`.
 - MCP connectors subsystem (grounded in the live Hermes source on prod). Added skill `connect-mcp` +
   manager `skills/connect-mcp/scripts/hermes_mcp.py`. Hermes' native `hermes mcp add` is interactive
   (TTY prompts), so the manager writes the **same canonical `mcp_servers` schema** (`{url, headers?,

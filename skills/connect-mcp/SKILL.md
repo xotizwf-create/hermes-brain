@@ -17,15 +17,22 @@ non-interactively:
 Default is **dry-run**; nothing is written until `--apply`. Every write backs up `config.yaml` first;
 `rollback` restores the latest backup.
 
-## Golden rules (safety)
-1. **The URL often contains the secret** (e.g. `https://host/mcp/<SECRET>`). Treat the whole URL as a
+## Golden rules (HARD — not suggestions)
+0. **НИКОГДА не придумывай имя коннектора сам.** После `probe` ОБЯЗАТЕЛЬНО остановись и спроси
+   владельца: «Как назовём этот сервер?». Не бери имя из URL, домена или названия сервера. Сохраняй
+   (`add`) **только** после явного ответа владельца. (Менеджер сам превратит человеческое название,
+   напр. «Простые поставки», в безопасный id `prostye_postavki` — тебе не нужно это делать руками.)
+1. **Общение с владельцем — только по-русски и без техники.** Никаких команд, путей, id вида
+   `mcp_*`, стек-трейсов, «exit code». Ошибку/предупреждение объясняй по-русски одной фразой + что
+   делать. Менеджер уже печатает всё по-русски — относи его вывод как есть, не добавляй техническую
+   обвязку. (Глобально: `profile/communication.md`.)
+2. **The URL often contains the secret** (e.g. `https://host/mcp/<SECRET>`). Treat the whole URL as a
    secret: it lives only in `config.yaml` (mode 600) on the server. **Never** commit it to the brain,
    **never** echo it back in full — the manager redacts it. When constructing the URL from a
-   server-side secret, read it on the server (e.g. from `/var/www/<app>/.env`) so it never transits
-   chat or a workstation.
-2. **Approval-gated.** Applying to `config.yaml` is an operational change: show the dry-run, get the
-   owner's "да", then `--apply`. Committing the registry entry follows `update-knowledge` (diff → approve).
-3. **No raw secret in `connectors/registry.yaml`** — only a redacted `url_template` with a
+   server-side secret, read it on the server so it never transits chat or a workstation.
+3. **Approval-gated.** Applying to `config.yaml` is an operational change: get the owner's "да" before
+   `--apply`. Committing the registry entry follows `update-knowledge` (diff → approve).
+4. **No raw secret in `connectors/registry.yaml`** — only a redacted `url_template` with a
    `{proj/<slug>/<service>/secret}` reference. `scripts/validate.py` must pass.
 
 ## Applying changes live — `/reload-mcp` (no restart)
@@ -35,29 +42,30 @@ losing the session**. The heavy fallback is `--restart` (systemctl restart herme
 only needed if `/reload-mcp` misbehaves.
 
 ## Connect a new MCP server — owner pastes a URL (the main flow)
-**Connect first, then ask for a name.** This is the intended UX:
-1. **Probe** the URL — connect and list its tools WITHOUT saving:
+Strict order. **Step 2 is a hard stop — do not skip it.**
+1. **Probe** the URL (connect + list tools, nothing saved):
    ```bash
    python3 .../hermes_mcp.py probe --url "<url>"
    ```
-   It prints `✅ connected — N tool(s)` and the tool list (the URL/secret is never echoed in full).
-   If it can't connect, report the error and stop — don't save a dead server.
-2. **Ask the owner what to name it** (short kebab-case; becomes the tool prefix `mcp_<name>_*` and the
-   handle to enable/disable/remove it later). E.g. "Подключился, нашёл N инструментов. Как назовём
-   этот MCP-сервер?"
-3. On the given name, **save it** (dry-run first shows the redacted entry, then `--apply`):
+   It prints `✅ Подключился. Инструментов: N`, the list, and ends with `Как назовём этот сервер?`.
+   Relay that to the owner as-is. If it can't connect, relay the Russian error and stop.
+2. **STOP and wait for the owner's name.** Do not invent one, do not derive it from the URL/domain.
+   The owner's answer can be a human phrase ("Простые поставки") — pass it straight to `add`; the
+   manager slugifies it to a safe id and tells you the final name.
+3. Only after the owner answered, **save** (preview, then `--apply`):
    ```bash
-   python3 .../hermes_mcp.py add <name> --url "<url>"            # preview
-   python3 .../hermes_mcp.py add <name> --url "<url>" --apply    # backup + write {url, enabled: true}
+   python3 .../hermes_mcp.py add "<owner's name>" --url "<url>"           # preview
+   python3 .../hermes_mcp.py add "<owner's name>" --url "<url>" --apply   # backup + write {url, enabled: true}
    ```
-4. **Apply live now:** tell the owner to send **`/reload-mcp`** in Telegram (the new server's tools
-   appear without a restart). (`hermes_mcp.py test <name>` also re-validates the connection.)
+4. **Apply live now:** tell the owner to send **`/reload-mcp`** in Telegram (tools appear without a
+   restart). `hermes_mcp.py test <name>` re-validates the connection if needed.
 5. **Remember it in the brain:**
    ```bash
    python3 .../hermes_mcp.py registry-snippet <name>
    ```
-   Paste the secret-free block into `connectors/registry.yaml`, fill `scope`, add `connectors/<name>.md`
-   from `connectors/_template/SKILL.md`, commit via `update-knowledge`.
+   Paste the secret-free block into `connectors/registry.yaml`, add the human label (`label:`) + `scope`,
+   add `connectors/<name>.md` from `connectors/_template/SKILL.md`, commit via `update-knowledge`. The
+   `label` lets the owner say "выключи Простые поставки" and you map it to the id.
 
 ## List the connected MCP servers — "покажи mcp / список серверов"
 ```bash
