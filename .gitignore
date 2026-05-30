@@ -5,6 +5,8 @@
 secrets.yaml
 access-map.yaml
 agent-secrets/
+# Local-only secret links/notes (e.g. the Vault URL with its token) — never commit
+*.local.txt
 *.secret.*
 *.secrets.*
 *.vault.*
