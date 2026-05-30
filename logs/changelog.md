@@ -11,6 +11,10 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Google OAuth app **published to Production** (owner did it) → re-ran the PC consent once and
+  re-minted the token, so the refresh token is now **long-lived** (no more ~7-day Testing expiry).
+  Delivered to the secure store + compat path (600, old backed up); read re-verified. The durability
+  caveat on the Calendar entry below is now resolved.
 - Google **Calendar upgraded to read/write** (owner asked Hermes to see AND edit). Changed the Calendar
   scope in `read-links/scripts/google_oauth_login.py` (`calendar.readonly` → `calendar`), re-ran the
   PC browser consent with the owner's existing Desktop OAuth client, minted a new token (refresh +
