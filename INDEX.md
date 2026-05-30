@@ -64,6 +64,8 @@ current task — never load the whole brain unless asked for a full audit.
 - **Tests / CI** → `engineering/testing.md`.
 - **Performance** → `engineering/optimization.md`.
 - **Code style / review** → `engineering/coding-standards.md`, `engineering/code-review.md`.
+- **AI-generated code cleanup / slop detection before PR or after agent edits** → skill
+  `skills/aislop-code-quality/`.
 - **How the agent should answer/communicate** → `profile/`.
 - **Hermes UX: "Думаю…"/typing, live step progress, reasoning, tone — config knobs** → `engineering/hermes-gateway-ux.md`.
 - **Change the brain itself / how Hermes scales itself** → skill `skills/update-knowledge/`.

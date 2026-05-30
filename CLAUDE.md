@@ -45,6 +45,9 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   export), via `fetch_url.py`; native `browser`/`web_search` for JS/search.
 - `markitdown-docs` — convert local PDF/Word/Excel/PowerPoint files to compact Markdown with
   Microsoft MarkItDown before analysis, so binary documents do not burn model context.
+- `aislop-code-quality` — run scanaislop/aislop after AI code edits or during review to catch
+  narrative comments, dead code, unsafe casts, swallowed exceptions, duplicate helpers, and other
+  agentic code slop; use only safe mechanical fixes unless explicitly approved.
 - `google-account` — the agent's Google profile (owner's account, OAuth read-only): Calendar/Drive/
   Docs/Sheets/Gmail; how it was connected, keep-alive (publish to Production), rotation, adding write.
 - `update-knowledge` — the workflow for changing the brain + two-way git sync (Hermes self-scaling);

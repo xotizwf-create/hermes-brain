@@ -11,6 +11,9 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Added `aislop-code-quality`: Hermes can now run scanaislop/aislop (`aislop@0.10.1`) after code edits
+  or before PRs to detect AI-code slop and apply only safe mechanical cleanup. Added
+  `aislop_guard.py`, INDEX/CLAUDE routing, local CLI install, and validation notes.
 - Added `markitdown-docs`: local PDF/Word/Excel/PowerPoint files now route through Microsoft
   MarkItDown into compact Markdown first (`convert_document.py` writes `.markitdown.md` + short
   preview), reducing token spend and improving document context before analysis. INDEX + CLAUDE routing
