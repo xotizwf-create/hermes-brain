@@ -12,6 +12,11 @@ agent-secrets/
 *.pem
 .env
 .env.*
+# Google OAuth / service-account material (server-only)
+token.json
+*client_secret*.json
+*oauth*token*.json
+google_service_account*.json
 
 # OS / tooling noise
 .DS_Store

@@ -32,17 +32,15 @@ in the owner's language; don't dump raw HTML.
 - `web_extract` (Firecrawl) is also available but **summarizes** large pages (costs tokens, truncates)
   — use it only when you explicitly want a summary, not the full text.
 
-## Google access — the agent's Google profile (service account)
-The agent has its own Google identity: a **service account** whose key lives at
-`/root/.hermes/secure/google_service_account.json` (600, not in git). `fetch_url.py` uses it
-(`gauth_read.py`) for Google links, so it reads **both** public-by-link **and private** docs — as
-long as the doc/folder is shared with the agent's service-account e-mail (read-only).
-- If the key is present and the doc is shared → full content (Docs/Slides → text, Sheets → all tabs
-  as CSV; `--gid` for one tab).
-- If the doc is **not** shared with the agent → `fetch_url.py` prints the agent's e-mail and asks the
-  owner to share it («Поделись им (доступ «Читатель») с агентом — его адрес: …»). Relay that.
-- If there's **no key** yet → it falls back to the public export (works only for «доступ по ссылке»).
-- Setup details (one-time, in Google Cloud) + how to deliver the key: `connectors/google-workspace.md`.
+## Google access — the agent reads the owner's Drive (OAuth, read-only)
+The agent's Google profile is the **owner's own account via OAuth** (read-only token at
+`/root/.hermes/secure/google_oauth_token.json`, 600, not in git). So `fetch_url.py` (`gauth_read.py`)
+reads **any** of the owner's Google Docs/Sheets/Slides — public or private — with **no per-doc
+sharing**. Docs/Slides → text, Sheets → all tabs as CSV (`--gid` for one tab).
+- If there's **no token** yet → it falls back to the public export (only «доступ по ссылке» works).
+- One-time setup (Cloud OAuth client + browser login on the PC + token to server):
+  `connectors/google-workspace.md`. Login script: `scripts/google_oauth_login.py` (run on the PC).
+- A **service account** is supported as an alternative (then docs are shared with the agent's e-mail).
 
 ## Rules
 - Owner-facing replies in Russian, no technical noise (paths, commands, stack traces) — the manager

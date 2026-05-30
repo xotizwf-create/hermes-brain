@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""gauth_read — read private Google Docs/Sheets/Slides via the agent's service account.
+"""gauth_read — read Google Docs/Sheets/Slides under the agent's Google profile.
 
-The agent has a Google identity: a service-account key at
-/root/.hermes/secure/google_service_account.json (mode 600, NOT in git; override with
-HERMES_GOOGLE_SA). The owner shares docs/folders with the service-account e-mail, and this module
-reads them via the read-only Drive/Sheets APIs. fetch_url.py uses it for Google links when the key
-is present, and falls back to the public export URL otherwise.
+The agent's profile is the OWNER'S Google account via OAuth (read-only): an authorized-user token
+at /root/.hermes/secure/google_oauth_token.json lets the agent read everything the owner can access,
+with no per-doc sharing. (A service-account key at /root/.hermes/secure/google_service_account.json
+is supported as an alternative — then docs must be shared with the SA e-mail.)
 
-Returns clean text. Raises NoAccess (share the doc with the SA) or NotGoogle / Unavailable so the
-caller can show a Russian message. Used only when a key exists — google libs are imported lazily.
+fetch_url.py uses this for Google links when a token/key is present, and falls back to the public
+export URL otherwise. Returns clean text. Raises NoAccess / NotGoogle / Unavailable so the caller can
+show a Russian message. Google libs are imported lazily (only when creds exist).
 """
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ import json
 import os
 import re
 
+OAUTH = os.environ.get("HERMES_GOOGLE_OAUTH", "/root/.hermes/secure/google_oauth_token.json")
 KEY = os.environ.get("HERMES_GOOGLE_SA", "/root/.hermes/secure/google_service_account.json")
 SCOPES = [
     "https://www.googleapis.com/auth/drive.readonly",
@@ -37,8 +38,16 @@ class Unavailable(Exception):
     pass
 
 
+def mode() -> str | None:
+    if os.path.exists(OAUTH):
+        return "oauth"
+    if os.path.exists(KEY):
+        return "sa"
+    return None
+
+
 def have_key() -> bool:
-    return os.path.exists(KEY)
+    return mode() is not None
 
 
 def sa_email() -> str | None:
@@ -47,6 +56,17 @@ def sa_email() -> str | None:
             return json.load(fh).get("client_email")
     except Exception:
         return None
+
+
+def _credentials():
+    m = mode()
+    if m == "oauth":
+        from google.oauth2.credentials import Credentials
+        return Credentials.from_authorized_user_file(OAUTH, SCOPES)
+    if m == "sa":
+        from google.oauth2 import service_account
+        return service_account.Credentials.from_service_account_file(KEY, scopes=SCOPES)
+    raise Unavailable("no google credentials")
 
 
 def _ident(url: str):
@@ -66,19 +86,18 @@ def _csv_field(v) -> str:
 
 def read(url: str, gid: str | None = None) -> str:
     if not have_key():
-        raise Unavailable("no service account key")
+        raise Unavailable("no google credentials")
     try:
-        from google.oauth2 import service_account
         from googleapiclient.discovery import build
         from googleapiclient.errors import HttpError
-    except Exception as e:  # libs missing
+    except Exception as e:
         raise Unavailable(f"google libs unavailable: {e}")
 
     kind, fid = _ident(url)
     if not fid:
         raise NotGoogle("not a google doc url")
 
-    creds = service_account.Credentials.from_service_account_file(KEY, scopes=SCOPES)
+    creds = _credentials()
     try:
         if kind == "spreadsheets":
             svc = build("sheets", "v4", credentials=creds, cache_discovery=False)
@@ -90,9 +109,8 @@ def read(url: str, gid: str | None = None) -> str:
                 sgid = str(props.get("sheetId"))
                 if gid and sgid != str(gid):
                     continue
-                rng = f"'{title}'"
                 vals = svc.spreadsheets().values().get(
-                    spreadsheetId=fid, range=rng).execute().get("values", [])
+                    spreadsheetId=fid, range=f"'{title}'").execute().get("values", [])
                 rows = "\n".join(",".join(_csv_field(c) for c in row) for row in vals)
                 blocks.append(f"# {title}\n{rows}".rstrip())
             return "\n\n".join(blocks).strip()
