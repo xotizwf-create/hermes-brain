@@ -2,13 +2,23 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-05-30
+updated: 2026-05-31
 secret_refs: []
 ---
 
 # Changelog
 
 Append-only, newest on top. Every approved change to the brain gets one line.
+
+## 2026-05-31
+- Published `aislop-code-quality` into the native Hermes skill registry as
+  `/root/.hermes/skills/software-development/aislop-code-quality` in addition to the git-tracked
+  `agent-knowledge/skills/aislop-code-quality`. This makes it visible in `hermes skills list`; the
+  related code-quality builtin skills (`test-driven-development`, `systematic-debugging`,
+  `requesting-code-review`, `writing-plans`, `plan`, `spike`, `subagent-driven-development`,
+  `github-code-review`, `github-pr-workflow`, `codebase-inspection`, `python-debugpy`,
+  `node-inspect-debugger`, `codex`, `claude-code`, `opencode`) were already installed and enabled in
+  `/root/.hermes/skills`.
 
 ## 2026-05-30
 - Added `aislop-code-quality`: Hermes can now run scanaislop/aislop (`aislop@0.10.1`) after code edits
