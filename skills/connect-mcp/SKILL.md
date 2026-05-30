@@ -34,28 +34,37 @@ the gateway reconnects servers and reports the new tool count, **without restart
 losing the session**. The heavy fallback is `--restart` (systemctl restart hermes-gateway + `/reset`),
 only needed if `/reload-mcp` misbehaves.
 
-## Connect a new MCP server — "подключи этот mcp: <url>"
-1. Pick a short kebab-case `name` (used as the tool prefix `mcp_<name>_*`). Ask if unclear.
-2. Dry-run (shows the exact entry, secret redacted):
+## Connect a new MCP server — owner pastes a URL (the main flow)
+**Connect first, then ask for a name.** This is the intended UX:
+1. **Probe** the URL — connect and list its tools WITHOUT saving:
    ```bash
-   python3 .../hermes_mcp.py add <name> --url "<url>"
+   python3 .../hermes_mcp.py probe --url "<url>"
    ```
-3. Owner confirms → apply:
+   It prints `✅ connected — N tool(s)` and the tool list (the URL/secret is never echoed in full).
+   If it can't connect, report the error and stop — don't save a dead server.
+2. **Ask the owner what to name it** (short kebab-case; becomes the tool prefix `mcp_<name>_*` and the
+   handle to enable/disable/remove it later). E.g. "Подключился, нашёл N инструментов. Как назовём
+   этот MCP-сервер?"
+3. On the given name, **save it** (dry-run first shows the redacted entry, then `--apply`):
    ```bash
-   python3 .../hermes_mcp.py add <name> --url "<url>" --apply
+   python3 .../hermes_mcp.py add <name> --url "<url>"            # preview
+   python3 .../hermes_mcp.py add <name> --url "<url>" --apply    # backup + write {url, enabled: true}
    ```
-   (backs up config, writes `{url, enabled: true}`).
-4. Validate the connection + tool discovery:
-   ```bash
-   python3 .../hermes_mcp.py test <name>      # = hermes mcp test <name>
-   ```
-5. Apply live: tell the owner to send **`/reload-mcp`** in Telegram.
-6. **Remember it in the brain:**
+4. **Apply live now:** tell the owner to send **`/reload-mcp`** in Telegram (the new server's tools
+   appear without a restart). (`hermes_mcp.py test <name>` also re-validates the connection.)
+5. **Remember it in the brain:**
    ```bash
    python3 .../hermes_mcp.py registry-snippet <name>
    ```
    Paste the secret-free block into `connectors/registry.yaml`, fill `scope`, add `connectors/<name>.md`
    from `connectors/_template/SKILL.md`, commit via `update-knowledge`.
+
+## List the connected MCP servers — "покажи mcp / список серверов"
+```bash
+python3 .../hermes_mcp.py list      # 🟢 enabled / ⚪ disabled, names + redacted URLs
+```
+(`hermes mcp list` is the native equivalent.) Report names + on/off state to the owner; never print
+the full secret URL.
 
 ### Auth variants
 - **Secret in the URL** (Albery-style `/mcp/<secret>`, auth none): just pass `--url`. Most common.
@@ -84,6 +93,24 @@ python3 .../hermes_mcp.py rollback                   # restore last config + res
 ```
 Roll back first if a bad connector breaks the gateway (won't start / errors every message), then
 debug the URL/auth offline.
+
+## Refresh tools — infra-level, NOT via the AI
+When a connected MCP server gains new tools upstream, Hermes only sees them after it **re-discovers**
+them, which happens on gateway start. So "refresh" = restart the gateway — an infra action that costs
+**zero model tokens**:
+```bash
+python3 .../hermes_mcp.py refresh --apply      # = systemctl restart hermes-gateway → re-discover all tools
+```
+This runs automatically every day via a **systemd timer** (independent of the gateway process, so it
+never races with the in-process cron scheduler). Install it once on prod:
+```bash
+cp /root/.hermes/agent-knowledge/skills/connect-mcp/systemd/hermes-mcp-refresh.{service,timer} /etc/systemd/system/
+systemctl daemon-reload && systemctl enable --now hermes-mcp-refresh.timer
+systemctl list-timers hermes-mcp-refresh.timer      # verify next run
+```
+Default schedule: `04:10 UTC` daily (just after the daily session reset, an idle window). Retune via
+`OnCalendar` in the `.timer`. Do **not** drive this refresh from a `hermes cron` job — that scheduler
+lives inside the gateway and would be killed by its own restart.
 
 ## Native CLI (alternative, interactive — for a human on the server)
 The wrapper matches the native CLI, which you can use directly over SSH:

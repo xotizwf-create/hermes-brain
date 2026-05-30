@@ -27,7 +27,16 @@ Safety: default is DRY-RUN; nothing is written until --apply. Every write backs 
 first (rollback restores it). Secrets (URL paths, tokens) live only in config.yaml (600) and
 are redacted in all output; the brain registry gets a secret-free `url_template`.
 
+Naming flow (owner pastes a URL): `probe --url <url>` connects and lists the tools WITHOUT
+saving, so Hermes can report "connected, found N tools" and ask what to name it; then
+`add <name> --url <url>` saves it under that name.
+
+Refreshing tools is an INFRA action, not an LLM one: `refresh --apply` restarts the gateway so
+it re-discovers every server's tools (picks up newly added upstream tools). A systemd timer
+(skills/connect-mcp/systemd/) runs it daily — no model tokens spent.
+
 Usage:
+  python3 hermes_mcp.py probe --url <url>          # connect + list tools, no save (then ask a name)
   python3 hermes_mcp.py list
   python3 hermes_mcp.py add <name> --url <url> [--bearer-env ENV | --header "K: V"]
                                  [--timeout N] [--connect-timeout N] [--apply] [--restart]
@@ -35,6 +44,7 @@ Usage:
   python3 hermes_mcp.py enable  <name> [--apply] [--restart]
   python3 hermes_mcp.py remove  <name> [--apply] [--restart]
   python3 hermes_mcp.py test    <name>             # hermes mcp test (connect + discover)
+  python3 hermes_mcp.py refresh [--apply]          # infra refresh: restart gateway → re-discover tools
   python3 hermes_mcp.py registry-snippet <name>
   python3 hermes_mcp.py rollback                   # restore the most recent backup + restart
 """
@@ -171,6 +181,52 @@ def cmd_list(_a) -> int:
     for name, entry in block.items():
         mark = "🟢 enabled " if is_enabled(entry) else "⚪ disabled"
         print(f"  {mark}  {name:<16} {describe(entry)}")
+    return 0
+
+
+def cmd_probe(a) -> int:
+    """Connect to a URL and list its tools WITHOUT saving — to ask the owner for a name."""
+    if not a.url or not URL_RE.match(a.url):
+        sys.exit("probe requires --url starting with http:// or https://")
+    try:
+        from hermes_cli.mcp_config import _probe_single_server  # Hermes' own probe (needs the venv)
+    except Exception as e:
+        sys.exit(f"probe must run with the Hermes venv python (could not import probe: {e})")
+    cfg = {"url": a.url}
+    for h in a.header or []:
+        k, _, v = h.partition(":")
+        cfg.setdefault("headers", {})[k.strip()] = v.strip()
+    if a.bearer_env:
+        cfg.setdefault("headers", {})["Authorization"] = f"Bearer ${{{a.bearer_env}}}"
+    print(f"→ connecting to {redact(a.url)} ...")
+    try:
+        tools = _probe_single_server("probe", cfg, connect_timeout=a.connect_timeout or 30)
+    except Exception as e:
+        sys.exit(f"could not connect: {e}")
+    print(f"✅ connected — {len(tools)} tool(s):")
+    for name, desc in tools:
+        short = (desc[:70] + "…") if len(desc) > 70 else desc
+        print(f"  • {name:<34} {short}")
+    print("\nAsk the owner what to name this server (kebab-case), then:")
+    print(f"  python3 {Path(__file__).name} add <name> --url \"<url>\" --apply")
+    return 0
+
+
+def cmd_refresh(a) -> int:
+    """Infra-level tool refresh: restart the gateway so it re-discovers all MCP tools (no LLM)."""
+    print("MCP refresh = restart gateway → re-discovers every server's tools (no model tokens).")
+    if not a.apply:
+        print("(dry-run) re-run with --apply, or let the systemd timer (hermes-mcp-refresh) do it daily.")
+        return 0
+    stamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"[{stamp}] → systemctl restart {GATEWAY_UNIT}")
+    try:
+        r = subprocess.run(["systemctl", "restart", GATEWAY_UNIT], capture_output=True, text=True)
+    except OSError as e:
+        sys.exit(f"could not run systemctl ({e}).")
+    if r.returncode != 0:
+        sys.exit(f"restart failed: {r.stderr.strip()}")
+    print(f"[{stamp}] gateway restarted — MCP tools re-discovered.")
     return 0
 
 
@@ -312,6 +368,17 @@ def main() -> int:
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("list").set_defaults(fn=cmd_list)
+
+    pr = sub.add_parser("probe")
+    pr.add_argument("--url", required=True)
+    pr.add_argument("--bearer-env", dest="bearer_env", default="")
+    pr.add_argument("--header", action="append")
+    pr.add_argument("--connect-timeout", dest="connect_timeout", type=int)
+    pr.set_defaults(fn=cmd_probe)
+
+    rf = sub.add_parser("refresh")
+    rf.add_argument("--apply", action="store_true")
+    rf.set_defaults(fn=cmd_refresh)
 
     a = sub.add_parser("add")
     a.add_argument("name")

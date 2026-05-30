@@ -1,0 +1,12 @@
+# Schedule for the infra-level MCP tool refresh. Server is UTC; 04:10 UTC sits just after
+# the daily session reset (session_reset.at_hour=4), so the restart lands in an idle window.
+# Persistent=true catches up a missed run if the box was off. Change OnCalendar to retune.
+[Unit]
+Description=Daily Hermes MCP tool refresh
+
+[Timer]
+OnCalendar=*-*-* 04:10:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

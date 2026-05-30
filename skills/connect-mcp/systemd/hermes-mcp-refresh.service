@@ -1,0 +1,16 @@
+# Infra-level MCP tool refresh — restarts the gateway so it re-discovers every
+# configured MCP server's tools (picks up newly added upstream tools). Runs WITHOUT
+# invoking the model (no Codex/LLM tokens). Triggered by hermes-mcp-refresh.timer.
+#
+# Install (on prod, as root):
+#   cp skills/connect-mcp/systemd/hermes-mcp-refresh.{service,timer} /etc/systemd/system/
+#   systemctl daemon-reload
+#   systemctl enable --now hermes-mcp-refresh.timer
+# Inspect:  systemctl list-timers hermes-mcp-refresh.timer ; journalctl -u hermes-mcp-refresh
+[Unit]
+Description=Hermes MCP tool refresh (restart gateway to re-discover MCP tools)
+After=hermes-gateway.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/hermes-agent/venv/bin/python /root/.hermes/agent-knowledge/skills/connect-mcp/scripts/hermes_mcp.py refresh --apply

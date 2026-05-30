@@ -60,14 +60,24 @@ context budget, avoids tool-name clashes). Keep `enabled:` in `registry.yaml` ma
 
 ## Adding a server safely (summary; full steps in skill `connect-mcp`)
 1. Owner pastes the MCP URL in Telegram.
-2. `hermes_mcp.py add <name> --url "<url>"` (dry-run) → owner confirms → `--apply` (backup → write
-   canonical `{url, enabled: true}`).
-3. `hermes_mcp.py test <name>` (= `hermes mcp test`) to confirm it connects and lists tools.
-4. Owner sends `/reload-mcp` to make it live.
+2. `hermes_mcp.py probe --url "<url>"` — connect + list tools WITHOUT saving, so Hermes can report
+   "connected, N tools" and **ask what to name it**.
+3. On the name: `hermes_mcp.py add <name> --url "<url>"` (dry-run) → confirm → `--apply` (backup →
+   write canonical `{url, enabled: true}`).
+4. Owner sends `/reload-mcp` to make it live (`hermes_mcp.py test <name>` re-validates).
 5. `registry-snippet <name>` → paste the secret-free entry into `registry.yaml`, add
    `connectors/<name>.md`, commit via `update-knowledge`.
 
 If a connection breaks the gateway: `hermes_mcp.py rollback` restores the last good config + restarts.
+
+## Refreshing tools (infra-level, no LLM)
+Hermes discovers each server's tools at gateway **startup**. To pick up tools a server added upstream,
+the gateway must re-discover them → it must restart. That's an infra action, **not** something the
+model should reason about: `hermes_mcp.py refresh --apply` (= `systemctl restart hermes-gateway`),
+runned daily by the **systemd timer** `hermes-mcp-refresh.timer` (`skills/connect-mcp/systemd/`,
+default 04:10 UTC). It's a systemd timer rather than a `hermes cron` job on purpose — the cron
+scheduler runs *inside* the gateway and would be killed by its own restart. `/reload-mcp` (in chat)
+is the on-demand, no-restart equivalent for a single change.
 
 ## Native CLI parity
 `hermes mcp {list,add,remove,test,configure,login,catalog,install}` is the underlying CLI (used
