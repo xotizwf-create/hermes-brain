@@ -171,7 +171,13 @@ def slugify_repo(name: str) -> str:
 
 # --------------------------------------------------------------------------- github
 
+_REPO_CACHE: dict = {"t": 0.0, "data": None}
+_REPO_TTL = 120  # seconds — keep the dashboard snappy without hammering the GitHub API
+
+
 def github_repos(cfg: dict) -> list[dict]:
+    if _REPO_CACHE["data"] is not None and (time.time() - _REPO_CACHE["t"]) < _REPO_TTL:
+        return _REPO_CACHE["data"]
     if not GH_TOKEN_PATH.exists():
         return []
     token = GH_TOKEN_PATH.read_text(encoding="utf-8").strip()
@@ -200,35 +206,64 @@ def github_repos(cfg: dict) -> list[dict]:
             })
         if len(batch) < 100:
             break
+    _REPO_CACHE["data"] = repos
+    _REPO_CACHE["t"] = time.time()
     return repos
 
 
 # --------------------------------------------------------------------------- HTML
 
+# Design language matched to the andidigital site: light theme, slate ink, bright-lime accent.
 CSS = """
-*{box-sizing:border-box} body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;margin:0;background:#0f1216;color:#e6e8eb}
-.wrap{max-width:920px;margin:0 auto;padding:24px}
-a{color:#6ea8fe;text-decoration:none} a:hover{text-decoration:underline}
-.card{background:#171b21;border:1px solid #232a33;border-radius:12px;padding:18px;margin:12px 0}
+:root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--line2:#cbd5e1;--card:#fff;
+ --lime:#c0fc41;--lime2:#a3e635;--olive:#6f9e2a;--shadow:0 8px 24px rgba(15,23,42,.06);
+ --shadow2:0 16px 34px rgba(148,163,184,.22)}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);background:linear-gradient(180deg,#f8fafc 0%,#f3f8ff 100%);
+ min-height:100vh;-webkit-font-smoothing:antialiased;
+ font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
+a{color:var(--olive);text-decoration:none;font-weight:600} a:hover{text-decoration:underline}
+.wrap{max-width:1000px;margin:0 auto;padding:26px 20px 64px}
+.brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em;color:var(--ink)}
+.brand .dot{width:12px;height:12px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(192,252,65,.28)}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin:4px 0 20px;gap:12px;flex-wrap:wrap}
+h1{font-size:26px;font-weight:800;letter-spacing:-.025em;margin:0 0 2px}
+h2{font-size:15px;font-weight:700;margin:0}
+.muted{color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin:14px 0;box-shadow:var(--shadow)}
+.repo{display:flex;justify-content:space-between;align-items:center;gap:14px;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease}
+.repo:hover{transform:translateY(-2px);box-shadow:var(--shadow2);border-color:#dbe7c4}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
-h1{font-size:20px;margin:0 0 4px} h2{font-size:16px;margin:0}
-.muted{color:#8b95a1;font-size:13px}
-.badge{font-size:11px;padding:2px 8px;border-radius:20px;background:#232a33;color:#9aa5b1}
-.badge.priv{background:#3a2a1a;color:#e0b070} .badge.has{background:#16301f;color:#5fd39a}
-input,textarea,button{font:inherit} input[type=password],input[type=text],textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #2a323c;background:#0f1216;color:#e6e8eb}
-textarea{min-height:240px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
-button{cursor:pointer;background:#2b6cff;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-weight:600}
-button.sec{background:#232a33;color:#e6e8eb} button.danger{background:#7a2230}
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-table{width:100%;border-collapse:collapse} td{padding:6px 4px;border-bottom:1px solid #232a33;font-size:14px}
-code{background:#0f1216;padding:2px 6px;border-radius:6px;border:1px solid #2a323c}
-.note{font-size:12px;color:#8b95a1;margin-top:8px}
+.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;background:#f1f5f9;color:#64748b;border:1px solid var(--line)}
+.badge.priv{background:#fff7ed;color:#b45309;border-color:#fed7aa}
+.badge.has{background:#f2ffd6;color:#4d7c0f;border-color:#d6f29a}
+input,textarea{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line2);background:#fff;color:var(--ink);font:inherit;outline:none}
+input:focus,textarea:focus{border-color:var(--lime2);box-shadow:0 0 0 4px rgba(163,230,53,.18)}
+textarea{min-height:260px;font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.55}
+button{cursor:pointer;border:0;border-radius:12px;padding:11px 18px;font-weight:700;font-size:14px;color:#1a2e05;
+ background:var(--lime);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 6px 16px rgba(146,200,40,.35);
+ transition:transform .1s ease,box-shadow .1s ease,background .1s ease}
+button:hover{background:var(--lime2);transform:translateY(-1px)} button:active{transform:translateY(0)}
+button.sec{background:#fff;color:var(--ink);border:1px solid var(--line2);box-shadow:var(--shadow)}
+button.sec:hover{background:#f8fafc}
+button.danger{background:#fee2e2;color:#b91c1c;box-shadow:none} button.danger:hover{background:#fecaca}
+table{width:100%;border-collapse:collapse} td{padding:8px 4px;border-bottom:1px solid var(--line);font-size:14px}
+code{background:#f1f5f9;border:1px solid var(--line);padding:2px 7px;border-radius:7px;font-size:12.5px;color:#334155}
+.note{font-size:12px;color:var(--muted);margin-top:8px}
+.login{max-width:430px;margin:7vh auto 0}
+.search{margin-bottom:4px}
+.empty{color:var(--muted);font-size:14px}
 """
+
+
+BRAND = "<a class=brand href='#'><span class=dot></span>andidigital · Vault</a>"
 
 
 def page(title: str, body: str) -> bytes:
     return (f"<!doctype html><html lang=ru><head><meta charset=utf-8>"
             f"<meta name=viewport content='width=device-width,initial-scale=1'>"
+            f"<meta name=theme-color content='#c0fc41'>"
+            f"<link rel=icon href='/favicon.svg'><link rel=icon type=image/png href='/favicon-32x32.png'>"
             f"<title>{html.escape(title)}</title><style>{CSS}</style></head>"
             f"<body><div class=wrap>{body}</div></body></html>").encode("utf-8")
 
@@ -364,14 +399,15 @@ class Handler(BaseHTTPRequestHandler):
 
     # ---- views
     def view_setup(self):
-        body = ("<h1>Hermes Vault — первый запуск</h1>"
-                "<div class=card><form method=post action='" + self.prefix() + "/setup'>"
-                "<p>Задай пароль для входа в хранилище секретов. Он сохранится только как scrypt-хэш.</p>"
-                "<p><input type=password name=pw1 placeholder='Пароль' minlength=10 required></p>"
+        body = ("<div class=login>" + BRAND +
+                "<div class=card style='margin-top:14px'><h1 style='font-size:21px'>Первый запуск</h1>"
+                "<p class=muted>Задай пароль для входа в хранилище. Он сохранится только как scrypt-хэш.</p>"
+                "<form method=post action='" + self.prefix() + "/setup'>"
+                "<p><input type=password name=pw1 placeholder='Пароль (мин. 10 символов)' minlength=10 required></p>"
                 "<p><input type=password name=pw2 placeholder='Повтори пароль' minlength=10 required></p>"
-                "<button>Установить пароль</button>"
-                "<div class=note>Минимум 10 символов. После этого вход — по этой секретной ссылке + паролю.</div>"
-                "</form></div>")
+                "<button style='width:100%'>Установить пароль</button>"
+                "<div class=note>После этого вход — по этой секретной ссылке + паролю.</div>"
+                "</form></div></div>")
         self.send_html(page("Vault — setup", body))
 
     def act_setup(self, p):
@@ -389,11 +425,13 @@ class Handler(BaseHTTPRequestHandler):
         if self._locked(ip):
             body = "<h1>Вход</h1><div class=card>Слишком много попыток. Подожди несколько минут.</div>"
             return self.send_html(page("Вход", body), code=429)
-        e = f"<div class=note style='color:#e08080'>{esc(err)}</div>" if err else ""
-        body = ("<h1>Hermes Vault</h1><div class=card><form method=post action='" + self.prefix() + "/login'>"
-                "<p>Введи пароль для доступа к секретам.</p>"
+        e = f"<div class=note style='color:#dc2626'>{esc(err)}</div>" if err else ""
+        body = ("<div class=login>" + BRAND +
+                "<div class=card style='margin-top:14px'><h1 style='font-size:21px'>Вход в хранилище</h1>"
+                "<p class=muted>Введи пароль для доступа к секретам проектов.</p>"
+                "<form method=post action='" + self.prefix() + "/login'>"
                 "<p><input type=password name=pw placeholder='Пароль' required autofocus></p>"
-                f"<button>Войти</button>{e}</form></div>")
+                f"<button style='width:100%'>Войти</button>{e}</form></div></div>")
         self.send_html(page("Вход", body))
 
     def act_login(self, p):
@@ -421,10 +459,11 @@ class Handler(BaseHTTPRequestHandler):
                      else "<span class=badge>нет секретов</span>")
             vis = "<span class='badge priv'>private</span>" if r["private"] else "<span class=badge>public</span>"
             rows.append(
-                f"<div class='card'><div class=row><div>"
-                f"<h2><a href='{pre}/project/{esc(slug)}'>{esc(r['name'])}</a></h2>"
-                f"<div class=muted>{esc(r['description'])}</div></div>"
-                f"<div style='text-align:right'>{vis} {badge}</div></div></div>")
+                f"<a class='card repo' data-name='{esc(r['name'].lower())}' "
+                f"href='{pre}/project/{esc(slug)}' style='color:inherit'><div>"
+                f"<h2>{esc(r['name'])}</h2>"
+                f"<div class=muted>{esc(r['description']) or '—'}</div></div>"
+                f"<div class=row style='gap:8px'>{vis} {badge}</div></a>")
         # secret stores that don't match a repo (manual projects)
         extra = [s for s in secrets_map if s not in seen]
         extra_html = ""
@@ -432,15 +471,22 @@ class Handler(BaseHTTPRequestHandler):
             items = "".join(f"<div class=row><a href='{pre}/project/{esc(s)}'>{esc(s)}</a>"
                             f"<span class='badge has'>секретов: {secrets_map[s]}</span></div>" for s in extra)
             extra_html = f"<div class=card><h2>Прочие проекты (без репозитория)</h2>{items}</div>"
-        nogh = "" if repos else "<div class=card>Не удалось получить список репозиториев GitHub (проверь токен).</div>"
-        top = (f"<div class=topbar><h1>Секреты проектов</h1>"
+        nogh = "" if repos else "<div class=card class=empty>Не удалось получить список репозиториев GitHub (проверь токен).</div>"
+        top = (f"{BRAND}"
+               f"<div class=topbar><div><h1>Секреты проектов</h1>"
+               f"<div class=muted>{len(repos)} репозиториев · {len(secrets_map)} с секретами</div></div>"
                f"<form method=post action='{pre}/logout' style='margin:0'>{self._csrf()}"
                f"<button class=sec>Выйти</button></form></div>")
+        search = ("<input class=search id=q type=text placeholder='Поиск по репозиториям…' autocomplete=off>"
+                  if repos else "")
         manual = (f"<div class=card><h2>Добавить проект вручную</h2>"
                   f"<form method=post action='{pre}/link-repo'>{self._csrf()}"
-                  f"<div class=row><input type=text name=slug placeholder='имя-проекта (slug)' required>"
-                  f"<button class=sec>Создать</button></div></form></div>")
-        self.send_html(page("Vault", top + nogh + "".join(rows) + extra_html + manual))
+                  f"<div class=row style='margin-top:10px'><input type=text name=slug placeholder='имя-проекта (slug)' required>"
+                  f"<button class=sec style='white-space:nowrap'>Создать</button></div></form></div>")
+        script = ("<script>const q=document.getElementById('q');q&&q.addEventListener('input',()=>{"
+                  "const v=q.value.toLowerCase();document.querySelectorAll('.repo').forEach(e=>"
+                  "{e.style.display=e.dataset.name.includes(v)?'':'none'})});</script>")
+        self.send_html(page("Vault", top + nogh + search + "".join(rows) + extra_html + manual + script))
 
     def view_project(self, slug: str, q: dict):
         if not SLUG_RE.match(slug):
@@ -464,8 +510,9 @@ class Handler(BaseHTTPRequestHandler):
                       f"<form method=post action='{pre}/project-delete' onsubmit=\"return confirm('Удалить все секреты проекта?')\" style='margin:0'>"
                       f"{self._csrf()}<input type=hidden name=slug value='{esc(slug)}'>"
                       f"<button class=danger>Удалить</button></form></div>")
-        body = (f"<div class=topbar><h1>{esc(slug)}</h1><a href='{pre}/'>← все проекты</a></div>"
-                f"<div class=card><h2>Переменные ({len(names)})</h2>{names_html}</div>"
+        body = (f"{BRAND}"
+                f"<div class=topbar><h1>{esc(slug)}</h1><a href='{pre}/'>← все проекты</a></div>"
+                f"<div class=card><h2>Переменные ({len(names)})</h2><div style='margin-top:8px'>{names_html}</div></div>"
                 f"<div class=card>{editor}</div>")
         self.send_html(page(f"Vault — {slug}", body))
 
