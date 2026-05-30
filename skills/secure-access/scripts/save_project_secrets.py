@@ -2,7 +2,7 @@
 """Securely ingest a project's secrets into the server secure store — without ever echoing values.
 
 The owner pastes a project's `.env` (or a prod-server password/key) to Hermes; Hermes writes it here.
-Everything lands under /root/.hermes/secure/projects/<slug>/ (dir 700, files 600, root-only) — never in
+Everything lands under /opt/hermes/secure/projects/<slug>/ (dir 2770, files 660, group hermessec) — never in
 git, never in chat, never repeated back. Confirmation prints variable NAMES only, never their values.
 
 This is the deliberate exception to "the agent does not type secrets" (engineering/secrets-access.md):
@@ -15,7 +15,7 @@ Usage (owner-facing output is Russian, value-free):
   save_project_secrets.py show <slug>        # non-secret summary: which secrets exist + var NAMES
   save_project_secrets.py list              # projects that have stored secrets
 
-Env override for testing: HERMES_SECURE_DIR (default /root/.hermes/secure).
+Env override for testing: HERMES_VAULT_DIR (default /opt/hermes/secure).
 """
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:
         pass
 
-SECURE = Path(os.environ.get("HERMES_SECURE_DIR", "/root/.hermes/secure"))
+SECURE = Path(os.environ.get("HERMES_VAULT_DIR", "/opt/hermes/secure"))
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,48}[a-z0-9]$")
 VAR_RE = re.compile(r"^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=")
 
@@ -73,8 +73,8 @@ def _ensure_dir(slug: str) -> Path:
     d = proj_dir(slug)
     d.parent.mkdir(parents=True, exist_ok=True)
     d.mkdir(parents=True, exist_ok=True)
-    _harden(d.parent, 0o700)
-    _harden(d, 0o700)
+    _harden(d.parent, 0o2770)  # setgid so files inherit group hermessec (agent root + web hermesvault)
+    _harden(d, 0o2770)
     return d
 
 
@@ -106,7 +106,7 @@ def cmd_save_env(a) -> int:
     target = d / ".env"
     _backup(target)
     target.write_text(text, encoding="utf-8")
-    _harden(target, 0o600)
+    _harden(target, 0o660)
     if names:
         print(f"✅ Сохранил .env проекта «{a.slug}» в защищённую зону: {len(names)} переменных.")
         print("Переменные (без значений): " + ", ".join(names))
@@ -127,17 +127,17 @@ def cmd_save_server(a) -> int:
     target = d / fname
     _backup(target)
     target.write_text(secret if secret.endswith("\n") else secret + "\n", encoding="utf-8")
-    _harden(target, 0o600)
+    _harden(target, 0o660)
     # Non-secret connection facts go into a value-free note for quick server-side recall.
     note = d / "server.txt"
     note.write_text(
         f"host: {a.host}\nuser: {a.user}\nport: {a.port or 22}\nauth: {kind} "
-        f"(-> {fname}, 600)\nupdated: {dt.datetime.now():%Y-%m-%d %H:%M}\n",
+        f"(-> {fname})\nupdated: {dt.datetime.now():%Y-%m-%d %H:%M}\n",
         encoding="utf-8")
-    _harden(note, 0o600)
+    _harden(note, 0o660)
     print(f"✅ Доступ к прод-серверу проекта «{a.slug}» сохранён: {a.user}@{a.host}:{a.port or 22} "
           f"(аутентификация — {kind}).")
-    print("Секрет лежит в защищённой зоне (600), в чат и git не попадает. "
+    print("Секрет лежит в защищённой зоне, в чат и git не попадает. "
           "Хост и пользователь не секретны — продублируй их в манифесте проекта.")
     return 0
 

@@ -2,7 +2,7 @@
 """WORKSTATION tool — push a project's .env straight into the server secure zone over SSH.
 
 Run this on YOUR PC. It reads a local secrets file and uploads it directly to
-/root/.hermes/secure/projects/<slug>/.env on the Hermes server over the encrypted SSH channel,
+/opt/hermes/secure/projects/<slug>/.env on the Hermes server over the encrypted SSH channel,
 then asks the server helper to confirm by variable NAMES only. The secret NEVER goes through
 Telegram and NEVER enters any LLM context — that is the whole point.
 
@@ -94,18 +94,18 @@ def main() -> int:
     c = connect(cfg)
     sftp = c.open_sftp()
     # land in a transient file inside the secure store, then let the server helper move+lock+confirm
-    staging = f"/root/.hermes/secure/.incoming_{a.slug}_{_secrets.token_hex(4)}"
+    staging = f"/opt/hermes/secure/.incoming_{a.slug}_{_secrets.token_hex(4)}"
     with sftp.open(staging, "wb") as fh:
         fh.write(payload)
     sftp.chmod(staging, 0o600)
 
-    cmd = f"HERMES_SECURE_DIR=/root/.hermes/secure python3 {SERVER_HELPER} save-env {a.slug} --from {staging}"
+    cmd = f"python3 {SERVER_HELPER} save-env {a.slug} --from {staging}"
     if a.as_file != ".env":
-        # generic file: write directly to the project dir under the chosen name, 600
-        target = f"/root/.hermes/secure/projects/{a.slug}/{a.as_file}"
-        cmd = (f"mkdir -p -m700 /root/.hermes/secure/projects/{a.slug} && "
-               f"mv {staging} {target} && chmod 600 {target} && "
-               f"echo '✅ Файл «{a.as_file}» сохранён в сейф проекта «{a.slug}» (600). Значение не показываю.'")
+        # generic file: write directly to the project dir under the chosen name, 660
+        target = f"/opt/hermes/secure/projects/{a.slug}/{a.as_file}"
+        cmd = (f"mkdir -p -m2770 /opt/hermes/secure/projects/{a.slug} && "
+               f"mv {staging} {target} && chmod 660 {target} && "
+               f"echo '✅ Файл «{a.as_file}» сохранён в сейф проекта «{a.slug}». Значение не показываю.'")
     _i, o, e = c.exec_command(cmd, timeout=60)
     out = o.read().decode("utf-8", "replace"); err = e.read().decode("utf-8", "replace")
     rc = o.channel.recv_exit_status()
