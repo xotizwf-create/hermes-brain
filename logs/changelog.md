@@ -11,6 +11,14 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- read-links Google profile: added `scripts/gauth_read.py` + `connectors/google-workspace.md`. The
+  agent gets its own Google identity (a Cloud **service account**, key at
+  `/root/.hermes/secure/google_service_account.json`, 600, not in git — ref `agent/google/service-account-key`,
+  read-only Drive+Sheets scopes). `fetch_url.py` now reads **private** Google Docs/Sheets/Slides shared
+  with the agent's e-mail (Sheets → all tabs as CSV), falling back to the public export when there's no
+  key/share; on no-access it prints the agent e-mail to share with. Google libs already in the venv.
+  Pending: owner creates the service account in Google Cloud + delivers the JSON key (steps in the
+  connector doc); then it's live for private docs.
 - Added skill `read-links` + `scripts/fetch_url.py` (stdlib): read the content behind a pasted link.
   Google Docs/Sheets/Slides/Drive → share-link converted to the export URL (Docs→txt, Sheets→csv,
   Slides→txt) and fetched in full (no browser, no LLM/Firecrawl summarization, no token cost); normal

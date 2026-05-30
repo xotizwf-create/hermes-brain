@@ -111,6 +111,31 @@ def main() -> int:
 
     is_google = "google.com" in a.url
     export = google_export_url(a.url, a.gid, a.format) if is_google else None
+
+    # Google doc + the agent has a Google identity (service account) → read it directly,
+    # which also covers PRIVATE docs shared with the agent. Falls through to the public
+    # export URL when there's no key or the SA simply isn't shared on this doc.
+    if export:
+        try:
+            import gauth_read as _ga
+        except Exception:
+            _ga = None
+        if _ga is not None and _ga.have_key():
+            try:
+                text = _ga.read(a.url, a.gid)
+                if text.strip():
+                    out = text if len(text) <= a.max else text[:a.max]
+                    print(out)
+                    if len(text) > a.max:
+                        print(f"\n… (показал первые {a.max} символов; в документе больше — скажи, если нужно продолжение)")
+                    return 0
+            except _ga.NoAccess:
+                em = _ga.sa_email() or "сервис-аккаунтом агента"
+                fail("Этот документ закрыт. Поделись им (доступ «Читатель») с агентом — его адрес:\n"
+                     f"{em}\nПосле этого пришли ссылку снова.")
+            except Exception:
+                pass  # SA unavailable / not-this-doc → try the public export below
+
     target = export or a.url
 
     try:

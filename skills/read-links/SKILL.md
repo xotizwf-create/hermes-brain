@@ -32,11 +32,17 @@ in the owner's language; don't dump raw HTML.
 - `web_extract` (Firecrawl) is also available but **summarizes** large pages (costs tokens, truncates)
   — use it only when you explicitly want a summary, not the full text.
 
-## Google access — shared vs private
-- `fetch_url.py` reads Google docs shared **«всем, у кого есть ссылка» (просмотр)** — no auth needed.
-- A **private** doc returns the Russian message «не открыт по ссылке…». Tell the owner to either open
-  link-sharing (viewer) for that doc, or set up Google access for Hermes (a Google service account /
-  OAuth — not configured yet; offer it as a follow-up if they need private company docs regularly).
+## Google access — the agent's Google profile (service account)
+The agent has its own Google identity: a **service account** whose key lives at
+`/root/.hermes/secure/google_service_account.json` (600, not in git). `fetch_url.py` uses it
+(`gauth_read.py`) for Google links, so it reads **both** public-by-link **and private** docs — as
+long as the doc/folder is shared with the agent's service-account e-mail (read-only).
+- If the key is present and the doc is shared → full content (Docs/Slides → text, Sheets → all tabs
+  as CSV; `--gid` for one tab).
+- If the doc is **not** shared with the agent → `fetch_url.py` prints the agent's e-mail and asks the
+  owner to share it («Поделись им (доступ «Читатель») с агентом — его адрес: …»). Relay that.
+- If there's **no key** yet → it falls back to the public export (works only for «доступ по ссылке»).
+- Setup details (one-time, in Google Cloud) + how to deliver the key: `connectors/google-workspace.md`.
 
 ## Rules
 - Owner-facing replies in Russian, no technical noise (paths, commands, stack traces) — the manager
