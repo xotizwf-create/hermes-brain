@@ -224,7 +224,7 @@ html{background:var(--bg)}
 body{margin:0;color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;
  font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
 a{color:inherit;text-decoration:none} a:hover{text-decoration:none}
-.wrap{max-width:834px;margin:0 auto 0 clamp(60px,12.7vw,182px);padding:42px 0 74px;animation:pageIn .34s ease both}
+.wrap{max-width:834px;margin:0 auto;padding:42px 0 74px;animation:pageIn .34s ease both}
 .brand{display:inline-flex;align-items:center;gap:9px;color:#69788f;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
 .brand .dot{width:8px;height:8px;border-radius:50%;background:#10b981}
 .hero{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:30px}
