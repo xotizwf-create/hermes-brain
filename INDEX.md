@@ -44,6 +44,8 @@ current task — never load the whole brain unless asked for a full audit.
 - **Project work / "connect to X" / deploy X** → read `projects/registry.yaml`, find the project,
   load only `projects/<slug>/`. For credentials use the `secure-access` skill.
 - **Add a new project** → use skill `skills/add-project/`.
+- **Securely take a project's secrets** (owner pastes a `.env` / prod-server password → store in the
+  secure zone, never echoed; remember repo + prod host) → skill `skills/store-project-secrets/`.
 - **Onboard a project to work in** (repo + prod access + git access + env, then write code) → skill `skills/project-onboarding/`.
 - **Reminders / recurring tasks / watch mail** → skill `skills/reminders-and-watchers/`.
 - **Connect / switch / remove an MCP server (owner pastes a URL)** → skill `skills/connect-mcp/`;

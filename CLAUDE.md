@@ -49,6 +49,9 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   includes the standing preference to document new non-trivial procedures in the nearest instruction,
   or create one if none exists.
 - `new-repo` — create a git repo + private GitHub repo (gh CLI is installed & authed as `xotizwf-create`).
+- `store-project-secrets` — owner pastes a project's `.env` / prod-server password → Hermes finds the
+  repo (gh), stores values in the secure zone (`/root/.hermes/secure/projects/<slug>/`, 600, never
+  echoed/committed), and remembers the project (repo + prod host) secret-free in `projects/<slug>/`.
 - `secure-access`, `postgres-production` — credentials & Postgres ops.
 
 ## Current state (2026-05-30)
