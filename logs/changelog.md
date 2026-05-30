@@ -11,6 +11,15 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- Added skill `read-links` + `scripts/fetch_url.py` (stdlib): read the content behind a pasted link.
+  Google Docs/Sheets/Slides/Drive → share-link converted to the export URL (Docs→txt, Sheets→csv,
+  Slides→txt) and fetched in full (no browser, no LLM/Firecrawl summarization, no token cost); normal
+  pages → HTML reduced to readable text (capped ~20k). Private Google docs are detected and reported
+  in Russian (need link-sharing or Google auth — offered as a follow-up). Skill routes JS-heavy/login
+  pages to the native `browser_*` tools and "найди в интернете" to `web_search` (both already enabled
+  on prod). All owner-facing output Russian, no technical noise. INDEX + CLAUDE key-skills updated.
+  Grounded in prod inspection: web/browser/vision toolsets enabled; server reaches the internet
+  (example.org 200); Google export endpoints reachable.
 - connect-mcp auto-reload: after add/enable/disable/remove the live Telegram session now picks up the
   tool changes **by itself** — the owner no longer needs to send `/reload-mcp`. Implemented as an
   idempotent gateway patch (`skills/connect-mcp/patches/mcp_autoreload_patch.py`): before each agent

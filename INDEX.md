@@ -48,6 +48,7 @@ current task — never load the whole brain unless asked for a full audit.
 - **Reminders / recurring tasks / watch mail** → skill `skills/reminders-and-watchers/`.
 - **Connect / switch / remove an MCP server (owner pastes a URL)** → skill `skills/connect-mcp/`;
   model in `connectors/mcp-servers.md`; what's connected in `connectors/registry.yaml`.
+- **Read a link / web page / Google Doc / Sheet / Slides (owner pastes a URL)** → skill `skills/read-links/`.
 - **Add/manage a GitHub repo** → use skill `skills/new-repo/`.
 - **Credentials, SSH, tokens, DB URLs** → `engineering/secrets-access.md` + skill `secure-access`.
 - **Database / migrations / Postgres** → `engineering/database.md` + skill `postgres-production`.

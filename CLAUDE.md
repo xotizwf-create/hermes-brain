@@ -40,6 +40,8 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
 - `reminders-and-watchers` — one-shot/recurring reminders & watchers (mail, etc.) via `hermes cron` → Telegram.
 - `connect-mcp` — connect/switch/remove MCP servers for Hermes safely (owner pastes a URL → Hermes
   edits its own `config.yaml`, restarts gateway, records a secret-free entry in `connectors/registry.yaml`).
+- `read-links` — read the content behind a link: web pages + Google Docs/Sheets/Slides (share-link →
+  export), via `fetch_url.py`; native `browser`/`web_search` for JS/search.
 - `update-knowledge` — the workflow for changing the brain + two-way git sync (Hermes self-scaling).
 - `new-repo` — create a git repo + private GitHub repo (gh CLI is installed & authed as `xotizwf-create`).
 - `secure-access`, `postgres-production` — credentials & Postgres ops.
