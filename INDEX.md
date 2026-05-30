@@ -64,6 +64,12 @@ current task — never load the whole brain unless asked for a full audit.
 - **Tests / CI** → `engineering/testing.md`.
 - **Performance** → `engineering/optimization.md`.
 - **Code style / review** → `engineering/coding-standards.md`, `engineering/code-review.md`.
+- **Writing/changing code, refactors, debugging, feature work — make Hermes code like Codex** →
+  `engineering/agentic-coding.md`; delegate the actual coding to the Codex CLI via skill
+  `skills/codex-delegation/`.
+- **Tiny live prod change (one support-text string, a config flag, one line)** → skill
+  `skills/small-prod-edit/` (backup → exact replace → verify → restart only that service; no
+  subsystem fishing).
 - **AI-generated code cleanup / slop detection before PR or after agent edits** → skill
   `skills/aislop-code-quality/`.
 - **How the agent should answer/communicate** → `profile/`.

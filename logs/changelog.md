@@ -11,6 +11,13 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-31
+- Added `engineering/agentic-coding.md` + skills `codex-delegation` and `small-prod-edit`; routed in
+  `INDEX.md` — why: a trivial one-line prod edit (2026-05-31) was slow, repetitive and rattled prod.
+  Root cause is the harness, not the model (Hermes IS gpt-5.5/Codex): throttled reasoning, mid-task
+  context compression, mis-classified time budget, live-SSH over-diagnosis. Fix = delegate real
+  coding to the Codex CLI (`codex exec`, high reasoning, separate uncompressed context, real patch
+  loop), git-first deploys, a strict tiny-edit workflow, and server-config notes (don't compress
+  mid code-task; classify file/SSH/config edits as code → 3600s budget).
 - Published `aislop-code-quality` into the native Hermes skill registry as
   `/root/.hermes/skills/software-development/aislop-code-quality` in addition to the git-tracked
   `agent-knowledge/skills/aislop-code-quality`. This makes it visible in `hermes skills list`; the
