@@ -72,6 +72,20 @@ secrets:
 - Give write access only to repositories where the agent is allowed to push.
 - For broad work across many repos, use a dedicated machine user with audited permissions.
 
+### Server GitHub access (live, 2026-05-30)
+Hermes (prod) has **account-wide** GitHub access as **`xotizwf-create`** so it can see/clone/edit/
+create repos (not just the `hermes-brain` deploy key). Setup:
+- `gh` CLI installed on prod (`/usr/bin/gh`).
+- Auth = the owner's existing **gh OAuth token reused from the PC** (owner chose speed over a
+  dedicated token). Scopes: `repo, read:org, gist` → broad: **read/write to ALL** the owner's repos.
+- Token stored secret-free-of-the-brain at `/root/.hermes/secure/github_token` (600) and in
+  `/root/.config/gh/hosts.yml`; git uses gh as the credential helper (`gh auth setup-git`). Brain
+  holds **no** token — ref only: `agent/github/token`.
+- Verify: `gh auth status`, `gh repo list`, `GIT_TERMINAL_PROMPT=0 git ls-remote <private repo>`.
+- ⚠ Coupling: it's the **same** token as this PC. If the owner re-runs `gh auth login`/`logout` on the
+  PC, the token may rotate and the server breaks → re-run the reuse step (see `logs/changelog.md`
+  2026-05-30) or mint a dedicated fine-grained PAT. Consider narrowing to a dedicated token later.
+
 ## Rotation Policy
 
 - Rotate any secret that was pasted into chat, logs, git, or shell history.

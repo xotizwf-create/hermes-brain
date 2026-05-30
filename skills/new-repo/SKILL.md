@@ -13,6 +13,10 @@ Create a repo locally, create it on GitHub (private), connect the remote, push t
 - GitHub CLI `gh` installed: `winget install --id GitHub.cli` (Windows).
 - Authenticated: `gh auth login` (interactive — user completes browser/device flow once).
   Verify: `gh auth status`.
+- **On the Hermes server this is already done** (2026-05-30): `gh` is installed and authed as
+  `xotizwf-create` (scope `repo`), git credential helper wired. So Hermes can run this skill itself —
+  `gh repo create`, clone, push, list. Details + the broad-token caveat: `engineering/secrets-access.md`
+  → "Server GitHub access".
 
 ## Automated path (preferred — gh CLI)
 From the project folder:

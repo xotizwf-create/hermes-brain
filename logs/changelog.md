@@ -11,6 +11,16 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- GitHub account access for Hermes (prod). Before: server had only the single-repo `hermes-brain`
+  deploy key + no `gh` → couldn't see/clone the owner's other repos. Now: installed `gh` CLI on prod
+  (`/usr/bin/gh` 2.93.0) and authed it as **`xotizwf-create`** by **reusing this PC's gh OAuth token**
+  (owner's choice: speed over a dedicated token; scope `repo, read:org, gist` = read/write to ALL the
+  owner's repos). Token pushed to `/root/.hermes/secure/github_token` (600) over SFTP (never printed) +
+  `/root/.config/gh/hosts.yml`; `gh auth setup-git` wired git's credential helper; git identity set.
+  Verified: `gh repo list` (10 repos), `gh repo view <private>`, `GIT_TERMINAL_PROMPT=0 git ls-remote
+  <private>` all OK. Brain holds no token — ref `agent/github/token`. Docs: `engineering/secrets-access.md`
+  ("Server GitHub access" + broad-token/PC-coupling caveat), `skills/new-repo` prerequisites, server
+  `access-map.yaml` github entry. ⚠ Same token as the PC — PC re-login may rotate it and break the server.
 - UX round 2 — kill technical noise, keep human narration. Owner saw raw tool bubbles
   (`📚 skill_view`, `💻 terminal: "git …"`) after round 1: those come from tool progress, which is
   exactly the technical text he rejects. Reverted **`display.platforms.telegram.tool_progress: off`**.
