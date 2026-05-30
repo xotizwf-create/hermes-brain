@@ -11,6 +11,15 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-30
+- UX round 2 — kill technical noise, keep human narration. Owner saw raw tool bubbles
+  (`📚 skill_view`, `💻 terminal: "git …"`) after round 1: those come from tool progress, which is
+  exactly the technical text he rejects. Reverted **`display.platforms.telegram.tool_progress: off`**.
+  Also turned **`long_running_notifications: false`** (the `⏳ Working — N min` heartbeat is hardcoded
+  English + leaks the current tool name). The real "live progress" is the model's own Russian
+  narration (`interim_assistant_messages`, already on) — strengthened the system_prompt: send a brief
+  natural status ~every 30s («Проверяю токен…»), never show tool names/commands/paths/iteration.
+  Corrected `engineering/hermes-gateway-ux.md` (round 1 wrongly recommended tool_progress=new) +
+  `profile/communication.md`. Config backed up, gateway restarted from SSH, healthy.
 - Hermes UX made visible & honest (config, not code — no run.py patch). Telegram **tool progress
   turned on** (`display.platforms.telegram.tool_progress: new`) so the owner sees live step bubbles;
   native Telegram "typing…" indicator already auto-resumes = the "Думаю…" cue. **system_prompt
