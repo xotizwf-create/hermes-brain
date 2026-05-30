@@ -12,7 +12,11 @@ connectors:
   url_template: "https://mcp.m4s.ru/mcp/{proj/albery/mcp/shared-secret}"
   transport: http
   auth: none            # secret embedded in the URL path
-  enabled: true
+  enabled: false
+  status: not-wired     # 2026-05-30: NOT configured on the Hermes host 217.198.12.236 (mcp_servers is empty).
+                        # The MCP host mcp.m4s.ru is a SEPARATE box; MCP_SHARED_SECRET is not on 217.
+                        # To connect: get the secret from the owner / the Albery host, then
+                        # `hermes_mcp.py add albery --url "https://mcp.m4s.ru/mcp/<secret>" --apply`.
   scope: "Albery context server — Bitrix tasks/chats, Zoom transcripts, company knowledge, owner/zoom reports (~38 tools)."
   doc: connectors/bitrix.md
   project: albery

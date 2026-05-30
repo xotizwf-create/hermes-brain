@@ -73,6 +73,12 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
 ## Open tasks (next steps, not yet done)
 - Reconcile legacy `186.246.7.32` references in `vpn-gateway.md`/`hermes.md` against the live host.
 - Task 4 (deferred): add the user's second project via the `add-project` skill.
-- Optional: re-wire Albery MCP (Hermes currently has 0 MCP servers → no Bitrix/Zoom hands).
+- MCP connection logic: shipped skill `connect-mcp` + manager (live-tested on 217). Use it for any
+  new MCP server: owner pastes a URL → Hermes connects itself. See `connectors/mcp-servers.md`.
+- Re-wire Albery MCP: confirmed 2026-05-30 that host 217.198.12.236 has **0 MCP servers** (no
+  Bitrix/Zoom hands) AND it is **not** the Albery host (it's `andigital`, `/var/www/andidigital`).
+  The MCP host `mcp.m4s.ru` is separate; `MCP_SHARED_SECRET` is not on 217. To connect, get the
+  secret from the owner / the Albery box, then `connect-mcp` add albery. (Also reconcile the stale
+  `production_host: 217...` + `/var/www/albery/.env` references in the albery docs.)
 
 Keep this section current as tasks complete.

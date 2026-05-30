@@ -92,9 +92,10 @@ The wrapper matches the native CLI, which you can use directly over SSH:
 Telegram/cron path and to keep the brain registry in sync.
 
 ## From the PC (secondary path)
-Server SSH creds live **locally in `c:\hermes-brain\.env`** (gitignored: IP / root / password) — the
-file `tmp_ssh.py` pattern (Paramiko) drives the same script on the server. The primary, intended flow
-is the owner pasting a URL to the Telegram bot and Hermes running the manager on itself.
+Server SSH creds live **locally in `c:\hermes-brain\.env`** (gitignored — IP / root user / password;
+real values never leave that file). A small Paramiko script reading that `.env` can drive the same
+manager on the server over SSH. The primary, intended flow is the owner pasting a URL to the Telegram
+bot and Hermes running the manager on itself.
 
 ## Pointers
 - Model & where things live: `connectors/mcp-servers.md`. What's connected now: `connectors/registry.yaml`.
