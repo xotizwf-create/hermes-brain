@@ -11,6 +11,14 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-31
+- Added **universal scale-adaptive server preflight** `engineering/server-preflight.md` (assess →
+  plan a memory budget from current headroom → protect live services → execute within the budget),
+  same protocol for a 512 MB VPS or a big dedicated box. Made it the mandatory first step for any
+  server work: rewrote `INDEX.md` core principle #6 + added a routing line (so it's in Hermes'
+  runtime system_prompt, which loads INDEX.md), and pointed `deployment.md` + `CLAUDE.md` rule #7 at
+  it. Key mechanics: reserve = max(20% RAM, 512 MB); on-box heavy work only if peak fits the budget
+  and only inside `systemd-run -p MemoryMax=… + nice/ionice` (runaway dies, app survives); else
+  off-box; `OOMScoreAdjust=-900` on critical services; never run build/test/migration on the live DB.
 - Added hard rule #7 (`CLAUDE.md`) + "Production resource safety (never OOM the box)" section
   (`engineering/deployment.md`): treat every prod host as fragile/memory-constrained, preflight
   `free -m`/`swapon` before heavy steps, build `dist/` + run tests/typecheck OFF the box, ship a

@@ -41,8 +41,9 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
    server do only `npm ci` + light smoke checks + one atomic release switch with rollback ready.
    **Never point a trial/dev instance, a test run, or a migration at the LIVE production database.**
    An OOM-kill on prod is never acceptable: a killed Node process cascades into DB connection drops
-   and user-facing failures (this is what broke LiteExams device-binding on 2026-05-30/31). Full
-   procedure: `engineering/deployment.md` → "Production resource safety (never OOM the box)".
+   and user-facing failures (this is what broke LiteExams device-binding on 2026-05-30/31). The
+   universal, scale-adaptive procedure (assess → plan budget → protect → execute, same for a 512 MB
+   VPS or a big box) is the mandatory first step for any server work: `engineering/server-preflight.md`.
 
 ## Key skills
 - `add-project` — register a new project safely (no secrets, refs only).

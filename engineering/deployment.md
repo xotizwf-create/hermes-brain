@@ -38,6 +38,10 @@ Use this guide for Linux server setup, deploys, services, nginx, logs, and produ
 
 ## Production resource safety (never OOM the box)
 
+**Run the universal preflight first: `engineering/server-preflight.md` (assess → plan budget →
+protect → execute).** It is mandatory before any server work and scales from a 512 MB VPS to a big
+dedicated box. The deploy-specific notes below assume that preflight has already set your budget.
+
 Hard rule #7 in `CLAUDE.md`. Many client servers are tiny VPSs (≈1 GB RAM, often no swap). A heavy
 step on such a box gets OOM-killed by the kernel, which then cascades: the killed Node process drops
 its Postgres connections, in-flight auth/payment requests fail, `Set-Cookie`/session writes are lost,
