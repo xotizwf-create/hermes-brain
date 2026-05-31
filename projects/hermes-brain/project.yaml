@@ -1,0 +1,35 @@
+id: hermes-brain
+name: Hermes Brain
+status: active
+summary: Каноническая база знаний, инструкций, навыков и проектной карты текущего Hermes-агента; критически важна для автоматизации рутины Александра.
+tags: [hermes, knowledge-base, automation, instructions, skills, self-improvement]
+
+github:
+  repo: https://github.com/xotizwf-create/hermes-brain
+  default_branch: main
+
+production:
+  host_alias: current-hermes-host
+  host: 217.198.12.236
+  working_dir: /root/.hermes/agent-knowledge
+  deploy: see deploy.md
+
+mcp:
+  name: ""
+  endpoint: ""
+
+connectors: [telegram]
+
+secret_refs:
+  - proj/hermes-brain/server/env
+  - proj/hermes-brain/github/deploy-key
+  - proj/hermes-brain/hermes/config
+  - proj/hermes-brain/hermes/env
+
+links:
+  - overview.md
+  - servers.md
+  - deploy.md
+  - runbook.md
+  - decisions.md
+  - incidents.md

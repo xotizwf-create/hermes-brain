@@ -1,0 +1,35 @@
+id: prostye-postavki
+name: Простые поставки
+status: active
+summary: Приложение для учета контрактов, товаров и коммерческих предложений в сфере госзакупок; критически важный рабочий проект.
+tags: [web, contracts, procurement, commercial-offers, mcp, postgres]
+
+github:
+  repo: https://github.com/xotizwf-create/prostye-postavki
+  default_branch: main
+
+production:
+  host_alias: prod-prostye-postavki
+  host: miramed32.ru
+  working_dir: уточнить после добавления серверных секретов
+  deploy: see deploy.md
+
+mcp:
+  name: prostye_postavki
+  endpoint: https://miramed32.ru/mcp        # secret path/token omitted on purpose
+
+connectors: []
+
+secret_refs:
+  - proj/prostye-postavki/server/env
+  - proj/prostye-postavki/ssh/root
+  - proj/prostye-postavki/mcp/token
+  - proj/prostye-postavki/database/url
+
+links:
+  - overview.md
+  - servers.md
+  - deploy.md
+  - runbook.md
+  - decisions.md
+  - incidents.md

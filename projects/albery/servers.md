@@ -23,6 +23,10 @@ secret_refs: [proj/albery/ssh/root]
   If already inside the server shell, run commands directly without `ssh root@...`.
 - 2026-05-30: legacy `andidigital.service` is stopped and disabled to free RAM for Hermes. Nginx still keeps the `andigital.ru` certificate and `/andigital/secret/` Vault proxy to `127.0.0.1:8787`; normal site root returns `503`.
 
+## Dedicated Albery Hermes agent
+- A separate Hermes agent runs on the same Albery server.
+- Scope: Albery-only work. Do not use it as the general assistant and do not mix its state/profile with Hermes Brain unless explicitly requested.
+
 ## Layout on server
 ```
 /var/www/albery/             project

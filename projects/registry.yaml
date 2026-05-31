@@ -24,3 +24,54 @@ projects:
   - bitrix
   - zoom
   path: projects/albery/
+- id: gov-exams-app
+  name: Лёгкие экзамены / LiteExams
+  status: active
+  summary: Платный сервис подготовки к госэкзаменам КФУ с базой вопросов, пользователей
+    и токенов; критически важный проект.
+  tags:
+  - web
+  - education
+  - subscriptions
+  - tokens
+  - node
+  - react
+  - postgres
+  - mcp
+  repo: https://github.com/xotizwf-create/gov-exams-app
+  production_host: liteexams.ru
+  connectors: []
+  path: projects/gov-exams-app/
+- id: hermes-brain
+  name: Hermes Brain
+  status: active
+  summary: Каноническая база знаний, инструкций, навыков и проектной карты текущего
+    Hermes-агента; критически важна для автоматизации рутины Александра.
+  tags:
+  - hermes
+  - knowledge-base
+  - automation
+  - instructions
+  - skills
+  - self-improvement
+  repo: https://github.com/xotizwf-create/hermes-brain
+  production_host: 217.198.12.236
+  connectors:
+  - telegram
+  path: projects/hermes-brain/
+- id: prostye-postavki
+  name: Простые поставки
+  status: active
+  summary: Приложение для учета контрактов, товаров и коммерческих предложений в сфере
+    госзакупок; критически важный рабочий проект.
+  tags:
+  - web
+  - contracts
+  - procurement
+  - commercial-offers
+  - mcp
+  - postgres
+  repo: https://github.com/xotizwf-create/prostye-postavki
+  production_host: miramed32.ru
+  connectors: []
+  path: projects/prostye-postavki/

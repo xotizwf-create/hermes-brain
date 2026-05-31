@@ -1,0 +1,35 @@
+id: gov-exams-app
+name: Лёгкие экзамены / LiteExams
+status: active
+summary: Платный сервис подготовки к госэкзаменам КФУ с базой вопросов, пользователей и токенов; критически важный проект.
+tags: [web, education, subscriptions, tokens, node, react, postgres, mcp]
+
+github:
+  repo: https://github.com/xotizwf-create/gov-exams-app
+  default_branch: main
+
+production:
+  host_alias: prod-liteexams
+  host: liteexams.ru
+  working_dir: уточнить по secure-доступу перед серверными работами
+  deploy: see deploy.md
+
+mcp:
+  name: gov_exams_tokens
+  endpoint: stdio:gov_exams_tokens        # HTTP endpoint, if any, is not confirmed yet
+
+connectors: []
+
+secret_refs:
+  - proj/gov-exams-app/server/env
+  - proj/gov-exams-app/ssh/root
+  - proj/gov-exams-app/database/url
+  - proj/gov-exams-app/tokens/admin
+
+links:
+  - overview.md
+  - servers.md
+  - deploy.md
+  - runbook.md
+  - decisions.md
+  - incidents.md

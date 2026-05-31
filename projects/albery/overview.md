@@ -10,8 +10,9 @@ secret_refs: []
 # Albery — overview
 
 ## What it is
-Flask backend + React/Vite frontend, plus an MCP context server that exposes company data
-(Bitrix tasks & chats, Zoom calls/transcripts, company knowledge, org structure) to assistants.
+Albery is Александр's main work project: Flask backend + React/Vite frontend, plus an MCP context server that exposes company data to assistants. It pulls Bitrix tasks, employee chats, Zoom calls/transcripts, org structure, regulations and Google Drive knowledge, then analyzes everything into management reports.
+
+A separate Hermes agent also runs on the same Albery server and is dedicated only to Albery work; do not confuse it with the current general-purpose Hermes Brain agent.
 
 ## Stack
 - Backend: Flask (`run_5002.py`, listens on `127.0.0.1:5002`), Python venv at `/var/www/albery/.venv`.
