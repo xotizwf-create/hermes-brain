@@ -65,6 +65,9 @@ If available RAM is small or there is no swap, **do not run the heavy step on th
   style asset check, and a lightweight smoke check (e.g. one API request on a scratch port).
 - Switch atomically (flip the `app` symlink / move) and `systemctl restart` **only** the affected
   services, with the previous release kept as a one-command rollback.
+- Keep releases finite: the active release, the immediately previous rollback release, and only a
+  small bounded history (usually the last 3–5 timestamped releases). After a successful deploy and
+  verification, prune older release directories so the server does not accumulate unbounded copies.
 
 **Never touch live data with non-prod processes:**
 - Do not point a trial/dev/test instance or a smoke run at the **production database** — it can

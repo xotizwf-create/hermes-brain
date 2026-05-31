@@ -11,6 +11,9 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-31
+- Added bounded release retention to deployment guidance: keep the active release, the immediately
+  previous rollback release, and only a small history (usually last 3–5 timestamped releases); after
+  successful verification, prune older release dirs so servers do not accumulate unlimited copies.
 - **Voice messages now work in Telegram (STT via Groq).** Root cause of the "endless thinking" on a
   voice note: `stt.provider` was `local` (faster-whisper) but the package wasn't installed, so
   `_transcribe_local` tried a runtime `pip install faster-whisper` + model download + CPU inference
