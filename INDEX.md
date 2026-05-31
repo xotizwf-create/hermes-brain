@@ -2,7 +2,7 @@
 id: index
 type: schema
 tags: [root, routing, entrypoint]
-updated: 2026-05-30
+updated: 2026-05-31
 secret_refs: []
 ---
 
@@ -24,6 +24,14 @@ current task — never load the whole brain unless asked for a full audit.
    and writes to `logs/changelog.md`.
 5. **Every doc carries frontmatter** (`id`, `type`, `tags`, `updated`, `secret_refs`) per
    `schema/frontmatter.schema.yaml`. This is the hook for future search/RAG without rewriting content.
+6. **Never overload or OOM a production host.** Treat every prod box as fragile/memory-constrained.
+   Before anything heavy (build/bundle/`vite build`, typecheck, full test suite, a trial/long-running
+   instance, a bulk migration): preflight `free -m` + `swapon --show`; if RAM is small (≈1 GB) or
+   there's no swap, **don't run it on the box** — build `dist/` and run tests/typecheck off-box, ship
+   a prebuilt tested release, and on the server do only `npm ci` + light smoke + one atomic switch
+   with rollback. **Never point a trial/test instance or migration at the live prod DB.** Full
+   procedure: `engineering/deployment.md` → "Production resource safety". (Caused the 2026-05-31
+   LiteExams OOM → DB drops → "another device" lockouts.)
 
 ## Areas
 
@@ -59,7 +67,8 @@ current task — never load the whole brain unless asked for a full audit.
 - **Add/manage a GitHub repo** → use skill `skills/new-repo/`.
 - **Credentials, SSH, tokens, DB URLs** → `engineering/secrets-access.md` + skill `secure-access`.
 - **Database / migrations / Postgres** → `engineering/database.md` + skill `postgres-production`.
-- **Deploy / systemd / nginx** → `engineering/deployment.md`.
+- **Deploy / systemd / nginx** → `engineering/deployment.md` (⚠ read "Production resource safety" —
+  build/test off-box, never OOM prod, never touch the live DB with a trial/test process).
 - **Security / auth / webhooks** → `engineering/security.md`.
 - **Tests / CI** → `engineering/testing.md`.
 - **Performance** → `engineering/optimization.md`.
