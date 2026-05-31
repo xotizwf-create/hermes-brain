@@ -20,7 +20,7 @@ edit on 2026-05-31.
 ## Root causes (mapped to that incident)
 | Symptom | Real cause | Lever |
 |---|---|---|
-| Worse code than Codex | Hermes runs `reasoning_effort=medium` (lowered to save the 5h limit); Codex CLI defaults to high | **Delegate the actual coding to `codex exec`** — it runs its own high-reasoning loop on the same account. Don't raise Hermes globally (burns the shared limit). |
+| Worse code than Codex | Hermes runs `reasoning_effort=medium` (lowered to save the 5h limit) | **Delegate the actual coding to `codex exec` pinned at `-c model_reasoning_effort="high"`** — a separate high-reasoning loop on the same account. Codex CLI's own default is `medium`, so high must be set explicitly (see `skills/codex-delegation`). Don't raise Hermes globally (burns the shared limit). |
 | Long, repetitive, "противоречивый результат" | Context **compressed mid-task** (twice); the model lost precise working state and re-derived it | Code work runs in a **separate process** (`codex exec` / `hermes -z`) with fresh, uncompressed context. Never `/compress` inside an active code task. |
 | Task killed after 10 min | Wall-clock guard classified a server edit as **general (600s)**, not code (3600s) | Fix the classifier so file/SSH/systemctl/config edits count as code. |
 | Knocked prod around, restarted clumsily | Live surgery over SSH + restart without health discipline | **Git-first** edit→validate→deploy, and the `small-prod-edit` skill for tiny live changes. |
@@ -35,7 +35,8 @@ tools.** It should hand the job to the purpose-built Codex coding loop and stay 
 Why this is the single biggest win:
 - **Quality**: Codex has `apply_patch`, repo awareness (`AGENTS.md`/`CLAUDE.md`), and a real
   edit→run-tests→fix loop — that's where "out of the box" quality comes from.
-- **Reasoning**: Codex runs at its own high reasoning regardless of Hermes' throttle.
+- **Reasoning**: Codex is pinned to `high` (`-c model_reasoning_effort="high"`) for coding — deep,
+  careful thinking from gpt-5.5 — independent of Hermes' `medium` chat throttle.
 - **Context**: it's a separate process, so Telegram session compression can't corrupt mid-task state.
 - **Cost is unchanged**: same ChatGPT account/quota, just used through the better harness.
 
@@ -66,8 +67,13 @@ back up first, restart the gateway from **outside** a chat turn. Current values:
    сервере"/"в боте"/"в коде". A tiny support-text edit that ends in a service restart is a code
    task, not a 10-minute chat task.
 3. **Reasoning.** Keep Hermes' own `reasoning_effort=medium` for cheap chat (limit-friendly); get
-   high reasoning for code by **delegating to Codex**, not by raising the global knob. Only consider
-   global `high` (or an API-key instance with no 5h cap) if delegation isn't enough.
+   high reasoning for code by **delegating to Codex pinned at `-c model_reasoning_effort="high"`**
+   (Codex's own default is `medium`, so it must be set explicitly), not by raising the global knob.
+   Trade-off: `high` spends more reasoning tokens against the shared 5h limit — accepted for coding
+   quality; keep tasks scoped. Optionally make it the server-wide Codex default too by setting
+   `model_reasoning_effort = "high"` in `/root/.codex/config.toml` (the per-invocation flag still
+   wins and is the canonical guarantee). Only consider raising Hermes' global knob — or an API-key
+   instance with no 5h cap — if delegation isn't enough.
 
 ## Hard rules
 - Beyond a one-liner, code through Codex (`skills/codex-delegation`), not free-hand tool calls.

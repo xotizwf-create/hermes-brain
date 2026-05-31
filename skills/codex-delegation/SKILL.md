@@ -21,6 +21,15 @@ ChatGPT account, in a separate process whose context can't be corrupted by Teleg
 - **Don't delegate** (do it directly via `skills/small-prod-edit`): a single trivial text/config
   string change on a live service. Spinning up Codex for one line is overkill.
 
+## Precondition: Codex must be installed on the work host
+Verify first: `command -v codex && codex --version`. **On prod `217.198.12.236` Codex CLI is
+installed (since 2026-05-31): `codex-cli 0.135.0` at `/usr/bin/codex`, authed (`codex login status`
+→ Logged in using ChatGPT), `/root/.codex/config.toml` pins `model_reasoning_effort = "high"`,
+outbound via VPN-Estonia (no 403).** If you ever land on a host where it's absent, install + auth
+first (`npm install -g @openai/codex`, copy `~/.codex/auth.json` from the PC to
+`/root/.codex/auth.json` 600, verify VPN/403, set `config.toml` → `model_reasoning_effort = "high"`).
+See `projects/albery/hermes.md`.
+
 ## Workflow
 1. **Locate & prep the repo** on the work host (clone/branch per `skills/project-onboarding`; branch
    off `main`, never code on `main`). Ensure the repo has `AGENTS.md`/`CLAUDE.md` if it carries one —
@@ -29,10 +38,19 @@ ChatGPT account, in a separate process whose context can't be corrupted by Teleg
    Run it in the repo dir so it has full context:
 
    ```bash
-   cd /path/to/repo && codex exec --skip-git-repo-check "Задача: <что сделать>. \
+   cd /path/to/repo && codex exec --skip-git-repo-check \
+   -c model_reasoning_effort="high" \
+   "Задача: <что сделать>. \
    Критерий готовности: <как понять что сделано>. Не трогай <запретные зоны>. \
    После правки прогони <тесты/линт>."
    ```
+
+   - **Always pin high reasoning** for delegated coding: `-c model_reasoning_effort="high"`.
+     Codex CLI's own default is `medium`, not high — so the deep, careful thinking we want from
+     gpt-5.5 during coding only happens if we set it explicitly. This is the whole point of
+     delegating: Hermes stays at `medium` (chat, limit-friendly), Codex thinks at `high` (code).
+     Caveat: `high` consumes more reasoning tokens → burns the shared ChatGPT 5h limit faster, so
+     keep tasks scoped and don't fire Codex for one-liners (those go to `small-prod-edit`).
 
    - Heavy/long jobs need room: Codex sessions can run minutes. If invoked from a cron `--script`,
      respect `cron.script_timeout_seconds` (900s on prod); from a chat turn it's a code task (3600s
@@ -50,6 +68,9 @@ ChatGPT account, in a separate process whose context can't be corrupted by Teleg
 ## Rules
 - Beyond a one-liner, code through Codex — don't free-hand multi-step edits through raw file/terminal
   tools (that's what produced the slow, low-quality 2026-05-31 edit).
+- Run Codex at `-c model_reasoning_effort="high"` for coding. Never drop it to medium/low to save
+  the limit — instead narrow the task. (Hermes' *own* knob stays `medium`; only the Codex subprocess
+  goes high.)
 - Always review and test Codex's diff; you own the result.
 - Never push to `main` without explicit ask; open a PR with a diff summary.
 - Never let the orchestrating session `/compress` while a Codex job is mid-flight.

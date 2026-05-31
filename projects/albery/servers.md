@@ -3,7 +3,7 @@ id: albery-servers
 type: project
 project: albery
 tags: [servers, access]
-updated: 2026-05-29
+updated: 2026-05-30
 secret_refs: [proj/albery/ssh/root]
 ---
 
@@ -21,6 +21,7 @@ secret_refs: [proj/albery/ssh/root]
 - Hermes home: `/root/.hermes`  (brain: `/root/.hermes/agent-knowledge`, secrets: `/root/.hermes/secure`)
 - Connection: prefer `python _deploy_helper.py new "<command>"` (reads secrets locally via Paramiko).
   If already inside the server shell, run commands directly without `ssh root@...`.
+- 2026-05-30: legacy `andidigital.service` is stopped and disabled to free RAM for Hermes. Nginx still keeps the `andigital.ru` certificate and `/andigital/secret/` Vault proxy to `127.0.0.1:8787`; normal site root returns `503`.
 
 ## Layout on server
 ```

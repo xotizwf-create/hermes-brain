@@ -11,6 +11,24 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-31
+- Installed Codex CLI on prod `217.198.12.236` (`codex-cli 0.135.0` → `/usr/bin/codex`), copied
+  `auth.json` from the PC to `/root/.codex/auth.json` (600), pinned `/root/.codex/config.toml`
+  → `model_reasoning_effort = "high"`. Verified: `codex login status` = Logged in using ChatGPT,
+  outbound IP 95.85.243.43 (VPN-Estonia, no 403), `codex exec` ran at `model gpt-5.5` / `high`.
+  Corrected the stale "Codex installed on prod" docs (it was the old host 186.246.7.32, not 217).
+  Delegation (`skills/codex-delegation`) now works on 217.
+- Documented self-serve prod access from the `hermes-brain` repo: gitignored `.env` (root SSH for
+  `217.198.12.236`) + paramiko path, so the agent reaches prod directly without the "Сайт мой"
+  deploy helper (`engineering/secrets-access.md`).
+- Pinned delegated coding to high reasoning: `codex exec` now always runs with
+  `-c model_reasoning_effort="high"` (`skills/codex-delegation`, `engineering/agentic-coding.md`).
+  Corrected the prior claim that Codex CLI defaults to high (it's `medium`) — high is now explicit.
+  Hermes' own `reasoning_effort` stays `medium`; only the Codex subprocess goes high. Noted the
+  5h-limit cost trade-off and the optional server-wide `/root/.codex/config.toml` default.
+- Added skill `hermes-self-repair` (diagnose-first runbook to fix the gateway runtime safely:
+  verify before touching, idempotent self-patchers, code-task classifier 3600s, config de-dup, one
+  observed restart with rollback) + routed in `INDEX.md`; logged the 2026-05-31 one-line-edit
+  incident in `projects/albery/incidents.md`. Lets the agent self-repair without blind prod restarts.
 - Added `engineering/agentic-coding.md` + skills `codex-delegation` and `small-prod-edit`; routed in
   `INDEX.md` — why: a trivial one-line prod edit (2026-05-31) was slow, repetitive and rattled prod.
   Root cause is the harness, not the model (Hermes IS gpt-5.5/Codex): throttled reasoning, mid-task

@@ -70,6 +70,9 @@ current task — never load the whole brain unless asked for a full audit.
 - **Tiny live prod change (one support-text string, a config flag, one line)** → skill
   `skills/small-prod-edit/` (backup → exact replace → verify → restart only that service; no
   subsystem fishing).
+- **Hermes gateway itself is broken/suspect (bloated or duplicated `run.py`, duplicated config
+  blocks, restart hangs/kills the bot, looping self-patcher, missing code-task classifier)** → skill
+  `skills/hermes-self-repair/` (diagnose first, restart last, rollback ready).
 - **AI-generated code cleanup / slop detection before PR or after agent edits** → skill
   `skills/aislop-code-quality/`.
 - **How the agent should answer/communicate** → `profile/`.

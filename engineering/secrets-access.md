@@ -86,6 +86,32 @@ create repos (not just the `hermes-brain` deploy key). Setup:
   PC, the token may rotate and the server breaks → re-run the reuse step (see `logs/changelog.md`
   2026-05-30) or mint a dedicated fine-grained PAT. Consider narrowing to a dedicated token later.
 
+### Self-serve prod access from the `hermes-brain` repo (2026-05-31)
+**The agent can reach prod directly from this repo — no "Сайт мой" deploy helper needed.** The repo
+root holds a **gitignored** `.env` (see `.gitignore`: `.env`, `.env.*`) with root SSH creds for the
+Hermes agent server `217.198.12.236` (keys: `IP сервера агента`, `Пользователь`, `Пароль`, plus a
+Gmail `App password`). Reference name: `agent/prod-217/ssh/root`.
+
+Use it like this (paramiko is installed locally; **never print or commit the values**):
+
+```python
+import paramiko
+host=user=pw=None
+for line in open(".env", encoding="utf-8"):
+    if "=" not in line: continue
+    k,v=line.split("=",1); k,v=k.strip(),v.strip()
+    if "IP" in k: host=v
+    elif k.startswith("Польз"): user=v
+    elif k=="Пароль": pw=v
+cli=paramiko.SSHClient(); cli.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+cli.connect(host, username=user, password=pw, timeout=20)
+# cli.exec_command(...) / cli.open_sftp() — back up before edits, chmod 600, restart only the target service
+```
+
+Rules: back up any file before editing (`*.bak.<ts>`), restart only the affected service, verify
+health, print only non-secret output. For server-side patches follow `skills/update-knowledge` /
+`skills/hermes-self-repair`. This `.env` is local-only and must never be committed.
+
 ## Owner-pasted secrets (the `.env` ingest exception)
 The base rule is "the agent does not type secrets — the owner places them in `secrets.yaml`". For
 project `.env`s there are two paths:
