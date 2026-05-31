@@ -558,6 +558,52 @@ ssh -L 9119:127.0.0.1:9119 root@186.246.7.32
 Albery (иначе версионная чехарда в отчётах). На тарифе Plus возможны upstream
 `usage limit` на тяжёлых прогонах — при необходимости перейти на API-ключ.
 
+### Голосовые сообщения — распознавание речи (STT), Groq (31.05.2026)
+
+**Что было сломано.** Любое голосовое в Telegram «вешало» агента (бесконечное
+«думаю…»). Hermes умеет принимать voice (скачивает .ogg, кэширует, вызывает
+`tools.transcription_tools.transcribe_audio`), но провайдер STT стоял `local`
+(faster-whisper), а сам пакет **не установлен**. В этом случае
+`_transcribe_local` пытается **на лету `pip install faster-whisper`** (ctranslate2/
+onnxruntime — сотни МБ) и затем качать+гонять модель CPU-инференсом. На этом хосте
+(**957 МБ RAM, свободно ~330 МБ**) это виснет минутами и грозит OOM — ровно
+запрещённый hard-rule #7 сценарий. **Локальный Whisper на этом проде гонять нельзя.**
+
+**Решение — облачный STT (нагрузка на сервер = 0): Groq.** Бесплатный тариф,
+`whisper-large-v3-turbo`, отличный русский, ~1-2 с. Настроено в `/root/.hermes/`:
+
+```yaml
+# config.yaml
+stt:
+  enabled: true
+  provider: groq
+  groq:
+    model: whisper-large-v3-turbo
+```
+
+```ini
+# /root/.hermes/.env  (chmod 600, секрет — НЕ в git)
+GROQ_API_KEY=gsk_...        # ключ из https://console.groq.com/keys (бесплатно)
+```
+
+После правки — `systemctl restart hermes-gateway`. Транскрипт подставляется в текст
+сообщения (`[The user sent a voice message... "<текст>"]`), и агент выполняет команду.
+
+**Грабли (важно для будущих проверок):**
+- Запрос к `api.groq.com` через `urllib`/`Python-urllib` **ловит Cloudflare 403 код
+  1010** (блок по User-Agent), хотя ключ валиден. Реальный код Hermes идёт через
+  `openai` SDK (httpx UA) — он **проходит**. Проверять ключ нужно SDK-путём
+  (`OpenAI(base_url='https://api.groq.com/openai/v1').models.list()`), а не curl/urllib.
+- Сервер ходит через VPN-Эстонию (`95.85.243.43`); до Groq достукивается.
+- `ffmpeg` на сервере есть (нужен Hermes для не-WAV входов локального STT; для Groq
+  конвертация не требуется — Groq принимает .ogg напрямую).
+
+**Сменить провайдер/ключ:** правишь `stt.provider` (`groq`/`openai`/`mistral`/`xai`) и
+соответствующий ключ в `.env` (`GROQ_API_KEY` / `VOICE_TOOLS_OPENAI_KEY` / …), затем
+рестарт gateway. Доступные провайдеры — `tools/transcription_tools.py`. Бэкапы перед
+правкой: `/root/.hermes/config.yaml.bak.<ts>`, `/root/.hermes/.env.bak.<ts>`.
+**Не переключай на `local` на этом боксе** (OOM, rule #7).
+
 ### Cron script timeout (увеличен 28.05.2026 до 900s)
 
 По умолчанию Hermes убивает `--script` cron-задачу через **120 секунд**. Для

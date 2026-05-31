@@ -11,6 +11,14 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-31
+- **Voice messages now work in Telegram (STT via Groq).** Root cause of the "endless thinking" on a
+  voice note: `stt.provider` was `local` (faster-whisper) but the package wasn't installed, so
+  `_transcribe_local` tried a runtime `pip install faster-whisper` + model download + CPU inference
+  on a 957 MB / ~330 MB-free box → hang/OOM risk (hard-rule #7). Fixed by switching to cloud STT:
+  set `stt.provider=groq` + `stt.groq.model=whisper-large-v3-turbo` in `/root/.hermes/config.yaml`,
+  added `GROQ_API_KEY` to `/root/.hermes/.env` (600), restarted gateway. Documented in
+  `projects/albery/hermes.md` (incl. the Cloudflare-1010-on-urllib gotcha — validate the key via the
+  openai SDK path, not curl/urllib). Backups: `config.yaml.bak.*`, `.env.bak.*`.
 - Added **universal scale-adaptive server preflight** `engineering/server-preflight.md` (assess →
   plan a memory budget from current headroom → protect live services → execute within the budget),
   same protocol for a 512 MB VPS or a big dedicated box. Made it the mandatory first step for any
