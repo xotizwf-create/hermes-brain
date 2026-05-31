@@ -275,3 +275,4 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   operational reference (UTF-8 verified clean, scanned for secrets — none). Curated docs link to it.
 - Hardened `scripts/validate.py`: skip README, expand secret-placeholder allowlist (getpass/env/...).
 - 2026-05-31: Added project map entries for Простые поставки, Лёгкие экзамены/LiteExams, Hermes Brain; updated Albery description with dedicated Albery Hermes-agent note.
+- 2026-05-31: Hardened reminder workflow: Moscow time by default, explicit timezone verification, active reminder list, and missed-reminder audit watchdog.

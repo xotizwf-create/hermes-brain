@@ -14,9 +14,11 @@ there; from a workstation use the `_deploy_helper.py new "<cmd>"` transport).
 hermes cron create <schedule> "<prompt>" [--name N] [--deliver telegram] [--repeat K] \
                    [--skill S] [--script F --no-agent] [--workdir DIR]
 ```
-- **schedule**: relative `30m` / `every 2h`, or cron `M H * * *`. **The prod server is on UTC**
-  (verified 2026-05-30), so a Moscow time = UTC−3 in the cron: "18:00 МСК" → `0 15 * * *`,
-  "10:00 МСК" → `0 7 * * *`. Always confirm the user means Moscow time, then convert.
+- **schedule**: relative `30m` / `every 2h`, cron `M H * * *`, or an explicit ISO timestamp.
+  **All user times without a timezone are Moscow time (Europe/Moscow)**. For one-shot reminders,
+  prefer an explicit timestamp with offset, e.g. `2026-05-31T15:00:00+03:00`, never a naive
+  timestamp. Cron expressions are evaluated by the scheduler/server timezone, so if a cron expression
+  is necessary, convert from МСК deliberately and verify the resulting `next_run_at` before confirming.
 - **--deliver telegram**: send the result to the owner's Telegram chat (default target). Use
   `platform:chat_id` for a specific chat.
 - **--repeat 1**: fire once then stop (one-shot reminder).
@@ -29,21 +31,40 @@ hermes cron create <schedule> "<prompt>" [--name N] [--deliver telegram] [--repe
 `Ответь ровно так и ничего больше: "⏰ Напоминание\n\nПора почистить зубы".`
 Watchers: header optional; on nothing-to-report return `[SILENT]`.
 
+## Reliability rules for reminders
+
+1. **Default timezone = Moscow**. If Александр says "в 15:00" without a timezone, treat it as
+   `15:00 Europe/Moscow`; do not ask again unless the date itself is ambiguous.
+2. **One-shot reminders use explicit timezone timestamps** whenever possible:
+   `YYYY-MM-DDTHH:MM:SS+03:00`. This prevents UTC/МСК shifts.
+3. **After creating a reminder, verify the actual scheduled time**: inspect the created job's
+   `next_run_at`, convert it to Moscow time, and confirm it equals the requested time.
+4. **If verification fails**, remove the bad job immediately and recreate it correctly.
+5. **Keep confirmations short**: `Поставил на 15:00 МСК` or `Поставил на завтра, 18:00 МСК`.
+   Do not show job ids, UTC, commands, paths or scheduler internals.
+6. **Active reminders list**: run `/root/.hermes/scripts/reminder_audit.py --list` and summarize in
+   Russian. If empty, say `Активных напоминаний нет`.
+7. **Missed-reminder check**: script-only cron job `reminder-audit` runs every 15 minutes. It stays
+   silent when all is OK and sends a short Russian alert only if an active reminder is overdue,
+   failed, or not delivered.
+
 ## One-shot reminder — "напомни завтра в 18:00 написать Даше"
-Compute tomorrow's date; fire once:
+Compute tomorrow's date in Europe/Moscow; fire once with an explicit Moscow offset:
 ```
-hermes cron create "0 18 30 5 *" "Напомни владельцу: написать Даше." \
+hermes cron create "2026-05-31T18:00:00+03:00" "Ответь ровно так и ничего больше: \"⏰ Напоминание\n\nНаписать Даше\"." \
   --name remind-dasha --deliver telegram --repeat 1
 ```
-(`M H DOM MON *` pins an exact date; `--repeat 1` removes it after firing. For "через 2 часа" just
-use `2h --repeat 1`.)
+Then verify the created job's `next_run_at` equals 18:00 МСК. For "через 2 часа" use `2h --repeat 1`
+and still check the computed next run.
 
 ## Recurring reminder — "каждый день в 10:00 напоминай скинуть архив"
+For recurring cron schedules, convert the user-facing Moscow time to the scheduler/server timezone and verify the first `next_run_at`. If the server is UTC, 10:00 МСК = 07:00 UTC:
 ```
-hermes cron create "0 10 * * *" "Напомни владельцу: нужно скинуть архив." \
+hermes cron create "0 7 * * *" "Ответь ровно так и ничего больше: \"⏰ Напоминание\n\nНужно скинуть архив\"." \
   --name daily-archive --deliver telegram
 ```
-Weekly example: `"0 10 * * 1"` (Mondays). Monthly: `"0 10 1 * *"` (1st of month).
+After creation, confirm to the user only in Moscow time: `Поставил ежедневно на 10:00 МСК`.
+Weekly example for Monday 10:00 МСК on a UTC server: `"0 7 * * 1"`. Monthly example for the 1st day 10:00 МСК: `"0 7 1 * *"`.
 
 ## Watcher — "смотри мою почту каждые 2 часа, говори только про важное (не рассылки)"
 Mail backend = Hermes built-in **`himalaya`** skill (IMAP). One-time prereq: configure himalaya with
