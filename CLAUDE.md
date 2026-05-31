@@ -33,6 +33,16 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
 4. **`projects/registry.yaml` is generated** — run `python scripts/build_registry.py`, never hand-edit.
 5. **Validate before committing:** `python scripts/validate.py` must pass.
 6. Keep LF line endings (`.gitattributes`); the brain syncs to a Linux server.
+7. **Never overload a production host — treat every prod box as fragile and memory-constrained.**
+   Before any memory-heavy step (build/bundle, typecheck, full test suite, a long-running or trial
+   app instance, a bulk migration) run a preflight: `free -m` + `swapon --show`. If RAM is small
+   (≈1 GB) or there is no swap, **do not run it on the box.** Build `dist/` and run tests/typecheck
+   **off the box** (locally or CI), upload only the prebuilt, already-tested release, and on the
+   server do only `npm ci` + light smoke checks + one atomic release switch with rollback ready.
+   **Never point a trial/dev instance, a test run, or a migration at the LIVE production database.**
+   An OOM-kill on prod is never acceptable: a killed Node process cascades into DB connection drops
+   and user-facing failures (this is what broke LiteExams device-binding on 2026-05-30/31). Full
+   procedure: `engineering/deployment.md` → "Production resource safety (never OOM the box)".
 
 ## Key skills
 - `add-project` — register a new project safely (no secrets, refs only).

@@ -11,6 +11,15 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-05-31
+- Added hard rule #7 (`CLAUDE.md`) + "Production resource safety (never OOM the box)" section
+  (`engineering/deployment.md`): treat every prod host as fragile/memory-constrained, preflight
+  `free -m`/`swapon` before heavy steps, build `dist/` + run tests/typecheck OFF the box, ship a
+  prebuilt tested release (`npm ci` + light smoke + atomic switch with rollback), and NEVER point a
+  trial/dev/test instance or migration at the live production DB. Standing rule behind the 2026-05-31
+  LiteExams incident (server-side `vite build` OOM-killed on a 1 GB box → dropped DB connections →
+  wave of "bound to another device" lockouts). Diagnosed gov-exams-app/LiteExams: token/device code
+  is byte-identical to old prod (deploy did NOT change auth logic); the lockouts are deploy-window
+  instability on 95 strict `server_cookie` tokens, subsiding once the box stabilised.
 - Installed Codex CLI on prod `217.198.12.236` (`codex-cli 0.135.0` → `/usr/bin/codex`), copied
   `auth.json` from the PC to `/root/.codex/auth.json` (600), pinned `/root/.codex/config.toml`
   → `model_reasoning_effort = "high"`. Verified: `codex login status` = Logged in using ChatGPT,
