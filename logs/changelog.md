@@ -289,3 +289,4 @@ Append-only, newest on top. Every approved change to the brain gets one line.
 - Hardened `scripts/validate.py`: skip README, expand secret-placeholder allowlist (getpass/env/...).
 - 2026-05-31: Added project map entries for Простые поставки, Лёгкие экзамены/LiteExams, Hermes Brain; updated Albery description with dedicated Albery Hermes-agent note.
 - 2026-05-31: Hardened reminder workflow: Moscow time by default, explicit timezone verification, active reminder list, and missed-reminder audit watchdog.
+- 2026-06-03: Secured Andigital MeshCentral human UI behind `/andigital/pc/<secret>/` hash-check gate; root UI closed; secret URL stored only in project env secrets.

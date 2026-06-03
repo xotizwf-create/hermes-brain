@@ -14,20 +14,26 @@ Andigital remote-PC access is the owner's simple support channel: send a link, t
 
 ## Live public entry points
 
-- Panel: `https://www.andigital.ru/`
-- New-PC onboarding shortcut: `https://www.andigital.ru/pc`
-- Default device group: `My PCs`
-- Current known personal PC: `DESKTOP-FSKTPR4`
+- Human panel entry: `https://www.andigital.ru/andigital/pc/<secret>/`.
+- The concrete secret URL is stored only in the secure per-project env store:
+  - all project envs: `ANDIGITAL_REMOTE_PC_ACCESS_URL`;
+  - Andigital env: `ANDIGITAL_PC_ACCESS_URL` and `ANDIGITAL_PC_ACCESS_KEY_SHA256`.
+- Old open entry points are intentionally closed: `https://www.andigital.ru/` and `https://www.andigital.ru/pc` must not expose the human UI.
+- Default device group: `My PCs`.
+- Current known personal PC: `DESKTOP-FSKTPR4`.
 
-No passwords, invite tokens, enrollment keys, private keys, or session keys belong in this repository.
+No passwords, invite tokens, URL keys, enrollment keys, private keys, or session keys belong in this repository.
 
 ## Server shape
 
 - MeshCentral runs as `meshcentral.service` from `/opt/meshcentral`.
-- It is reverse-proxied by nginx over HTTPS.
+- It is reverse-proxied by nginx over HTTPS, but the human UI is hidden behind `/andigital/pc/<secret>/`.
 - MeshCentral binds locally to `127.0.0.1:3001`.
+- `andigital-pc-gate.service` runs locally on `127.0.0.1:8791` and verifies the URL key by SHA-256 hash before nginx proxies the secret path to MeshCentral.
+- The raw URL key must not be stored in nginx config or committed docs. Nginx `access_log` must stay off for `/andigital/pc/` and `/andigital/secret/` paths.
 - Extra technical AMT/MPS exposure is disabled; do not open additional public ports unless the owner explicitly approves a new use case.
 - Nginx must keep the Hermes Vault path under `/andigital/secret/` working.
+- Root-level MeshCentral transport endpoints may remain reachable only for already-installed agents (`meshagents`, `meshsettings`, `agent.ashx`, `meshrelay.ashx`, `control.ashx`, `apf.ashx`); do not expose the browser UI at root.
 
 ## Mandatory safety baseline
 
@@ -72,9 +78,13 @@ Before changing the server:
 5. Restart only MeshCentral unless nginx config changed.
 6. Verify:
    - `meshcentral` is active;
+   - `andigital-pc-gate` is active;
    - nginx is active;
-   - `https://www.andigital.ru/` returns OK;
-   - `https://www.andigital.ru/pc` returns OK;
+   - `https://www.andigital.ru/` returns closed/not-found for the human UI;
+   - `https://www.andigital.ru/pc` returns closed/not-found;
+   - a wrong `/andigital/pc/<wrong>/...` key is rejected;
+   - the real secret URL from the secure env returns the modern landing page and MeshCentral login;
+   - root-level agent transport endpoints still reach MeshCentral as needed for installed agents;
    - expected users only;
    - expected device group/device still present;
    - all consent flags are enabled.
