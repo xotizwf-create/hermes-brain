@@ -303,18 +303,21 @@ systemd-служба. Мозг — ChatGPT Plus (`gpt-5.5`) через `openai-c
 
 Две автоматизации (`hermes cron list`):
 
-- `zoom-to-tasks` — `*/30 * * * *`: находит Zoom-созвоны без отчёта
+- `zoom-to-tasks` — `*/5 * * * *`: находит Zoom-созвоны без отчёта
   **без расхода Codex на пустых проверках**. Реализовано как `no-agent` cron
   со скриптом `/root/.hermes/scripts/zoom_watchdog.sh`: скрипт напрямую и быстро
   проверяет PostgreSQL (`zoom_calls` за последние 2 дня, `analytical_note=''`,
   транскрипт есть). Если новых Zoom нет — stdout пустой, Telegram молчит, LLM не
-  вызывается. Если есть новый Zoom — только тогда скрипт запускает `hermes -z` с
+  вызывается. Если есть новый Zoom — скрипт быстро запускает отдельный защищённый
+  worker и сам сразу завершается, чтобы короткий timeout `no-agent` cron не мог
+  оборвать качественное формирование отчёта. Worker уже запускает `hermes -z` с
   промптом из `/root/.hermes/scripts/hermes_zoom_to_tasks_prompt.txt`
   (источник правды в git: [scripts/hermes_zoom_to_tasks_prompt.txt](scripts/hermes_zoom_to_tasks_prompt.txt)).
   Промпт подставляет `$DATE_FROM`, `$DATE_TO`, `$MISSING` через awk-substitution
   (без проблем со sed-escaping для многострочных значений).
-  В скрипте есть `flock` и cooldown 7200 сек на тот же набор missing-call id,
-  чтобы при ошибке не жечь лимит каждые 30 минут.
+  В скрипте есть `flock`, отдельный lock на worker и короткий cooldown 900 сек
+  на тот же набор missing-call id; состояние «обработано» записывается только
+  после успешного завершения `hermes -z`, чтобы не глушить повтор после ошибки.
 
   **Что делает агент.** По промпту строго:
   1. `start_here_always_read_ai_instructions` → `get_context_guide`;

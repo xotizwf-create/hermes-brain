@@ -10,6 +10,16 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 
+## 2026-06-03
+- Closed the previously dirty `projects/albery/hermes.md` Zoom-watchdog documentation update: it records
+  the live 5-minute no-agent check, detached protected worker, separate worker lock, 900-second retry
+  cooldown, and "mark processed only after successful worker completion" behavior.
+- Added a dirty-brain safety rule to `skills/update-knowledge`: every self-edit starts with a clean
+  git-state check, resolves unrelated dirty files first, commits only intended files, pushes, and
+  verifies the repo is clean before final response.
+- Added server-side watchdog script `/root/.hermes/scripts/brain_dirty_watchdog.py`: silent when the
+  brain repo is clean, Telegram alert when uncommitted brain changes remain, throttled per dirty state.
+
 ## 2026-05-31
 - Added bounded release retention to deployment guidance: keep the active release, the immediately
   previous rollback release, and only a small history (usually last 3–5 timestamped releases); after

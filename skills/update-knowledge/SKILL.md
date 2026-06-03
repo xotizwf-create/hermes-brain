@@ -22,6 +22,10 @@ own; if none exists, create a new instruction. Do not ask separately whether to 
 - If unclear, drop into `inbox/unsorted.md` and propose classification later.
 
 ## Algorithm
+0. **Start clean.** Before editing, run `git status --short` in the brain repo. If there are unrelated
+   dirty files, stop and resolve them first: inspect the diff, then either commit the previous approved
+   change with its changelog line or explicitly revert junk. Do not mix unrelated brain edits in one
+   commit and do not leave the repo dirty after answering the owner.
 1. Decide the target file (or new file). New docs MUST have valid frontmatter
    (`id`, `type`, `updated`, optional `tags`/`secret_refs`/`aliases`) per `schema/frontmatter.schema.yaml`.
 2. Make the edit. Bump `updated`. Never write secret values — references only.
@@ -32,7 +36,9 @@ own; if none exists, create a new instruction. Do not ask separately whether to 
    (for example, "ничего не надо показывать, просто добавляй"), treat that as approval and proceed.
 6. Append a line to `logs/changelog.md`. For architectural choices, add to `logs/decisions.md`;
    for lessons, `logs/learning-log.md`; for errors, `logs/mistakes.md`.
-7. Sync to Hermes server.
+7. Commit only the intended files, push, then verify `git status --short` is clean. If any local-only
+   operational file remains, explain it to the owner and either add it to the proper repo/skill or move
+   it outside the brain.
 
 ## Sync model: two-way git (single source of truth)
 Canonical = the GitHub repo `hermes-brain`. Both the local working copy (`C:\hermes-brain`) and the
