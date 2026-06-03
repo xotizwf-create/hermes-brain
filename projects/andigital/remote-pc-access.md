@@ -20,7 +20,7 @@ Andigital remote-PC access is the owner's simple support channel: send a link, t
   - Andigital env: `ANDIGITAL_PC_ACCESS_URL` and `ANDIGITAL_PC_ACCESS_KEY_SHA256`.
 - Old open entry points are intentionally closed: `https://www.andigital.ru/` and `https://www.andigital.ru/pc` must not expose the human UI.
 - Default device group: `My PCs`.
-- Current known personal PC: `DESKTOP-FSKTPR4`.
+- Current known personal PC: display name/alias `ПК-Александр`; old Windows hostname may still appear as `DESKTOP-FSKTPR4` until Windows is renamed with an ASCII-safe system name.
 
 No passwords, invite tokens, URL keys, enrollment keys, private keys, or session keys belong in this repository.
 
@@ -64,6 +64,7 @@ Current intended consent flags:
 
 - Never bypass the local-consent prompt. If the PC owner does not approve the prompt, stop and ask them to approve locally.
 - Do not silently inspect private data. For “what do you see?” first list window titles; take a screenshot only when explicitly useful for the owner’s request.
+- For searches on a connected PC, do not browse visually or open the remote desktop first. Use the fastest narrow read-only command path through MeshCentral Terminal/RunCommand: list window titles, running processes, target directories, or specific filename/text matches with a focused PowerShell query; output short UTF-8 lines and summarize only the answer. Use screenshots or interactive desktop control only after the command-line search is insufficient or the owner asks for a visual check.
 - Do not click, type, move the mouse, upload/download files, execute commands, or change PC settings unless the owner explicitly asked for that exact action.
 - Summaries to the owner should describe only the practical result. Do not dump logs, database ids, config secrets, screenshots, private message text, or credentials.
 - If a temporary operator account is created for a diagnostic action, remove it before final response and verify that only the expected account(s) remain.

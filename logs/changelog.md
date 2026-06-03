@@ -11,6 +11,7 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-03
+- Added Andigital remote-PC fast-search guidance: prefer focused MeshCentral RunCommand/PowerShell queries for windows, processes, files, and text before visual desktop browsing; recorded the owner PC display alias as `ПК-Александр`.
 - Added Andigital MeshCentral internal-panel theming guidance: use `custom.css`/`custom.js` for a modern cosmetic layer only, without changing auth, websocket/agent paths, cookies, permissions, or local-consent safeguards.
 - Closed the previously dirty `projects/albery/hermes.md` Zoom-watchdog documentation update: it records
   the live 5-minute no-agent check, detached protected worker, separate worker lock, 900-second retry
