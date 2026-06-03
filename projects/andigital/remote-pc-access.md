@@ -38,9 +38,10 @@ The remote-access system must remain visible and consent-based:
 3. Only expected owner/admin accounts remain; temporary diagnostic users must be deleted before finishing a task.
 4. MeshCentral sessions use a short idle timeout and logout on idle.
 5. Password requirements must be enforced for future password changes.
-6. Desktop, Terminal, and Files access must require local consent on the PC.
-7. Desktop access must show the local privacy bar / notification that a remote connection is active.
-8. The notification text must clearly say that remote access is active and tell the local user what to do if it is unexpected.
+6. 2FA is an owner-only manual setup step: do not generate/store the owner’s TOTP secret in automation; Александр must enable 2FA in his own profile after login.
+7. Desktop, Terminal, and Files access must require local consent on the PC.
+8. Desktop access must show the local privacy bar / notification that a remote connection is active.
+9. The notification text must clearly say that remote access is active and tell the local user what to do if it is unexpected.
 
 Current intended consent flags:
 
