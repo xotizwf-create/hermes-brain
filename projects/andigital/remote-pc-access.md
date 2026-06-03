@@ -34,6 +34,7 @@ No passwords, invite tokens, URL keys, enrollment keys, private keys, or session
 - Extra technical AMT/MPS exposure is disabled; do not open additional public ports unless the owner explicitly approves a new use case.
 - Nginx must keep the Hermes Vault path under `/andigital/secret/` working.
 - Root-level MeshCentral transport endpoints may remain reachable only for already-installed agents (`meshagents`, `meshsettings`, `agent.ashx`, `meshrelay.ashx`, `control.ashx`, `apf.ashx`); do not expose the browser UI at root.
+- The internal MeshCentral UI is cosmetically themed through the official custom static files: `public/styles/custom.css` and `public/scripts/custom.js` under the MeshCentral install. These files may style the header, device list, toolbar, cards, forms, menus, and login shell, but must not change authentication, websocket/agent paths, consent prompts, permissions, cookies, or remote-control logic.
 
 ## Mandatory safety baseline
 
@@ -72,8 +73,8 @@ Current intended consent flags:
 Before changing the server:
 
 1. Run the universal server preflight and keep the operation light; the host is memory-constrained.
-2. Back up MeshCentral config and database before editing.
-3. Make narrow config/database changes only.
+2. Back up MeshCentral config and database before editing. For visual theme edits, back up `custom.css` and `custom.js` before overwriting.
+3. Make narrow config/database/theme changes only.
 4. Fix ownership of MeshCentral data back to the service user after any recovery/local admin command.
 5. Restart only MeshCentral unless nginx config changed.
 6. Verify:
