@@ -228,6 +228,9 @@ Append-only, newest on top. Every approved change to the brain gets one line.
 - Added `logs/session-2026-05-30.md` — session retrospective + "how Hermes is trained / how it scales
   itself" + a map of where everything lives. Refreshed `CLAUDE.md` state and `INDEX.md` so both the
   next Claude session and Hermes itself find it.
+- Added a `reminders-and-watchers` note for ChatGPT/Codex account-pool checks: how to identify the
+  active entry vs temporarily limited entries, explain email/no-email account switching to the owner,
+  convert cooldowns to МСК, and avoid exposing emails/tokens.
 - Activation (mail watcher): installed `himalaya` v1.2.0 on prod, configured the Gmail account
   (App Password in `/root/.hermes/secure/gmail_app_password`, 600, referenced via `auth.cmd` — not in
   repo/config). Created cron `mail-watch` (every 2h, `--skill himalaya`, deliver telegram). IMAP

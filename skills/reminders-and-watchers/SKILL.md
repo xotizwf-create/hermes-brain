@@ -108,6 +108,30 @@ it expires. Subscription end-dates aren't in the OAuth tokens → kept manually 
 - Cron `chatgpt-sub-watch`: `0 7 * * *` (10:00 МСК), `--script chatgpt_sub_watch.py --no-agent
   --deliver telegram`. Accounts pool: `hermes auth list`.
 
+### ChatGPT/Codex account pool — checking active vs limited account
+Use this when Александр asks which ChatGPT/Codex account Hermes is using, whether it switched after a
+limit, or whether the active account is the one with email / without email.
+
+1. Check the pool state with `hermes auth list openai-codex` (or `hermes auth list` if provider is
+   unclear). **Never paste raw emails, token values, refresh tokens or auth files into chat.** It is OK
+   to say human labels only: "аккаунт с почтой" / "аккаунт без почты" / "первый доступ" / "второй
+   доступ".
+2. Interpret markers:
+   - `←` = currently selected/active pool entry.
+   - `rate-limited`, `usage_limit_reached`, `429`, `exhausted` = this entry is temporarily limited.
+   - A remaining time like `2h left` is the expected cooldown; convert it to МСК before telling the
+     owner.
+3. Hermes itself rotates pool entries on provider failures: for usage-limit errors it marks the
+   current entry exhausted and switches to the next usable entry. For ordinary rate limits it may retry
+   once, then rotate on the next failure. So if the emailed account shows limited and the no-email
+   account has `←`, explain: "переключились на аккаунт без почты, потому что почтовый сейчас на лимите".
+4. If the owner asks "ты только что переключился?", answer from the current pool state plus timestamps
+   if available; do not claim an exact switch moment unless logs show it. Safe wording: "по текущему
+   состоянию активен X, Y на лимите до примерно HH:MM МСК".
+5. If all entries are exhausted, tell the owner plainly that the model pool is temporarily out of
+   usable ChatGPT/Codex access and give the nearest cooldown time. Do **not** remove accounts for
+   temporary usage limits; removal is only for expired subscriptions via `chatgpt-sub-watch`.
+
 ## Manage
 ```
 hermes cron list                 # all jobs + ids
