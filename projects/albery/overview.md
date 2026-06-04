@@ -3,7 +3,7 @@ id: albery-overview
 type: project
 project: albery
 tags: [overview]
-updated: 2026-05-29
+updated: 2026-06-04
 secret_refs: []
 ---
 
@@ -32,6 +32,9 @@ A separate Hermes agent also runs on the same Albery server and is dedicated onl
 ## Current state
 Active. Near-realtime Bitrix task sync (outgoing webhook), incremental Zoom recording sync,
 Zoom webhooks. Big external sync cron runs daily 18:00 Europe/Moscow.
+
+## Critical external dependencies
+- Bitrix Marketplace subscription is mandatory for Albery. Without an active Marketplace subscription in Bitrix, message delivery and pulling information from Bitrix will not work reliably / may stop working entirely.
 
 ## Full reference
 The legacy `agent.md` import (now de-mojibaked) is split into focused docs; the docs in this

@@ -2,13 +2,16 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-05-31
+updated: 2026-06-04
 secret_refs: []
 ---
 
 # Changelog
 
 Append-only, newest on top. Every approved change to the brain gets one line.
+
+## 2026-06-04
+- Recorded Albery's critical Bitrix dependency in `projects/albery/overview.md`: an active Bitrix Marketplace subscription is mandatory; without it, message delivery and pulling information from Bitrix may stop working.
 
 ## 2026-06-03
 - Added Andigital remote-PC fast-search guidance: prefer focused MeshCentral RunCommand/PowerShell queries for windows, processes, files, and text before visual desktop browsing; recorded the owner PC display alias as `ПК-Александр`.
