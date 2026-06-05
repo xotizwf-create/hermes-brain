@@ -3,7 +3,7 @@ id: albery-hermes
 type: project
 project: albery
 tags: [albery, hermes, agent, codex, cron, telegram, mcp, reference]
-updated: 2026-05-30
+updated: 2026-06-05
 secret_refs: [proj/albery/ssh/root]
 ---
 
@@ -678,6 +678,27 @@ ssh root@186.246.7.32 'hermes mcp test albery 2>&1 | grep -E "Tools discovered|<
 
 Признак, что toolset устарел: Hermes отказывает с описанием **другого** инструмента (видел 2026-05-28 после деплоя `send_bitrix_message` — Hermes сослался на `send_owner_recommendations_to_bitrix`, потому что в кэше сессии нового инструмента ещё не было).
 
+
+### Command approval mode = off (полный авто-доступ codex, 2026-06-05)
+
+По запросу владельца снят интерактивный approval-gate Hermes: в `/root/.hermes/config.yaml`
+`approvals.mode: manual` → `off` (yolo-эквивалент). Telegram-агент больше НЕ показывает
+«Command Approval Required» / security-scan (Tirith «Pipe to interpreter» и пр.) и выполняет
+команды без подтверждения.
+
+- **YAML-нюанс:** `mode: off` PyYAML читает как boolean `False`; код `tools/approval.py`
+  (`_normalize`, ~847) намеренно трактует `False` как строку `"off"` — значение корректно,
+  кавычки не нужны. Проверено: `raw=False → normalized=off`.
+- **Что остаётся несбрасываемым даже при `off`:** HARDLINE-блок-лист (~12 катастрофичных
+  паттернов, `approval.py` `HARDLINE_PATTERNS`, проверяется ДО yolo — `rm -rf /` и т.п.). Хост
+  защищён от необратимого. Плюс агент не может сам править свой `~/.hermes/config.yaml`/`.env`
+  (sensitive write target) — менять только напрямую по SSH под root.
+- `approvals.cron_mode: deny` НЕ трогали — это про cron-контекст, не интерактив.
+- **Бэкап перед правкой:** `/root/.hermes/config.yaml.bak.1780671169`.
+- **Откат:** вернуть `approvals.mode: manual` (или восстановить бэкап) + `systemctl restart
+  hermes-gateway`.
+- После правки сделан `systemctl restart hermes-gateway`; в активном Telegram-чате нужен `/reset`,
+  чтобы сессия подтянула новый режим.
 
 ### Дорожная карта: внедрение Hermes в компанию + RBAC по ролям (план, не выполнено)
 

@@ -305,3 +305,9 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   "not under real name"), and owner (Александр) must never be the responsible in the decisions table.
   Also: read «О компании» by file name, not multi-word keyword search. Regenerated + saved test
   weekly report 01.06–05.06 (v3, current). Recorded in brain: new `projects/albery/owner-reports.md`.
+- 2026-06-05: Albery Hermes — disabled the interactive command approval gate at owner's request:
+  `/root/.hermes/config.yaml` `approvals.mode: manual` → `off` (yolo-equivalent), gateway restarted.
+  codex no longer prompts «Command Approval Required»/Tirith security-scan; HARDLINE blocklist still
+  unbypassable, agent still can't edit its own config.yaml/.env. Backup `config.yaml.bak.1780671169`.
+  Documented in `projects/albery/hermes.md`. Also set global Claude Code permission policy
+  (`~/.claude/settings.json`): allow all except external-send tools + `git push`.
