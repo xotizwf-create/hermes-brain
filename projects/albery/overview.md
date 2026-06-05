@@ -44,3 +44,6 @@ folder are the curated summary, consult these for full detail:
 - [vpn-gateway.md](vpn-gateway.md) — AmneziaWG outbound-via-Estonia gateway.
 - [hermes.md](hermes.md) — Hermes autonomous agent: setup, Codex provider, cron, Telegram,
   sessions, training, roadmap.
+- [owner-reports.md](owner-reports.md) — owner daily/weekly/Zoom report contracts, the
+  AI-instruction layer (`upsert_ai_instruction`), and hard rules (identity by transcription,
+  owner not responsible, read company knowledge by file name).

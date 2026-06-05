@@ -2,7 +2,7 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-06-04
+updated: 2026-06-05
 secret_refs: []
 ---
 
@@ -298,3 +298,10 @@ Append-only, newest on top. Every approved change to the brain gets one line.
 - 2026-05-31: Added project map entries for Простые поставки, Лёгкие экзамены/LiteExams, Hermes Brain; updated Albery description with dedicated Albery Hermes-agent note.
 - 2026-05-31: Hardened reminder workflow: Moscow time by default, explicit timezone verification, active reminder list, and missed-reminder audit watchdog.
 - 2026-06-03: Secured Andigital MeshCentral human UI behind `/andigital/pc/<secret>/` hash-check gate; root UI closed; secret URL stored only in project env secrets.
+- 2026-06-05: Albery — authored a new owner-weekly report contract in the live AI-instruction layer
+  (`Формирование отчетов / Еженедельный отчет по компании`, via `upsert_ai_instruction` → prod DB):
+  team verdict + meeting-rhythm + regulation compliance + per-leader accept/partial/reject format.
+  Encoded two hard rules from owner feedback — identity by transcription not Zoom metadata (no false
+  "not under real name"), and owner (Александр) must never be the responsible in the decisions table.
+  Also: read «О компании» by file name, not multi-word keyword search. Regenerated + saved test
+  weekly report 01.06–05.06 (v3, current). Recorded in brain: new `projects/albery/owner-reports.md`.

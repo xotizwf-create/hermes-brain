@@ -36,4 +36,5 @@ links:
   - runbook.md
   - decisions.md
   - incidents.md
+  - owner-reports.md     # owner daily/weekly/Zoom report contracts + hard rules (AI-instruction layer)
   - server-context.md   # full legacy reference (imported from agent.md)
