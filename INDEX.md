@@ -2,7 +2,7 @@
 id: index
 type: schema
 tags: [root, routing, entrypoint]
-updated: 2026-06-04
+updated: 2026-06-05
 secret_refs: []
 ---
 
@@ -87,6 +87,9 @@ current task — never load the whole brain unless asked for a full audit.
   `skills/hermes-self-repair/` (diagnose first, restart last, rollback ready).
 - **AI-generated code cleanup / slop detection before PR or after agent edits** → skill
   `skills/aislop-code-quality/`.
+- **Coding behavior rules to avoid LLM pitfalls (don't assume, simplicity first, surgical edits,
+  verifiable goals) — apply when writing/reviewing/refactoring code** → skill `skills/karpathy-guidelines/`
+  (Karpathy-derived, MIT; pairs with `engineering/agentic-coding.md` + `aislop-code-quality`).
 - **How the agent should answer/communicate** → `profile/`.
 - **Hermes UX: "Думаю…"/typing, live step progress, reasoning, tone — config knobs** → `engineering/hermes-gateway-ux.md`.
 - **Build a team of agents / split into multiple agents / multi-agent design / when to add an agent**

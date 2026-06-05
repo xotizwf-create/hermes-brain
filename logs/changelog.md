@@ -10,6 +10,9 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 
+## 2026-06-05
+- Added skill `skills/karpathy-guidelines/` (vendored from `multica-ai/andrej-karpathy-skills`, MIT): four behavioral rules to reduce common LLM coding mistakes — Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution. Derived from Andrej Karpathy's observations on LLM coding pitfalls. Routed in `INDEX.md`; pairs with `engineering/agentic-coding.md` and `aislop-code-quality`.
+
 ## 2026-06-04
 - Recorded Albery's critical Bitrix dependency in `projects/albery/overview.md`: an active Bitrix Marketplace subscription is mandatory; without it, message delivery and pulling information from Bitrix may stop working.
 - Implemented the notifications channel: all cron/reminder/watcher deliveries now route to the Telegram group «Уведомления» (`chat_id -5120862157`) via `TELEGRAM_HOME_CHANNEL` + per-job `origin` redirect; the owner's DM (`1451982360`) stays clean for dialogue. Verified `hermes send` → group = sent. Recorded in `engineering/agent-team.md`.
