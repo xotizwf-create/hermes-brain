@@ -12,6 +12,7 @@ Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-04
 - Recorded Albery's critical Bitrix dependency in `projects/albery/overview.md`: an active Bitrix Marketplace subscription is mandatory; without it, message delivery and pulling information from Bitrix may stop working.
+- Implemented the notifications channel: all cron/reminder/watcher deliveries now route to the Telegram group «Уведомления» (`chat_id -5120862157`) via `TELEGRAM_HOME_CHANNEL` + per-job `origin` redirect; the owner's DM (`1451982360`) stays clean for dialogue. Verified `hermes send` → group = sent. Recorded in `engineering/agent-team.md`.
 - Added `engineering/agent-team.md`: grounded multi-agent build guide synthesized from three authorities — Anthropic "Building Effective Agents", Microsoft Azure Architecture Center "AI Agent Orchestration Patterns" (2026-05), and 12-factor-agents — adapted to the Главный+Темур design (one workflow = one agent, orchestrator+workers, own-your-context, checklist before adding an agent). Records the 2026-06-04 decision: notifications = a delivery channel (separate Telegram chat, same main bot), not a second agent. Routed in `INDEX.md`.
 
 ## 2026-06-03
