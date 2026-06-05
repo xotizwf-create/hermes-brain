@@ -2,7 +2,7 @@
 id: index
 type: schema
 tags: [root, routing, entrypoint]
-updated: 2026-05-31
+updated: 2026-06-04
 secret_refs: []
 ---
 
@@ -89,6 +89,9 @@ current task — never load the whole brain unless asked for a full audit.
   `skills/aislop-code-quality/`.
 - **How the agent should answer/communicate** → `profile/`.
 - **Hermes UX: "Думаю…"/typing, live step progress, reasoning, tone — config knobs** → `engineering/hermes-gateway-ux.md`.
+- **Build a team of agents / split into multiple agents / multi-agent design / when to add an agent**
+  → `engineering/agent-team.md` (grounded in 12-factor-agents + Anthropic "Building Effective Agents":
+  one workflow = one agent, orchestrator+workers, own your context; checklist before adding an agent).
 - **Change the brain itself / how Hermes scales itself** → skill `skills/update-knowledge/`.
 - **How Hermes was built & how it's taught (orientation)** → `logs/session-2026-05-30.md`.
 

@@ -12,6 +12,7 @@ Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-04
 - Recorded Albery's critical Bitrix dependency in `projects/albery/overview.md`: an active Bitrix Marketplace subscription is mandatory; without it, message delivery and pulling information from Bitrix may stop working.
+- Added `engineering/agent-team.md`: grounded multi-agent build guide synthesized from three authorities — Anthropic "Building Effective Agents", Microsoft Azure Architecture Center "AI Agent Orchestration Patterns" (2026-05), and 12-factor-agents — adapted to the Главный+Темур design (one workflow = one agent, orchestrator+workers, own-your-context, checklist before adding an agent). Records the 2026-06-04 decision: notifications = a delivery channel (separate Telegram chat, same main bot), not a second agent. Routed in `INDEX.md`.
 
 ## 2026-06-03
 - Added Andigital remote-PC fast-search guidance: prefer focused MeshCentral RunCommand/PowerShell queries for windows, processes, files, and text before visual desktop browsing; recorded the owner PC display alias as `ПК-Александр`.
