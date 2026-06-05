@@ -1,6 +1,6 @@
 ---
 name: karpathy-guidelines
-description: Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiable success criteria.
+description: Apply when writing, editing, refactoring, reviewing, or debugging any non-trivial code. Four rules (from Andrej Karpathy's LLM-coding-pitfalls) to avoid wrong assumptions, overcomplication, collateral edits to existing code, and vague success criteria. Skip for trivial one-liners or non-code tasks.
 license: MIT
 ---
 
@@ -11,7 +11,17 @@ Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej
 > Vendored from `multica-ai/andrej-karpathy-skills` (MIT). Pairs with `engineering/agentic-coding.md`
 > and skill `aislop-code-quality`.
 
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+## When to use this skill
+
+Load and follow it at the **start of any non-trivial coding task**:
+- writing a new feature / module / script; editing or refactoring existing code; fixing a bug;
+  reviewing a PR or diff; designing an API.
+- **Especially** when: touching unfamiliar or existing code; the request is vague or has multiple
+  interpretations; or you feel tempted to add abstraction / "flexibility" / error-handling nobody asked for.
+
+**Skip** for trivial one-line changes and non-code work (docs, chat answers) — use judgment.
+
+**Tradeoff:** These guidelines bias toward caution over speed.
 
 ## 1. Think Before Coding
 

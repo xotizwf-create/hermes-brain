@@ -2,7 +2,7 @@
 id: agentic-coding
 type: engineering
 tags: [hermes, coding, codex, quality, reasoning, compression, prod-edit, delegation]
-updated: 2026-05-31
+updated: 2026-06-05
 secret_refs: []
 ---
 
@@ -76,6 +76,9 @@ back up first, restart the gateway from **outside** a chat turn. Current values:
    instance with no 5h cap — if delegation isn't enough.
 
 ## Hard rules
+- Before any non-trivial code task (write/edit/refactor/review/debug), load and follow
+  `skills/karpathy-guidelines`: think before coding (surface assumptions, ask), simplicity first,
+  surgical changes (don't touch unrelated code/comments), verifiable success criteria.
 - Beyond a one-liner, code through Codex (`skills/codex-delegation`), not free-hand tool calls.
 - Backup before any live edit; restart only the affected service; verify health before reporting.
 - Don't diagnose subsystems that aren't reported broken (`small-prod-edit` scope discipline).

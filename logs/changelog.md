@@ -12,6 +12,7 @@ Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-05
 - Added skill `skills/karpathy-guidelines/` (vendored from `multica-ai/andrej-karpathy-skills`, MIT): four behavioral rules to reduce common LLM coding mistakes — Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution. Derived from Andrej Karpathy's observations on LLM coding pitfalls. Routed in `INDEX.md`; pairs with `engineering/agentic-coding.md` and `aislop-code-quality`.
+- Wired karpathy-guidelines into the agent's workflow so it knows when to apply it: sharpened the skill `description` with explicit triggers (use on any non-trivial write/edit/refactor/review/debug; skip trivial/non-code) + added a "When to use" section; added it as the first hard rule in `engineering/agentic-coding.md`; published to the native Hermes skill registry (`/root/.hermes/skills/software-development/karpathy-guidelines`) so it shows in `hermes skills list` and is auto-surfaced.
 
 ## 2026-06-04
 - Recorded Albery's critical Bitrix dependency in `projects/albery/overview.md`: an active Bitrix Marketplace subscription is mandatory; without it, message delivery and pulling information from Bitrix may stop working.
