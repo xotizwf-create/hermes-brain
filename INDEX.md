@@ -53,6 +53,9 @@ current task — never load the whole brain unless asked for a full audit.
 - **Project work / "connect to X" / deploy X** → read `projects/registry.yaml`, find the project,
   load only `projects/<slug>/`. For credentials use the `secure-access` skill.
 - **Add a new project** → use skill `skills/add-project/`.
+- **Audit / document / "разбери" an existing project — full dossier по полочкам (plain-language human
+  summary + structure, architecture, database, API & integrations, runbook) with Mermaid diagrams** →
+  skill `skills/project-audit/` (inspects repo + prod read-only, flags unknowns, then registers via add-project).
 - **Securely take a project's secrets** (owner pastes a `.env` / prod-server password → store in the
   secure zone, never echoed; remember repo + prod host) → skill `skills/store-project-secrets/`.
 - **Secret-manager web UI** (browser, tied to GitHub repos; install/operate/resell) → `skills/secure-access/vault/` (README).
