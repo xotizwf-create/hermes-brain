@@ -11,6 +11,7 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-06
+- Fixed Telegram file/attachment delivery: `gateway.media_delivery_allow_dirs` was empty, so every attachment was silently dropped (`Skipping unsafe MEDIA directive path`) — the agent falsely reported «отправил» and hung on retries. Set allow-dirs to `[/root/audits, /root/.hermes/outbox, /tmp]`, documented the gotcha + a verify-delivery rule in `engineering/hermes-gateway-ux.md`, and pinned a SOUL rule (write deliverables to an allowed dir, never claim sent without confirmation; for hard-confirmed binaries use Telegram `sendDocument` and check `ok:true`).
 - Corrected `projects/prostye-postavki/` documentation after production/GitHub reconciliation: source repo is `xotizwf-create/prostavki`, live code is `/var/www/prostye-postavki/app`, service is `prostye-backend.service`, and project deploy rules now require GitHub `main` to match the production checkout after any server-side change.
 
 ## 2026-06-05

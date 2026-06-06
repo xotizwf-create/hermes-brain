@@ -1,8 +1,8 @@
 ---
 id: hermes-gateway-ux
 type: engineering
-tags: [hermes, gateway, telegram, ux, config, display, reasoning, progress]
-updated: 2026-05-30
+tags: [hermes, gateway, telegram, ux, config, display, reasoning, progress, media, attachments]
+updated: 2026-06-06
 secret_refs: []
 ---
 
@@ -46,6 +46,20 @@ small `run.py` patch to translate `_heartbeat_text` + drop `_status_detail` — 
 - `display.personality` was `kawaii` (a cutesy persona). If the tone ever feels off / сюсюкающим,
   switch it to a neutral persona (e.g. `concise`) or empty. Left as-is 2026-05-30 — the system_prompt
   "деловой тон, без сюсюканья" line should dominate.
+
+## File / attachment delivery (don't silently drop files)
+The gateway sends a file/attachment **only if its path is under `gateway.media_delivery_allow_dirs`**.
+If that list is **empty** (install default), EVERY attachment is silently dropped with a log-only
+warning `Skipping unsafe MEDIA directive path: …`: the model emits a MEDIA directive, the file never
+arrives, and the agent gets no signal — so it falsely reports «отправил» and may hang on retries.
+This is what made Hermes "never send files" (found 2026-06-06 on a project-audit `.zip`).
+
+- **Fix (217, 2026-06-06):** `gateway.media_delivery_allow_dirs: [/root/audits, /root/.hermes/outbox, /tmp]`.
+- **Write deliverables only into an allowed dir** (`/root/audits` or `/root/.hermes/outbox`).
+- **Always verify delivery — never claim «отправил» without confirmation.** For a hard-confirmed
+  binary attachment, bypass the agent loop and use the Telegram Bot API directly:
+  `curl -s -F chat_id=<id> -F document=@<path> "https://api.telegram.org/bot$TOKEN/sendDocument"` →
+  check `"ok":true`. Note: `hermes send --file` sends a **text body**, not an attachment.
 
 ## Applying changes
 Edit `config.yaml` (back it up first), then restart the gateway **from outside it** (SSH / systemd),
