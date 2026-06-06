@@ -71,7 +71,7 @@ projects:
   - commercial-offers
   - mcp
   - postgres
-  repo: https://github.com/xotizwf-create/prostye-postavki
+  repo: https://github.com/xotizwf-create/prostavki
   production_host: miramed32.ru
   connectors: []
   path: projects/prostye-postavki/

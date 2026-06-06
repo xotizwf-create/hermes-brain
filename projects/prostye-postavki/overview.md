@@ -25,8 +25,8 @@ secret_refs: []
 - Infra: публичная точка `miramed32.ru`; серверные секреты будут дозаполнены отдельно.
 
 ## Key URLs (non-secret)
-- Repo: https://github.com/xotizwf-create/prostye-postavki
+- Repo: https://github.com/xotizwf-create/prostavki
 - MCP endpoint without secret segment: https://miramed32.ru/mcp
 
 ## Current state
-Активный критически важный проект. MCP доступен из текущего Hermes-профиля. Серверные секреты для полноценного SSH/деплоя пока считаются неполными: перед любыми серверными действиями сначала проверить наличие доступов в secure-зоне и выполнить обязательный server preflight.
+Активный критически важный проект. MCP доступен из текущего Hermes-профиля. Живой production-код находится в `/var/www/prostye-postavki/app` и связан с GitHub-репозиторием `xotizwf-create/prostavki`; пустой репозиторий `xotizwf-create/prostye-postavki` не является источником production-кода. Перед любыми серверными действиями сначала проверить доступы в secure-зоне и выполнить обязательный server preflight.

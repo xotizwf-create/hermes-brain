@@ -10,6 +10,9 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 
+## 2026-06-06
+- Corrected `projects/prostye-postavki/` documentation after production/GitHub reconciliation: source repo is `xotizwf-create/prostavki`, live code is `/var/www/prostye-postavki/app`, service is `prostye-backend.service`, and project deploy rules now require GitHub `main` to match the production checkout after any server-side change.
+
 ## 2026-06-05
 - Added skill `skills/karpathy-guidelines/` (vendored from `multica-ai/andrej-karpathy-skills`, MIT): four behavioral rules to reduce common LLM coding mistakes — Think Before Coding, Simplicity First, Surgical Changes, Goal-Driven Execution. Derived from Andrej Karpathy's observations on LLM coding pitfalls. Routed in `INDEX.md`; pairs with `engineering/agentic-coding.md` and `aislop-code-quality`.
 - Wired karpathy-guidelines into the agent's workflow so it knows when to apply it: sharpened the skill `description` with explicit triggers (use on any non-trivial write/edit/refactor/review/debug; skip trivial/non-code) + added a "When to use" section; added it as the first hard rule in `engineering/agentic-coding.md`; published to the native Hermes skill registry (`/root/.hermes/skills/software-development/karpathy-guidelines`) so it shows in `hermes skills list` and is auto-surfaced.

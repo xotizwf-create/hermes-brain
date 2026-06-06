@@ -14,8 +14,10 @@ secret_refs: [proj/prostye-postavki/server/env, proj/prostye-postavki/ssh/root, 
 ## Production / public endpoints
 - Host alias: `prod-prostye-postavki`
 - Public host/domain: `miramed32.ru`
+- Working directory: `/var/www/prostye-postavki/app`
 - MCP: `https://miramed32.ru/mcp/<secret-token>`; store only the token reference, never the token.
-- SSH user, IP, working directory, services: уточнить после добавления серверных секретов.
+- Main service: `prostye-backend.service`.
+- GitHub source of truth: `https://github.com/xotizwf-create/prostavki`.
 
 ## Secure references
 - `proj/prostye-postavki/server/env` — project env / server access bundle if present.

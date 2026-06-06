@@ -5,13 +5,13 @@ summary: Приложение для учета контрактов, товар
 tags: [web, contracts, procurement, commercial-offers, mcp, postgres]
 
 github:
-  repo: https://github.com/xotizwf-create/prostye-postavki
+  repo: https://github.com/xotizwf-create/prostavki
   default_branch: main
 
 production:
   host_alias: prod-prostye-postavki
   host: miramed32.ru
-  working_dir: уточнить после добавления серверных секретов
+  working_dir: /var/www/prostye-postavki/app
   deploy: see deploy.md
 
 mcp:
