@@ -2,7 +2,7 @@
 id: index
 type: schema
 tags: [root, routing, entrypoint]
-updated: 2026-06-05
+updated: 2026-06-10
 secret_refs: []
 ---
 
@@ -63,6 +63,8 @@ current task — never load the whole brain unless asked for a full audit.
 - **Reminders / recurring tasks / watch mail** → skill `skills/reminders-and-watchers/`.
 - **Connect / switch / remove an MCP server (owner pastes a URL)** → skill `skills/connect-mcp/`;
   model in `connectors/mcp-servers.md`; what's connected in `connectors/registry.yaml`.
+- **VK: общение с Hermes через VK-сообщество (Callback-мост), починка/расширение моста** →
+  skill `skills/vk-hermes-bridge-mvp/`; live: `vk-hermes-bridge.service` на 217 (`/opt/vk-hermes-bridge`).
 - **Read a link / web page / Google Doc / Sheet / Slides (owner pastes a URL)** → skill `skills/read-links/`.
 - **Read local PDF / Word / Excel / PowerPoint files** → skill `skills/markitdown-docs/`;
   convert with Microsoft MarkItDown first, then inspect the generated Markdown.

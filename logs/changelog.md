@@ -11,6 +11,22 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-10
+- Autonomy rules pinned to SOUL.md (always-loaded layer, backup `SOUL.md.bak.projectrules_*`):
+  (1) «Работа с проектами» — any task naming a project starts from `projects/registry.yaml` →
+  `projects/<slug>/` card; access resolution order: card → `/opt/hermes/secure/projects/<slug>/` +
+  `/root/.hermes/secure/` → gh → project MCP; ask the owner only for a concretely named missing
+  credential and store it via `store-project-secrets` so it's the last time. (2) «Расширение системы =
+  задокументировано» — a new channel/bot/service/integration/MCP/cron isn't done until the knowledge
+  is written to the brain (nearest instruction or a skill in git) in the same dialog, unprompted.
+  Reason: both rules existed only in skills the agent reads on-demand (chicken-and-egg, e.g. the VK
+  bridge built 2026-06-09 was documented only after the owner asked).
+- Migrated skill `vk-hermes-bridge-mvp` from the server-local skills dir into the brain
+  (`skills/vk-hermes-bridge-mvp/`, canonical in git); local copy archived to avoid ambiguous skill
+  matches; routed in `INDEX.md`. Gap found during access audit: the secure zone has gh/Gmail/Google/
+  Groq credentials but NO ssh access for `miramed32.ru` (prostye-postavki) or `liteexams.ru`
+  (gov-exams-app) — agent can reach code (GitHub) and data (MCP) but not those prod servers.
+- Weekly `self-review` cron extended: also detect system changes from the past week that were never
+  reflected in the brain and propose the missing docs/skills.
 - Runtime audit applied to prod gateway (owner-approved, backup `config.yaml.bak.audit_20260610_102335`): `web.search_backend: ddgs` (instant keyless web search instead of hand-rolled scraping; Chrome stays for interactive logins like hh.ru), `task_wall_timeout_seconds` 600→2400 and `terminal.timeout` 180→300 (tasks were being killed mid-flight 5×/week), all auxiliary text chores (compression/title/skills_hub/approval/web_extract/triage/kanban/profile/curator) pinned to `groq llama-3.3-70b-versatile` with a fresh `GROQ_API_KEY` (key existed nowhere before — context compression and voice STT were silently broken), `skills.external_dirs → /root/.hermes/agent-knowledge/skills` (brain skills now natively visible to the skill matcher), `approvals.mode: smart` + cleared `command_allowlist` (it had pre-approved `git reset --hard`, recursive deletes, bare SQL DELETE), `sessions.auto_prune: true`, weekly `self-review` cron (Mon 10:00 МСК: digest of the week's agent errors → owner + proposed brain edits via approval flow), 25 stale `.bak` files moved to `_bak_archive_20260610`, `state.db` checkpointed/vacuumed, Telegram bot tokens removed from the OneDrive-synced local `.env` (canonical copies live in `/root/.hermes/profiles/*/.env`).
 
 ## 2026-06-06
