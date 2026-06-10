@@ -11,6 +11,21 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-10
+- Documented Telegram status reactions (the 👀→👍/👎 lifecycle the owner loved): built-in, enabled by
+  `telegram.reactions: true`; spec in `engineering/hermes-gateway-ux.md` («Реакции-статусы»).
+- Voice stress: edge-TTS honors the U+0301 acute mark (verified — за́мок/замо́к render differently),
+  so correct stress is now driven from the TTS text — SOUL voice rule asks the agent to mark
+  homographs/ambiguous words. Tested `ruaccent` (ML accentuation) in an isolated memory-capped venv
+  and rejected it for this 1 GB box: peak RSS 761 MB + ~92 s cold load = OOM risk / starves RAM, and
+  tiny model still misreads homographs; removed. «Robotic» timbre is inherent to free edge — real
+  upgrade = cloud TTS (ElevenLabs / Gemini free tier), offered as a next step. Documented in
+  `engineering/hermes-gateway-ux.md` («Голос: ударения и натуральность»). SOUL backup `*.bak.stress_*`.
+- VK ↔ Telegram parity audit + fix: control is identical (same Hermes agent behind the bridge). Added
+  `upload_vk_audio_message` to `/opt/vk-hermes-bridge/vk_bridge.py` so the agent's `.ogg/.opus` TTS
+  goes out as a VK **voice message** (was a plain doc) — matching the Telegram voice bubble; surgical
+  edit, `py_compile` OK, only `vk-hermes-bridge.service` restarted, backup `vk_bridge.py.bak.audiomsg_*`.
+  Remaining non-parity is platform-inherent (no VK reactions for community bots; VK is an external
+  bridge, not a native gateway). Recorded in `skills/vk-hermes-bridge-mvp` («VK ↔ Telegram»).
 - Voice replies enabled end-to-end: `tts.edge.voice` en-US-AriaNeural → **ru-RU-DmitryNeural**
   (edge, free, ffmpeg present); audio cache dirs added to `gateway.media_delivery_allow_dirs`
   (else MEDIA voice files are silently dropped — the 06-06 gotcha); SOUL rule «Голосовые ответы»

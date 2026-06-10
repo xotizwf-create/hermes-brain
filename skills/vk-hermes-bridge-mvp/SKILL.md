@@ -148,6 +148,30 @@ If the VK client still shows buttons, tell the owner to close/reopen the dialog 
 - [ ] Allowlisted synthetic callback sends a VK reply.
 - [ ] Owner’s real VK message receives a normal Hermes answer.
 
+## VK ↔ Telegram: что 1:1, а что нет (аудит 2026-06-10)
+
+**Управление — то же самое.** Мост гонит сообщения в того же агента Hermes, поэтому из ВК доступны
+те же команды, навыки, проекты, делегирование и логика, что и из Telegram. «Управлять всем из ВК как
+из ТГ» — да, можно.
+
+**Что у моста уже есть (близко к паритету):** входящие текст, фото, голосовые/аудио со STT (Groq
+whisper), документы, видео-ссылки; исходящие — текст, фото, документы, и **голосовые сообщения**
+(`upload_vk_audio_message`, добавлено 2026-06-10: `.ogg/.opus` уходят как голосовой кружок ВК через
+`docs.getMessagesUploadServer?type=audio_message`, а не как файл-документ). Индикатор «печатает»
+(`messages.setActivity`) есть.
+
+**Чего в ВК нет и почему (не баг моста, а ограничения платформы):**
+- **Реакции 👀/👍** на сообщение пользователя. В Telegram это нативный `set_message_reaction`
+  (lifecycle: 👀 при старте → 👍/👎 в конце). У VK Callback API для community-ботов эквивалента нет —
+  не реализуемо без костылей; принято оставить как есть. (Заменитель: индикатор «печатает».)
+- **Нативный платформенный toolset.** Telegram — встроенная платформа Hermes (полный gateway
+  lifecycle), а ВК — внешний мост через `hermes chat`. Поэтому тонкие платформенные фишки
+  (inline-кнопки гейтвея, прогресс-реакции) в ВК отсутствуют by design; основная работа агента — та же.
+
+**Если нужно расширить ВК-паритет дальше** — это правки `vk_bridge.py` (surgical, с бэкапом
+`vk_bridge.py.bak.*`, `py_compile`, рестарт только `vk-hermes-bridge.service`). Менять авторизацию,
+allowlist и секреты при этом нельзя.
+
 ## Current Known Good Pattern
 
 The proven MVP used:
