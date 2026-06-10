@@ -11,6 +11,12 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-10
+- CORRECTION to the access-audit note below: the per-project secrets DO exist — each
+  `/opt/hermes/secure/projects/<slug>/` holds a `.env` (gov-exams-app, albery, prostye-postavki,
+  hermes-brain; visible in the Vault UI). The earlier "store is empty / no ssh access" conclusion was
+  an auditing mistake: the directory listing was piped through `grep -v '^\.'` to drop `.`/`..`,
+  which also hid the `.env` files. Recorded in `logs/mistakes.md`; SOUL project rule now says
+  explicitly that project secrets live as `.env` inside the project's vault folder.
 - Autonomy rules pinned to SOUL.md (always-loaded layer, backup `SOUL.md.bak.projectrules_*`):
   (1) «Работа с проектами» — any task naming a project starts from `projects/registry.yaml` →
   `projects/<slug>/` card; access resolution order: card → `/opt/hermes/secure/projects/<slug>/` +

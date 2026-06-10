@@ -2,7 +2,7 @@
 id: mistakes
 type: log
 tags: [mistakes, postmortem]
-updated: 2026-05-29
+updated: 2026-06-10
 secret_refs: []
 ---
 
@@ -10,6 +10,20 @@ secret_refs: []
 
 Append-only, newest on top. Concrete mistakes + how to avoid repeating them. Pulled from
 incidents and review feedback so the same error doesn't happen twice.
+
+## 2026-06-10 — dotfile-blind listing → false "secrets store is empty" conclusion
+- **What:** during the access audit the vault store was listed with
+  `ls -la … | grep -v '^\.'` to drop `.`/`..` — which also silently dropped the `.env` files the
+  store actually keeps secrets in. Conclusion "no ssh access for miramed32/liteexams, store is
+  empty" went to the owner and into the changelog; the owner disproved it with the Vault UI
+  (4 secrets per project were there all along).
+- **Why it slipped:** the filter was written to clean cosmetic noise, and "empty output = empty
+  dir" was accepted without a second look; secret stores *conventionally* keep values in dotfiles
+  (`.env`), so the filter excluded exactly the expected payload.
+- **How to avoid:** when checking whether a directory has content — especially a secrets/config
+  store — use `find <dir> -maxdepth N` or `ls -A`, never a listing piped through a `^\.` filter.
+  Before reporting "X is missing", ask: could my own filter have hidden X? Prefer a positive search
+  (`find -name '.env*'`) over an eyeballed negative.
 
 ## 2026-05-30 — tar-sync didn't exclude `.env`, leaked secrets into server backups
 - **What:** the early `update-knowledge` tar sync used `tar --exclude=.git .` but **not** `.env`.
