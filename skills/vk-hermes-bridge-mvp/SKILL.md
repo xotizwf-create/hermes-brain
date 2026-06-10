@@ -156,9 +156,12 @@ If the VK client still shows buttons, tell the owner to close/reopen the dialog 
 
 **Что у моста уже есть (близко к паритету):** входящие текст, фото, голосовые/аудио со STT (Groq
 whisper), документы, видео-ссылки; исходящие — текст, фото, документы, и **голосовые сообщения**
-(`upload_vk_audio_message`, добавлено 2026-06-10: `.ogg/.opus` уходят как голосовой кружок ВК через
-`docs.getMessagesUploadServer?type=audio_message`, а не как файл-документ). Индикатор «печатает»
-(`messages.setActivity`) есть.
+(`upload_vk_audio_message`: аудио уходит через VK `audio_message`, а не как файл-документ). Важный
+питфолл 2026-06-10: TTS может создать `.mp3`; VK для voice-bubble надёжно принимает OGG/Opus, поэтому
+перед отправкой `.mp3/.wav/.m4a` нужно конвертировать через `ffmpeg` в mono OGG/Opus и только потом
+вызывать upload `type=audio_message`. Если upload вернул пустой `file`, не дергать `docs.save` с пустым
+значением — это даёт VK API error 100 `file is undefined`; логировать понятную ошибку. Индикатор
+«печатает» (`messages.setActivity`) есть.
 
 **Чего в ВК нет и почему (не баг моста, а ограничения платформы):**
 - **Реакции 👀/👍** на сообщение пользователя. В Telegram это нативный `set_message_reaction`

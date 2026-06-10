@@ -11,6 +11,7 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-10
+- VK voice-message pitfall documented in `skills/vk-hermes-bridge-mvp`: TTS may produce `.mp3`, but VK voice bubbles need OGG/Opus via `docs.getMessagesUploadServer?type=audio_message`; convert with `ffmpeg` first and fail cleanly if VK returns an empty upload `file` instead of calling `docs.save` with a bad value.
 - Documented Telegram status reactions (the 👀→👍/👎 lifecycle the owner loved): built-in, enabled by
   `telegram.reactions: true`; spec in `engineering/hermes-gateway-ux.md` («Реакции-статусы»).
 - Voice stress: edge-TTS honors the U+0301 acute mark (verified — за́мок/замо́к render differently),
