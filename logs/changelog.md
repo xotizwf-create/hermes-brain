@@ -11,6 +11,12 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-10
+- Context management made fully automatic (no owner confirmations): `compression.threshold`
+  0.5 → 0.2 so the compressor summarises early and silently (groq aux, last 20 messages verbatim);
+  `telegram_context_guard.enabled: false` — the «Сжать контекст?» button prompt was a band-aid from
+  the broken-compression era. Topic changes: no built-in detector exists; covered by `session_reset`
+  (idle 30m + daily 04:00) and manual `/new`. Documented in `engineering/hermes-gateway-ux.md`
+  («Context: автосжатие и жизнь сессий»). Backup `config.yaml.bak.autocompress_*`.
 - Fixed «auxiliary compression provider 'groq' is unavailable»: Hermes has no first-class `groq`
   provider — all 9 `auxiliary.*` tasks now use `provider: custom` + `base_url:
   https://api.groq.com/openai/v1` + `api_key: ${GROQ_API_KEY}` (env reference expanded by the config

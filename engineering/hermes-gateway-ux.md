@@ -82,6 +82,27 @@ found 2026-06-10 when moving them to Groq (free, fast):
   `call_llm(messages=[…], task='title_generation')` from `agent.auxiliary_client` — and check the
   journal of the NEW pid only; the draining old process still logs old-config warnings.
 
+## Context: автосжатие и жизнь сессий (2026-06-10)
+Three mechanisms manage a growing dialog; know which is which:
+
+- **Auto-compression** (`compression.*` + `context.engine: compressor`) — fully automatic, no owner
+  confirmation: when the session passes `threshold` (fraction of the model's context length) the
+  middle of the dialog is summarised by the auxiliary model into ~`target_ratio`, keeping
+  `protect_first_n: 3` and the last `protect_last_n: 20` messages verbatim. Set 2026-06-10:
+  `threshold: 0.2` (was 0.5 — with gpt-5.5's huge window that meant "compress at ~135k tokens",
+  i.e. практически никогда, and every turn got slow/expensive long before that). Requires a working
+  `auxiliary.compression` provider — see the Groq section above; without it compression degrades to
+  dropping middle turns.
+- **`telegram_context_guard`** — the «Сжать контекст?» inline-button prompt in Telegram. It was a
+  band-aid added while auto-compression was broken (no aux model). **Disabled 2026-06-10**
+  (`enabled: false`): with working auto-compression it only added manual confirmations. Re-enable
+  only if sessions ever blow up again despite the compressor.
+- **`session_reset`** — fresh session after `idle_minutes: 30` of silence and daily at
+  `at_hour: 4` (mode `both`). This is the "topic change" proxy: came back after a pause → clean
+  context. There is **no built-in topic-change detector** in Hermes (checked 2026-06-10); an
+  LLM-based one would need a gateway patch — don't (patch fragility, see `hermes-self-repair`).
+  For an instant mid-conversation switch the owner sends `/new`.
+
 ## Applying changes
 Edit `config.yaml` (back it up first), then restart the gateway **from outside it** (SSH / systemd),
 never from a chat turn: `systemctl restart hermes-gateway`. Most `display.*` settings are re-read per
