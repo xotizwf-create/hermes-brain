@@ -11,6 +11,13 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-10
+- Voice replies enabled end-to-end: `tts.edge.voice` en-US-AriaNeural → **ru-RU-DmitryNeural**
+  (edge, free, ffmpeg present); audio cache dirs added to `gateway.media_delivery_allow_dirs`
+  (else MEDIA voice files are silently dropped — the 06-06 gotcha); SOUL rule «Голосовые ответы»
+  (when asked, speak via `text_to_speech` → MEDIA .ogg; conversational text, <1 min, confirm
+  delivery, fall back to text honestly). Verified live: generated Russian .ogg via the real tool and
+  delivered to the owner's Telegram (`sendVoice` ok:true, msg 4686). Backups `config.yaml.bak.voice_*`,
+  `SOUL.md.bak.voice_*`. Documented in `engineering/hermes-gateway-ux.md» («Голосовые ответы»).
 - Subagents enabled in practice: the built-in `delegate_task` orchestrator–workers tool was never
   used (0 calls in 14 days — nothing told the agent when). Added a SOUL rule (when to
   delegate / when not / how to brief a worker: one goal, needed toolsets only, done-criterion,

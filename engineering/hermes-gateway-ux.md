@@ -103,6 +103,19 @@ Three mechanisms manage a growing dialog; know which is which:
   LLM-based one would need a gateway patch — don't (patch fragility, see `hermes-self-repair`).
   For an instant mid-conversation switch the owner sends `/new`.
 
+## Голосовые ответы (2026-06-10)
+Полная цепочка живёт из коробки и проверена end-to-end:
+- Инструмент `text_to_speech` (tools/tts_tool.py), провайдер `edge` (бесплатный, без ключа),
+  голос `tts.edge.voice: ru-RU-DmitryNeural` (был английский en-US-AriaNeural — поменян).
+  Альтернатива: `ru-RU-SvetlanaNeural` (женский). Требует ffmpeg (стоит) для .ogg.
+- Инструмент возвращает `MEDIA:<путь>` — Telegram-адаптер шлёт `.ogg/.opus` как голосовой кружок
+  (`send_voice`). **Аудио-кэш добавлен в `gateway.media_delivery_allow_dirs`**
+  (`/root/.hermes/cache/audio`, `/root/.hermes/audio_cache`) — без этого вложение молча дропается
+  (грабли от 06-06).
+- Правило в SOUL: просят голосом → `text_to_speech` (.ogg) → MEDIA; текст разговорный без
+  markdown/списков, длинное сократить (<1 мин); доставку подтверждать, при сбое — честно текстом.
+- Входящие голосовые уже расшифровываются (STT groq whisper, `GROQ_API_KEY`).
+
 ## Applying changes
 Edit `config.yaml` (back it up first), then restart the gateway **from outside it** (SSH / systemd),
 never from a chat turn: `systemctl restart hermes-gateway`. Most `display.*` settings are re-read per
