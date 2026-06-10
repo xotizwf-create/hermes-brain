@@ -2,13 +2,16 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-06-05
+updated: 2026-06-10
 secret_refs: []
 ---
 
 # Changelog
 
 Append-only, newest on top. Every approved change to the brain gets one line.
+
+## 2026-06-10
+- Runtime audit applied to prod gateway (owner-approved, backup `config.yaml.bak.audit_20260610_102335`): `web.search_backend: ddgs` (instant keyless web search instead of hand-rolled scraping; Chrome stays for interactive logins like hh.ru), `task_wall_timeout_seconds` 600→2400 and `terminal.timeout` 180→300 (tasks were being killed mid-flight 5×/week), all auxiliary text chores (compression/title/skills_hub/approval/web_extract/triage/kanban/profile/curator) pinned to `groq llama-3.3-70b-versatile` with a fresh `GROQ_API_KEY` (key existed nowhere before — context compression and voice STT were silently broken), `skills.external_dirs → /root/.hermes/agent-knowledge/skills` (brain skills now natively visible to the skill matcher), `approvals.mode: smart` + cleared `command_allowlist` (it had pre-approved `git reset --hard`, recursive deletes, bare SQL DELETE), `sessions.auto_prune: true`, weekly `self-review` cron (Mon 10:00 МСК: digest of the week's agent errors → owner + proposed brain edits via approval flow), 25 stale `.bak` files moved to `_bak_archive_20260610`, `state.db` checkpointed/vacuumed, Telegram bot tokens removed from the OneDrive-synced local `.env` (canonical copies live in `/root/.hermes/profiles/*/.env`).
 
 ## 2026-06-06
 - Fixed Telegram file/attachment delivery: `gateway.media_delivery_allow_dirs` was empty, so every attachment was silently dropped (`Skipping unsafe MEDIA directive path`) — the agent falsely reported «отправил» and hung on retries. Set allow-dirs to `[/root/audits, /root/.hermes/outbox, /tmp]`, documented the gotcha + a verify-delivery rule in `engineering/hermes-gateway-ux.md`, and pinned a SOUL rule (write deliverables to an allowed dir, never claim sent without confirmation; for hard-confirmed binaries use Telegram `sendDocument` and check `ok:true`).
