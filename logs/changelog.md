@@ -11,6 +11,14 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-10
+- Subagents enabled in practice: the built-in `delegate_task` orchestrator–workers tool was never
+  used (0 calls in 14 days — nothing told the agent when). Added a SOUL rule (when to
+  delegate / when not / how to brief a worker: one goal, needed toolsets only, done-criterion,
+  forbidden zones; parent owns the result) + `engineering/agent-team.md` §4.5 («Встроенные
+  субагенты») — ephemeral workers instead of permanent bots/gateways (the 04.06 anti-pattern).
+  Config: `delegation.child_timeout_seconds` 600→1800 (workers were being killed mid-task, same
+  bug as the main loop), deep profile 600→1800, review 420→900. Bonus UX: `telegram.reactions:
+  true`. Backup `config.yaml.bak.delegation_*`, `SOUL.md.bak.subagents_*`.
 - Context management made fully automatic (no owner confirmations): `compression.threshold`
   0.5 → 0.2 so the compressor summarises early and silently (groq aux, last 20 messages verbatim);
   `telegram_context_guard.enabled: false` — the «Сжать контекст?» button prompt was a band-aid from
