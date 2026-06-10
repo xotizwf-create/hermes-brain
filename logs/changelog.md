@@ -11,6 +11,12 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-10
+- Fixed «auxiliary compression provider 'groq' is unavailable»: Hermes has no first-class `groq`
+  provider — all 9 `auxiliary.*` tasks now use `provider: custom` + `base_url:
+  https://api.groq.com/openai/v1` + `api_key: ${GROQ_API_KEY}` (env reference expanded by the config
+  loader; key stays only in `/root/.hermes/secure/hermes-gateway.env`, 600). Verified end-to-end via
+  a direct `call_llm` test; new gateway process logs clean. Gotchas documented in
+  `engineering/hermes-gateway-ux.md` («Auxiliary LLMs … on Groq»).
 - CORRECTION to the access-audit note below: the per-project secrets DO exist — each
   `/opt/hermes/secure/projects/<slug>/` holds a `.env` (gov-exams-app, albery, prostye-postavki,
   hermes-brain; visible in the Vault UI). The earlier "store is empty / no ssh access" conclusion was

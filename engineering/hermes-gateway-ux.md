@@ -2,7 +2,7 @@
 id: hermes-gateway-ux
 type: engineering
 tags: [hermes, gateway, telegram, ux, config, display, reasoning, progress, media, attachments]
-updated: 2026-06-06
+updated: 2026-06-10
 secret_refs: []
 ---
 
@@ -60,6 +60,27 @@ This is what made Hermes "never send files" (found 2026-06-06 on a project-audit
   binary attachment, bypass the agent loop and use the Telegram Bot API directly:
   `curl -s -F chat_id=<id> -F document=@<path> "https://api.telegram.org/bot$TOKEN/sendDocument"` →
   check `"ok":true`. Note: `hermes send --file` sends a **text body**, not an attachment.
+
+## Auxiliary LLMs (compression, titles, web-extract, approval-judge…) on Groq
+The gateway runs ~10 auxiliary mini-tasks (`auxiliary.*` in config.yaml) on a side model. Gotchas
+found 2026-06-10 when moving them to Groq (free, fast):
+
+- **There is NO first-class provider named `groq`.** `provider: groq` →
+  `resolve_provider_client: unknown provider 'groq'` → compression silently degrades to
+  "drop middle turns without a summary" (and on 2026-06-10 this crashed the gateway at 04:10).
+  `hermes auth add groq` fails the same way. Valid aux providers: `openrouter`, `nous`,
+  `openai-codex`, `custom`, `auto`, …
+- **The working shape is a custom endpoint** — per `auxiliary.<task>`:
+  `provider: custom`, `model: llama-3.3-70b-versatile`, `base_url: https://api.groq.com/openai/v1`,
+  `api_key: ${GROQ_API_KEY}`. The config loader expands `${ENV}` references, so no plaintext key
+  lives in config.yaml (references only, per the secrets policy).
+- **The key itself** sits in `/root/.hermes/secure/hermes-gateway.env` (600) and is loaded via
+  `EnvironmentFile=` in `hermes-gateway.service`; the same `GROQ_API_KEY` also feeds voice STT
+  (whisper on Groq). Note: aux `custom` does NOT read `GROQ_API_KEY` by itself (only
+  `explicit api_key or OPENAI_API_KEY`), hence the `${GROQ_API_KEY}` reference in each task block.
+- **Verify after a change** with a direct in-venv call (no gateway restart loops):
+  `call_llm(messages=[…], task='title_generation')` from `agent.auxiliary_client` — and check the
+  journal of the NEW pid only; the draining old process still logs old-config warnings.
 
 ## Applying changes
 Edit `config.yaml` (back it up first), then restart the gateway **from outside it** (SSH / systemd),
