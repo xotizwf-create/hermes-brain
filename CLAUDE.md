@@ -28,6 +28,11 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
 1. **Approval-gated mutations.** To change the brain: propose the edit → show a diff → wait for the
    user's confirmation → commit → append one line to `logs/changelog.md`. If the owner explicitly says
    to update without showing the diff, that counts as approval. No silent unapproved edits.
+   **Standing approval (owner, 2026-06-11): working-tree leftovers in the server brain clone are
+   auto-committed by the `brain-dirty-watchdog` cron** (source: `scripts/brain_dirty_watchdog.py`) —
+   only after the dirty state is stable ≥25 min AND `scripts/validate.py` passes (frontmatter +
+   secret scan); otherwise it alerts instead of committing. Уведомление «база знаний не в чистом
+   состоянии» больше не требует ручных действий — вотчдог разберётся сам или позовёт.
 2. **No secrets in any committed file.** References only. `scripts/validate.py` enforces this.
 3. **Every doc needs valid frontmatter.** Skills use the `name`/`description` format instead.
 4. **`projects/registry.yaml` is generated** — run `python scripts/build_registry.py`, never hand-edit.
