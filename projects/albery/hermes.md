@@ -9,9 +9,10 @@ secret_refs: [proj/albery/ssh/root]
 
 # Albery — Hermes agent (autonomous AI employee)
 
-> ⚠ Server IP: current prod is `217.198.12.236`. Some legacy commands below reference the
-> historical IP `186.246.7.32` from the 2026-05-27 setup; treat those as "the prod server"
-> and verify against the live host before running (to be reconciled during brain sync).
+> ⚠ Server IP — CORRECTED 2026-06-11: the **dedicated Albery Hermes runs on `186.246.7.32`**
+> (Timeweb; m4s.ru/mcp.m4s.ru → 186 by DNS). The `217.198.12.236` references scattered below were
+> WRONG — 217 is the *separate* general Hermes Brain box. `186.246.7.32` is correct (it was the
+> original 2026-05-27 host all along). Access + topology: `servers.md`. Codex was also set up here.
 > Credentials by NAME only — never print or commit secrets.
 
 > Extracted from `server-context.md`. Hermes (Nous Research) is the autonomous agent that

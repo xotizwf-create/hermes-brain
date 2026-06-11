@@ -10,6 +10,26 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 
+## 2026-06-11
+- Audited & tuned the **dedicated Albery Hermes agent** — and corrected a long-standing brain error:
+  it runs on **186.246.7.32** (Timeweb, 2 GB RAM), NOT 217 (m4s.ru/mcp.m4s.ru → 186 by DNS). 217 is
+  the separate general Hermes Brain box. Fixed `projects/albery/servers.md`; access is in the 217
+  vault `/opt/hermes/secure/projects/albery/.env` (reached via `sshpass -f` jump from 217).
+- Applied the same audit fixes the 217 agent got (backup `config.yaml.bak.audit_*`, gateway verified
+  stable 90 s post-change, RAM 1 GB free): **Telegram reactions ON** (`telegram.reactions: true` —
+  the 👀→👍/👎 lifecycle the owner wanted; was `false`); auxiliary text tasks → groq custom endpoint
+  (`${GROQ_API_KEY}` in a 600 secure env file + systemd drop-in `40-groq-env.conf`; key was
+  commented-out/absent on 186, so compression/aux ran on broken `auto`); **STT** `local`
+  (faster-whisper, RAM risk) → **groq** `whisper-large-v3-turbo`; **web search** empty → `ddgs`
+  (installed). Caught & reverted my own bug: the apply loop had also pointed the `vision` aux task at
+  text-only llama-3.3-70b (would break chat-OCR `process_chat_ocr`) — reverted `vision` → `auto`.
+- Albery agent open risks (flagged, not yet fixed): single `openai-codex` account, no failover → a
+  `token_invalidated` 401 crashes the gateway (22 crashes 2026-06-08/09); a **Gemini API key is
+  present and unused** — adding it as `fallback_providers` would stop the crash-on-401. «Smarter»
+  report quality lives in the Albery report contracts/prompts (business logic) — left untouched.
+- Recorded in `projects/albery/servers.md`; resolves the CLAUDE.md open task «reconcile stale 217
+  references in albery docs».
+
 ## 2026-06-10
 - VK voice-message pitfall documented in `skills/vk-hermes-bridge-mvp`: TTS may produce `.mp3`, but VK voice bubbles need OGG/Opus via `docs.getMessagesUploadServer?type=audio_message`; convert with `ffmpeg` first and fail cleanly if VK returns an empty upload `file` instead of calling `docs.save` with a bad value.
 - Documented Telegram status reactions (the 👀→👍/👎 lifecycle the owner loved): built-in, enabled by
