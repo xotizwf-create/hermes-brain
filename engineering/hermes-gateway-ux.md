@@ -188,6 +188,26 @@ telegram.py`, `on_processing_start`/`on_processing_complete`): 👀 (U+1F440) с
   markdown/списков, длинное сократить (<1 мин); доставку подтверждать, при сбое — честно текстом.
 - Входящие голосовые уже расшифровываются (STT groq whisper, `GROQ_API_KEY`).
 
+## Rich Messages — полноценный Markdown в Telegram (2026-06-11)
+Bot API 10.1 (вышел 11.06.2026) дал ботам **rich messages**: `sendRichMessage` /
+`editMessageText` принимают `rich_message: {"markdown": "<текст>"}` — Telegram сам парсит
+markdown в нативные таблицы, заголовки, цитаты, сворачиваемые `<details>`, LaTeX-формулы,
+надстрочный/подстрочный текст; лимит **32 768 символов** (клиент сам сворачивает после ~8k
+кнопкой «Показать ещё»). Поле-альтернатива `html`; ровно одно из двух.
+
+- **Патч:** `/root/.hermes/patches/rich_messages_patch.py` (ExecStartPre, переживает
+  `hermes update`; source of truth: `scripts/hermes_rich_messages_patch.py` в этом репо).
+  PTB 22.7 про rich не знает, поэтому хуки зовут Bot API напрямую (stdlib urllib, без новых
+  зависимостей). Две точки: `send()` пробует rich ДО format/chunk (нестримовые ответы, cron);
+  finalize-`edit_message` пробует rich-edit ДО оверфлоу-сплита 4096 — длинные финалы остаются
+  одним сообщением вместо N кусков. Любая ошибка → старый MarkdownV2-путь (хуже — не будет);
+  404/401 от API отключают rich до конца процесса; kill-switch: env `HERMES_TELEGRAM_RICH_DISABLE=1`.
+- **system_prompt** дополнен: оформлять ответы структурно (таблицы для сравнений, заголовки,
+  сворачиваемые детали) — «не упрощай форматирование потому что это Telegram».
+- Старый костыль `_wrap_markdown_tables` (таблицы → буллеты) остался только в fallback-пути.
+- Проверено вживую: markdown-таблица доставлена владельцу через sendRichMessage (msg 5112);
+  оба хука подтверждены в загруженном классе адаптера.
+
 ## Applying changes
 Edit `config.yaml` (back it up first), then restart the gateway **from outside it** (SSH / systemd),
 never from a chat turn: `systemctl restart hermes-gateway`. Most `display.*` settings are re-read per

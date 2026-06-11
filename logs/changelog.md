@@ -465,3 +465,10 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   (ff-pull + push отставших коммитов). Исходник: scripts/brain_dirty_watchdog.py (бэкап старого:
   .bak-2026-06-11 на сервере). Протестированы все три пути. Сегодняшний алерт был ложно-серединным:
   поймал рабочее состояние в процессе задачи про почту, всё было закоммичено через 20 минут.
+- 2026-06-11: Rich Messages в Telegram (Bot API 10.1, вышел в этот же день): Hermes теперь отвечает
+  полноценным Markdown — нативные таблицы, заголовки, цитаты, сворачиваемые блоки, формулы, до 32k
+  символов одним сообщением. Патч rich_messages_patch.py (sendRichMessage в send() + rich-edit в
+  finalize до оверфлоу-сплита; raw Bot API на stdlib, fallback на старый MarkdownV2 при любой
+  ошибке, kill-switch HERMES_TELEGRAM_RICH_DISABLE=1), правило форматирования в system_prompt.
+  Бэкапы: patches/telegram.py.bak-2026-06-11, config.yaml.bak-rich-2026-06-11. Тест: таблица
+  доставлена (msg 5112). Док: engineering/hermes-gateway-ux.md.
