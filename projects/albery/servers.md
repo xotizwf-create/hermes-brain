@@ -30,9 +30,17 @@ secret_refs: [proj/albery/ssh/root]
 - A separate Hermes agent runs on the Albery server (186), distinct from the general Hermes Brain (217).
 - Scope: Albery-only work (zoom→tasks, owner-daily/weekly reports, Albery MCP). Do not mix its
   state/profile with Hermes Brain unless explicitly requested.
-- Brain = ChatGPT `gpt-5.5` via `openai-codex`, **single account** `albery-dedicated-codex` +
-  a Gemini API key present (unused as fallback — see incidents). No account failover → a codex
-  `token_invalidated` 401 crashes the gateway (22 crashes 2026-06-08/09 before the account was re-added).
+- Brain = ChatGPT `gpt-5.5` via `openai-codex`, **single dedicated account** `albery-dedicated-codex`
+  (account `chatbot879@…`, plan plus; healthy, refresh-token auto-refreshing). `fill_first` strategy.
+  Gemini was **removed from the project 2026-06-11** at the owner's request (no fallback provider).
+- **Crash-storm root cause (fixed 2026-06-11):** the systemd unit used `RestartSteps` /
+  `RestartMaxDelaySec` (systemd ≥254 keys) but the box runs **systemd 249**, which *ignores* them
+  ("Unknown key name 'RestartSteps'") → no restart backoff → a `token_invalidated` 401 made the
+  gateway respawn every `RestartSec=5s` in a tight loop (the "22 crashes" of 2026-06-08/09). Fixed:
+  removed the dead keys, set `RestartSec=30` (gentle auto-recovery), backup
+  `hermes-gateway.service.bak.nogemini_*`. With a single account a truly revoked token still needs a
+  manual re-add — but a dedicated (non-shared) account shouldn't be invalidated by session conflicts,
+  and a transient blip now self-heals quietly instead of storming.
 
 ## Layout on server
 ```

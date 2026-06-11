@@ -11,6 +11,19 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-11
+- Albery agent crash-resilience (owner: no Gemini) — found the real crash-storm cause: the
+  `hermes-gateway.service` unit on 186 declares `RestartSteps`/`RestartMaxDelaySec` (systemd ≥254),
+  but the host runs **systemd 249** which silently ignores them → no restart backoff → on a codex
+  `token_invalidated` 401 the gateway respawned every `RestartSec=5s` in a tight loop (= the "22
+  crashes" of 06-08/09, not 22 separate incidents). Fix: removed the dead keys, `RestartSec=30`
+  (gentle self-heal), backup `hermes-gateway.service.bak.nogemini_*`. Set
+  `credential_pool_strategies.openai-codex: fill_first`. The codex account itself is healthy
+  (dedicated, refresh-token auto-refreshing) — so it shouldn't 401 again from session conflicts.
+- **Removed Gemini from the Albery project** per owner: dropped `GOOGLE_API_KEY` from
+  `/root/.hermes/.env`, purged the cached `gemini` credential from `auth.json`, `fallback_providers:
+  []`; verified "GEMINI GONE", codex intact, gateway stable. (Gmail/Workspace OAuth untouched — that's
+  a separate credential.) Honest caveat recorded: with one account and no fallback, a genuinely revoked
+  token still needs a manual re-add; resilience here = healthy dedicated account + gentle auto-restart.
 - Audited & tuned the **dedicated Albery Hermes agent** — and corrected a long-standing brain error:
   it runs on **186.246.7.32** (Timeweb, 2 GB RAM), NOT 217 (m4s.ru/mcp.m4s.ru → 186 by DNS). 217 is
   the separate general Hermes Brain box. Fixed `projects/albery/servers.md`; access is in the 217
