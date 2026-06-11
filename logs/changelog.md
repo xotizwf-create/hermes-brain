@@ -11,6 +11,17 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-06-11
+- **First CI contour for `prostye-postavki`** (PR #1, merged to main) — making the agent's coding
+  verifiable instead of "looks right". `.github/workflows/ci.yml`: backend-smoke (a `postgres:16`
+  service + `pytest backend/tests`: app boots against a real DB, `/api/health`, pure-helper units),
+  frontend-build (`vite build` = typecheck), and a non-blocking legacy vitest job (step-level
+  continue-on-error + `::warning`). All required checks green; verified frontend build locally and the
+  backend suite in CI. Findings: backend is **FastAPI, not Flask** (corrected `overview.md`); module
+  import does `ensure_*_schema()` so it needs Postgres; two legacy parsing tests
+  (`contractParsing`/`specPipeline`) were already broken (assert quantity-like `price`, parser returns
+  "") — surfaced, not papered over. New brain rule in `engineering/testing.md`: a coding task isn't
+  done until CI is green; branch→PR→read `gh pr checks`→merge; never make CI green by weakening a test;
+  heavy suites run off-box. This is the reference template for onboarding future projects.
 - Albery agent crash-resilience (owner: no Gemini) — found the real crash-storm cause: the
   `hermes-gateway.service` unit on 186 declares `RestartSteps`/`RestartMaxDelaySec` (systemd ≥254),
   but the host runs **systemd 249** which silently ignores them → no restart backoff → on a codex
