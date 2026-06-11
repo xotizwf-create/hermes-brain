@@ -432,3 +432,12 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   unbypassable, agent still can't edit its own config.yaml/.env. Backup `config.yaml.bak.1780671169`.
   Documented in `projects/albery/hermes.md`. Also set global Claude Code permission policy
   (`~/.claude/settings.json`): allow all except external-send tools + `git push`.
+- 2026-06-11: Hermes (217) «отправил PDF» 4 раза, файл не доходил — в нестрогом режиме весь /root
+  в hardcoded-denylist доставки вложений, дроп молчаливый (модель не видит ошибку и врёт «отправил»).
+  Fix: (1) rescue-патч шлюза — location-only-отказ свежего (≤30 мин) некредентного файла теперь
+  копирует его в /root/.hermes/outbox и доставляет (`scripts/hermes_media_rescue_patch.py` →
+  `/root/.hermes/patches/media_rescue_patch.py`, ExecStartPre, переживает hermes update; юнит-тест:
+  свежий /root-файл спасается, config.yaml/.env/старые — нет); (2) правило в system_prompt: файлы
+  только в outbox + не утверждать «отправил» без реальной отправки; (3) PDF довезён владельцу
+  напрямую через Bot API (ok:true, message_id 5081). Документация: engineering/hermes-gateway-ux.md,
+  logs/mistakes.md. Бэкапы на 217: config.yaml.bak-2026-06-11, patches/base.py.bak-2026-06-11.

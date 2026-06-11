@@ -2,7 +2,7 @@
 id: hermes-gateway-ux
 type: engineering
 tags: [hermes, gateway, telegram, ux, config, display, reasoning, progress, media, attachments]
-updated: 2026-06-10
+updated: 2026-06-11
 secret_refs: []
 ---
 
@@ -48,18 +48,37 @@ small `run.py` patch to translate `_heartbeat_text` + drop `_status_detail` — 
   "деловой тон, без сюсюканья" line should dominate.
 
 ## File / attachment delivery (don't silently drop files)
-The gateway sends a file/attachment **only if its path is under `gateway.media_delivery_allow_dirs`**.
-If that list is **empty** (install default), EVERY attachment is silently dropped with a log-only
-warning `Skipping unsafe MEDIA directive path: …`: the model emits a MEDIA directive, the file never
-arrives, and the agent gets no signal — so it falsely reports «отправил» and may hang on retries.
-This is what made Hermes "never send files" (found 2026-06-06 on a project-audit `.zip`).
+The gateway sends a file/attachment **only if its path passes `validate_media_delivery_path()`**
+(`gateway/platforms/base.py`). A rejected path is dropped **silently** with a log-only warning
+`Skipping unsafe MEDIA directive path: …`: the model emits a MEDIA directive, the file never
+arrives, and the agent gets no error signal — so it falsely reports «отправил» and may hang on
+retries. Hit twice: 2026-06-06 (empty `media_delivery_allow_dirs`, project-audit `.zip`) and
+2026-06-11 (PDF written to `/root/…pdf`).
 
-- **Fix (217, 2026-06-06):** `gateway.media_delivery_allow_dirs: [/root/audits, /root/.hermes/outbox, /tmp]`.
-- **Write deliverables only into an allowed dir** (`/root/audits` or `/root/.hermes/outbox`).
+How validation actually works (non-strict mode, our case — `gateway.strict: false`):
+1. allowlist `gateway.media_delivery_allow_dirs` is always honored first;
+2. otherwise any existing file is accepted UNLESS it is under a hardcoded denylist — and that
+   denylist includes **the whole of `/root`** (root's home = credential territory), plus
+   `/etc /proc /sys /dev /boot /var/*`, `~/.ssh`-style dirs and `~/.hermes/{.env,auth.json,credentials,config.yaml}`.
+   So «файл лежит в /root — значит не уйдёт», даже свежий. `trust_recent_files` applies only in
+   strict mode and does NOT override the denylist.
+
+Defenses now in place (217, 2026-06-11):
+- **Rescue patch** `/root/.hermes/patches/media_rescue_patch.py` (ExecStartPre in
+  `hermes-gateway.service.d/10-reapply-patches.conf`, survives `hermes update`; source of truth:
+  `scripts/hermes_media_rescue_patch.py` in this repo). When validation rejects a path purely for
+  its location, but the file is real, ≤50 MB, **created within the last 30 min** (session-trust
+  signal) and NOT under a credential/system location, it is **copied to `/root/.hermes/outbox` and
+  delivered from there** (journal: `Rescued MEDIA path outside allowlist: …`). Credentials
+  (`config.yaml`, `.env`, `~/.ssh`…) and stale files stay rejected — verified by unit test in venv.
+- **system_prompt rule** (read every turn): файлы для владельца сохранять ТОЛЬКО в
+  `/root/.hermes/outbox`; никогда не утверждать «отправил», пока вложение реально не ушло.
+- `gateway.media_delivery_allow_dirs: [/root/audits, /root/.hermes/outbox, /tmp, audio caches]`.
 - **Always verify delivery — never claim «отправил» without confirmation.** For a hard-confirmed
   binary attachment, bypass the agent loop and use the Telegram Bot API directly:
   `curl -s -F chat_id=<id> -F document=@<path> "https://api.telegram.org/bot$TOKEN/sendDocument"` →
-  check `"ok":true`. Note: `hermes send --file` sends a **text body**, not an attachment.
+  check `"ok":true` (token in `/root/.hermes/.env`, chat id in `telegram.allowed_chats`).
+  Note: `hermes send --file` sends a **text body**, not an attachment.
 
 ## Auxiliary LLMs (compression, titles, web-extract, approval-judge…) on Groq
 The gateway runs ~10 auxiliary mini-tasks (`auxiliary.*` in config.yaml) on a side model. Gotchas

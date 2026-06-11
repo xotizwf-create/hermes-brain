@@ -2,7 +2,7 @@
 id: mistakes
 type: log
 tags: [mistakes, postmortem]
-updated: 2026-06-10
+updated: 2026-06-11
 secret_refs: []
 ---
 
@@ -10,6 +10,26 @@ secret_refs: []
 
 Append-only, newest on top. Concrete mistakes + how to avoid repeating them. Pulled from
 incidents and review feedback so the same error doesn't happen twice.
+
+## 2026-06-11 — PDF "отправлен" 4 раза, но так и не дошёл: /root в denylist доставки вложений
+- **What:** owner asked for a solved math problem as a PDF. The agent built the PDF at
+  `/root/integral_solution_2026.pdf` and four times told the owner «отправил» — but the gateway
+  silently dropped every attempt (`Skipping unsafe MEDIA directive path`), because in non-strict
+  mode the **whole `/root` is on the hardcoded denylist** (root's home = credential territory);
+  only `media_delivery_allow_dirs` subfolders are deliverable. The agent gets **no error signal**
+  on a dropped MEDIA path, so it kept honestly believing — and claiming — delivery.
+- **Why it slipped:** the 2026-06-06 fix added allow_dirs and a brain rule «write deliverables to
+  the outbox», but a brain doc is not read every turn — the model wrote to `/root/` again; and the
+  failure stayed invisible to the model (log-only warning), so it could not self-correct.
+- **Fix (3 layers, 2026-06-11):** (1) gateway **rescue patch** — a location-only rejection of a
+  fresh (≤30 min), non-credential, ≤50 MB file now copies it into `/root/.hermes/outbox` and
+  delivers from there (`/root/.hermes/patches/media_rescue_patch.py`, re-applied via ExecStartPre,
+  source `scripts/hermes_media_rescue_patch.py`); (2) **system_prompt rule** (read every turn):
+  файлы — только в outbox, «отправил» — только после реальной отправки; (3) docs updated
+  (`engineering/hermes-gateway-ux.md`). Stranded PDF hand-delivered via Bot API (`"ok":true`).
+- **How to avoid (pattern):** a per-turn behavioural rule belongs in `system_prompt`, not only in
+  the brain; and any safety check that silently swallows an agent's action MUST either feed an
+  error back to the agent or auto-correct — otherwise the agent will confidently lie about success.
 
 ## 2026-06-10 — dotfile-blind listing → false "secrets store is empty" conclusion
 - **What:** during the access audit the vault store was listed with
