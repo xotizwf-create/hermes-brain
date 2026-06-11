@@ -76,13 +76,37 @@ Defenses now in place (217, 2026-06-11):
 - `gateway.media_delivery_allow_dirs: [/root/audits, /root/.hermes/outbox, /tmp, audio caches]`.
 - **Always verify delivery — never claim «отправил» without confirmation.** For a hard-confirmed
   binary attachment, bypass the agent loop and use the Telegram Bot API directly:
-  `curl -s -F chat_id=<id> -F document=@<path> "https://api.telegram.org/bot$TOKEN/sendDocument"` →
+  `curl -s -F chat_id=<id> -F document=@<path> "https://api.telegram.org/bot<токен>/sendDocument"` →
   check `"ok":true` (token in `/root/.hermes/.env`, chat id in `telegram.allowed_chats`).
   Note: `hermes send --file` sends a **text body**, not an attachment.
+
+**⚠️ Never put shell examples with secret-looking env vars into SOUL.md** (or any per-turn context
+file). The prompt threat scanner (`tools/threat_patterns.py`) flags `curl …$TOKEN`-shaped text as
+`exfil_curl` and **silently drops the ENTIRE file from every prompt** (journal:
+`Context file SOUL.md blocked: exfil_curl`). Exactly this happened 2026-06-06→11: the
+delivery-verification advice added to SOUL contained the literal curl/$TOKEN example, SOUL stopped
+loading at all, and the agent lost все свои правила поведения (включая «файлы только в outbox»).
+Keep concrete commands in the brain docs; in SOUL — only a reference. After editing SOUL, verify:
+`scan_for_threats(open('/root/.hermes/SOUL.md').read())` in the venv must return nothing.
 
 ## Auxiliary LLMs (compression, titles, web-extract, approval-judge…) on Groq
 The gateway runs ~10 auxiliary mini-tasks (`auxiliary.*` in config.yaml) on a side model. Gotchas
 found 2026-06-10 when moving them to Groq (free, fast):
+
+- **Groq free-tier limits are per-MINUTE token caps and they are SMALL** (verified 2026-06-11 via
+  `x-ratelimit-*` headers): `llama-3.3-70b-versatile` = **12 000 TPM**, 1 000 RPM;
+  `llama-3.1-8b-instant` = **6 000 TPM**, 14 400 RPM. A single request bigger than the TPM cap is
+  rejected outright — and the aux client classifies that as a *payment/credit error* and marks the
+  whole custom provider **unhealthy for 600 s**, killing ALL Groq aux tasks (titles, approval…)
+  for 10 minutes. This cascaded all day 2026-06-11: compression payloads ~70k tokens → instant
+  reject → fallback to the codex aux (the main ChatGPT brain) → 120 s stream timeouts per attempt →
+  «model is very slow» for the owner. **Sizing rule: every aux task's worst-case payload must fit
+  the model's TPM cap.**
+- **Split (2026-06-11):** small tasks (`title_generation`, `skills_hub`, `approval`,
+  `triage_specifier`, `kanban_decomposer`, `profile_describer`, `curator`) → `llama-3.1-8b-instant`
+  (faster, huge RPM); `compression` + `web_extract` (bigger payloads) → `llama-3.3-70b-versatile`
+  (12k TPM). `auxiliary.compression.timeout: 45` (was 120) so a broken summarizer fails fast to the
+  deterministic static-fallback summary instead of stalling the turn.
 
 - **There is NO first-class provider named `groq`.** `provider: groq` →
   `resolve_provider_client: unknown provider 'groq'` → compression silently degrades to
@@ -107,11 +131,14 @@ Three mechanisms manage a growing dialog; know which is which:
 - **Auto-compression** (`compression.*` + `context.engine: compressor`) — fully automatic, no owner
   confirmation: when the session passes `threshold` (fraction of the model's context length) the
   middle of the dialog is summarised by the auxiliary model into ~`target_ratio`, keeping
-  `protect_first_n: 3` and the last `protect_last_n: 20` messages verbatim. Set 2026-06-10:
-  `threshold: 0.2` (was 0.5 — with gpt-5.5's huge window that meant "compress at ~135k tokens",
-  i.e. практически никогда, and every turn got slow/expensive long before that). Requires a working
-  `auxiliary.compression` provider — see the Groq section above; without it compression degrades to
-  dropping middle turns.
+  `protect_first_n: 3` and the last `protect_last_n` messages verbatim. History: 0.5 → 0.2
+  (2026-06-10) → **0.05, protect_last_n 10** (2026-06-11). Rationale for 0.05 (~16k tokens with the
+  320k window): (а) the main model's working context stays small → every turn is fast and cheap;
+  (б) the compression payload (the summarized middle) stays well under Groq's 12k-TPM cap, so the
+  LLM summary actually succeeds instead of cascading into provider-unhealthy + codex-timeout (see
+  the Groq section — this is what made the 2026-06-11 prostavki MCP session crawl for ~2 hours).
+  Requires a working `auxiliary.compression` provider; without it compression degrades to a
+  deterministic static summary / dropping middle turns.
 - **`telegram_context_guard`** — the «Сжать контекст?» inline-button prompt in Telegram. It was a
   band-aid added while auto-compression was broken (no aux model). **Disabled 2026-06-10**
   (`enabled: false`): with working auto-compression it only added manual confirmations. Re-enable

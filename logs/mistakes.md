@@ -11,6 +11,29 @@ secret_refs: []
 Append-only, newest on top. Concrete mistakes + how to avoid repeating them. Pulled from
 incidents and review feedback so the same error doesn't happen twice.
 
+## 2026-06-11 — «модель ОЧЕНЬ долго работала» на prostavki-MCP: каскад из трёх невидимых поломок
+- **What:** the owner's prostavki MCP-надстройка session crawled for ~2 hours. Journal showed the
+  cascade: (1) every prompt logged `Context file SOUL.md blocked: exfil_curl` — the 06-06 advice
+  line in SOUL (`curl … bot$TOKEN/sendDocument`) tripped the threat scanner, which **silently drops
+  the whole SOUL.md from every prompt** (so the agent also lost the «файлы в outbox» rule → the PDF
+  incident the same day); (2) context compression payloads (~70k tokens at `threshold: 0.2`) can
+  NEVER fit Groq free tier (llama-3.3-70b = 12 000 tokens/MIN; one oversized request is rejected
+  outright) — the aux client read that as a payment error and marked the whole Groq provider
+  unhealthy for 600 s, killing titles/approval too; (3) compression then fell back to the codex aux
+  (the main ChatGPT brain) which hit its 120 s stream timeout per attempt, session «compressed»
+  13+ times degraded — each turn dragged an ~86k-token prompt plus minutes of summary timeouts.
+- **Why it slipped:** all three failures are log-only — chat looked normal, just slow; and the
+  06-06 «fix» (delivery advice in SOUL) introduced failure (1) itself: nobody re-ran the threat
+  scanner over SOUL after editing it.
+- **Fix (2026-06-11):** SOUL line reworded (no curl+$TOKEN shape; scanner-verified clean);
+  `compression.threshold` 0.2→0.05 и `protect_last_n` 20→10 (small fast working context, payload
+  fits Groq), `auxiliary.compression.timeout` 120→45; aux split: small tasks → llama-3.1-8b-instant,
+  compression/web_extract → 70b. Live-verified: compression call 1.4 s, titles 0.3 s.
+- **How to avoid (patterns):** (1) после правки SOUL/контекстных файлов прогоняй threat-scanner;
+  (2) any aux task's worst-case payload must fit the provider's per-minute token cap — проверяй
+  `x-ratelimit-*` headers, не только «ключ работает»; (3) «агент тупит/тормозит» → first grep the
+  journal for `blocked:`, `unhealthy`, `Failed to generate context summary`, `Preflight compression`.
+
 ## 2026-06-11 — PDF "отправлен" 4 раза, но так и не дошёл: /root в denylist доставки вложений
 - **What:** owner asked for a solved math problem as a PDF. The agent built the PDF at
   `/root/integral_solution_2026.pdf` and four times told the owner «отправил» — but the gateway

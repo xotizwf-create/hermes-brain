@@ -441,3 +441,11 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   только в outbox + не утверждать «отправил» без реальной отправки; (3) PDF довезён владельцу
   напрямую через Bot API (ok:true, message_id 5081). Документация: engineering/hermes-gateway-ux.md,
   logs/mistakes.md. Бэкапы на 217: config.yaml.bak-2026-06-11, patches/base.py.bak-2026-06-11.
+- 2026-06-11: Разбор «модель очень долго работала» (prostavki MCP-сессия ~2 часа). Три причины, все
+  log-only: SOUL.md целиком выпадал из промптов (exfil_curl на curl+$TOKEN-строке от 06-06);
+  payload сжатия ~70k токенов никогда не влезал в Groq free (70b = 12k токенов/мин) → провайдер
+  «unhealthy 600s» гасил все aux-задачи → fallback на codex со 120s-таймаутами, 13+ деградированных
+  сжатий. Fix: SOUL переписан (scanner-clean), compression.threshold 0.2→0.05, protect_last_n
+  20→10, aux compression timeout 45s; мелкие aux → llama-3.1-8b-instant, compression/web_extract →
+  70b. Проверено вживую: compression 1.4s, titles 0.3s. Бэкапы: config.yaml.bak-speedfix-2026-06-11,
+  SOUL.md.bak-speedfix-2026-06-11. Док: engineering/hermes-gateway-ux.md, logs/mistakes.md.
