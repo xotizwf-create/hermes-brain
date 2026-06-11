@@ -449,3 +449,11 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   20→10, aux compression timeout 45s; мелкие aux → llama-3.1-8b-instant, compression/web_extract →
   70b. Проверено вживую: compression 1.4s, titles 0.3s. Бэкапы: config.yaml.bak-speedfix-2026-06-11,
   SOUL.md.bak-speedfix-2026-06-11. Док: engineering/hermes-gateway-ux.md, logs/mistakes.md.
+- 2026-06-11: Починена отправка почты («не смог отправить вакансии Тимуру»). Причина: хостер 217
+  блокирует ВЕСЬ исходящий SMTP (25/465/587 к любым серверам) — himalaya send падал «Connection
+  refused» после 135s; локальный файрвол ни при чём. Решение: Gmail API по HTTPS — добавлен скоуп
+  gmail.send (re-consent на ПК, токен на оба пути, 600), новый скилл skills/send-email
+  (scripts/gmail_send.py: --to/--cc/--bcc/--subject/--body/--attach/--html, успех = «SENT id=»);
+  нативный скилл email/send-email в хабе + предупреждение в email/himalaya («отправка тут не
+  работает»). Протестировано: текст и PDF-вложение доставлены (SENT id=19eb80d5…, 19eb80db…).
+  INDEX-роутинг добавлен; google-account скилл обновлён (скоупы, паттерн добавления write).

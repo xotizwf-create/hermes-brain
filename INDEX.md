@@ -65,6 +65,9 @@ current task — never load the whole brain unless asked for a full audit.
   model in `connectors/mcp-servers.md`; what's connected in `connectors/registry.yaml`.
 - **VK: общение с Hermes через VK-сообщество (Callback-мост), починка/расширение моста** →
   skill `skills/vk-hermes-bridge-mvp/`; live: `vk-hermes-bridge.service` на 217 (`/opt/vk-hermes-bridge`).
+- **Отправить письмо / email / переслать файл-подборку на почту (кому угодно, с почты владельца)** →
+  skill `skills/send-email/` (Gmail API по HTTPS; himalaya/SMTP для отправки НЕ работают — порты
+  заблокированы хостером 217).
 - **Read a link / web page / Google Doc / Sheet / Slides (owner pastes a URL)** → skill `skills/read-links/`.
 - **Read local PDF / Word / Excel / PowerPoint files** → skill `skills/markitdown-docs/`;
   convert with Microsoft MarkItDown first, then inspect the generated Markdown.

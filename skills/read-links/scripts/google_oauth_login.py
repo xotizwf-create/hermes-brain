@@ -27,6 +27,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets.readonly",
     "https://www.googleapis.com/auth/calendar",  # read/write: see + create/edit/delete events
     "https://www.googleapis.com/auth/gmail.readonly",
+    "https://www.googleapis.com/auth/gmail.send",  # send mail as the owner (added 2026-06-11)
 ]
 
 
