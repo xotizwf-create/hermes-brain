@@ -1,6 +1,6 @@
 ---
 name: vk-hermes-bridge-mvp
-description: "Use when connecting Hermes Agent to a VK community via a safe MVP bridge: VK Callback API -> localhost Python bridge -> Hermes CLI -> VK messages."
+description: "Use when connecting Hermes Agent to a VK community via a safe MVP bridge: VK Callback API -> localhost Python bridge -> Hermes CLI -> VK messages. For VK audio/voice attachment failures, see references/vk-audio-voice-attachments.md."
 version: 1.0.0
 author: Hermes Agent
 license: MIT
