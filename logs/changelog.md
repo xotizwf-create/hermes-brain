@@ -495,3 +495,4 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   поэтому откат на MarkdownV2 (работает везде; таблицы → буллет-группы). Патч и код-хуки на месте,
   выключатель работает на лету — вернуть rich = убрать строку из env + рестарт, когда Web научится.
   Шлюз перезапущен, флаг подтверждён в живом процессе. Док: engineering/hermes-gateway-ux.md.
+- 2026-06-12: Added hh.ru AI/business automation job-search watcher context and approval-only application rules in personal/side-jobs.md.
