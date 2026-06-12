@@ -73,6 +73,8 @@ DEFAULT_CONFIG = {
         "дизайнер", "рекрутер", " hr", "охран", "водител", "грузчик",
         "контент", "копирайт", "smm", "маркетолог", "таргетолог", "редактор",
         "монтажёр", "монтажер", "оператор", "видеограф",
+        "бизнес-ассистент", "бизнес ассистент", "личный ассистент",
+        "помощник руководител", "офис-менеджер",
     ],
     # части названий гос-компаний и бигтехов — такие работодатели пропускаются
     "employer_exclude": [
@@ -571,11 +573,7 @@ def main():
         if letters_fyi:
             lines.append("📩 Тут просили сопроводительное — тексты писем:\n"
                          + "\n\n".join(letters_fyi))
-        if proposed:
-            lines.append(
-                f"🔎 Кандидаты на отклик ({len(proposed)}) — скажи, какие норм, "
-                "какие нет и почему (например: «1,3 норм — откликнись; 2 нет — "
-                "это менеджмент, а не ИИ»):\n\n" + "\n\n".join(proposed))
+        # кандидаты (proposed) уже отправлены по одному прямо из цикла
         if manual:
             lines.append(f"✍️ Требуют ручного отклика (опрос/тест), {len(manual)}:\n"
                          + "\n".join(manual))
@@ -702,13 +700,18 @@ def main():
                     "salary": vac.get("salary", ""), "url": c["url"],
                     "letter": letter, "reason": reason,
                     "proposed_at": time.strftime("%Y-%m-%d %H:%M")}
-                proposed.append(
-                    f"{len(proposed) + 1}) {vac['title']} — {vac['employer']}\n"
-                    f"   {vac.get('salary') or 'ЗП не указана'}\n"
-                    f"   {reason[:140]}\n"
-                    f"   id {c['id']}  {c['url']}")
+                hint = ("\n\nОтветь: «норм — откликнись» или «не норм, потому что …»"
+                        if not proposed else "")
+                msg = (f"🔎 Вакансия-кандидат\n"
+                       f"{vac['title']} — {vac['employer']}\n"
+                       f"{vac.get('salary') or 'ЗП не указана'}\n"
+                       f"Почему: {reason[:160]}\n"
+                       f"id {c['id']}\n{c['url']}{hint}")
+                proposed.append(vac["title"])
                 log("PROPOSE:", vac["title"][:60], "|", vac["employer"][:40])
                 jsave(LEDGER_PATH, ledger)
+                if not args.dry_run:
+                    tg_send(msg)          # сразу владельцу, не ждём конца прогона
                 continue
 
             log("APPLY:", vac["title"][:60], "|", vac["employer"][:40])
