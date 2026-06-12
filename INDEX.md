@@ -69,6 +69,10 @@ current task — never load the whole brain unless asked for a full audit.
   skill `skills/send-email/` (Gmail API по HTTPS; himalaya/SMTP для отправки НЕ работают — порты
   заблокированы хостером 217).
 - **Read a link / web page / Google Doc / Sheet / Slides (owner pastes a URL)** → skill `skills/read-links/`.
+- **Вакансии hh.ru: поиск + автоотклики (внедрение ИИ/автоматизаций в бизнес)** → skill
+  `skills/hh-auto-apply/` (залогиненный браузер `/opt/hh-browser`, LLM-фильтр + человечные
+  письма, журнал без повторов, отчёт в Telegram; cron `hh-auto-apply`). Полуавтоматический
+  разовый поиск/черновики — старый `skills/.../hh-ru-semiauto-job-search` (нативный хаб).
 - **Изометрия / аксонометрия / «начерти деталь по ГОСТ» (владелец присылает чертёж)** →
   skill `skills/iso-drawing/` (библиотека `iso_gost.py`: ГОСТ 2.317 на А4 с рамкой,
   основной надписью и размерами; эталон — `detail22_demo.py`; результат PDF в outbox).

@@ -496,3 +496,13 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   выключатель работает на лету — вернуть rich = убрать строку из env + рестарт, когда Web научится.
   Шлюз перезапущен, флаг подтверждён в живом процессе. Док: engineering/hermes-gateway-ux.md.
 - 2026-06-12: Added hh.ru AI/business automation job-search watcher context and approval-only application rules in personal/side-jobs.md.
+- 2026-06-12: Новый скилл hh-auto-apply — автономные отклики на hh.ru (запрос владельца). Профиль:
+  ТОЛЬКО внедрение ИИ/автоматизаций в бизнес (не ML/DS). Цикл: поиск по кластерам запросов через
+  залогиненный Chrome (/opt/hh-browser, CDP 9225; API соискателя hh отключён 15.12.25 + 403 с
+  серверного IP, поэтому DOM-скрейп) → префильтр по названию → LLM (Groq 70b) решает релевантность
+  и пишет короткое человечное письмо (анти-ИИ-промпт) → отклик кликом → журнал hh_applies.json
+  (applied/manual/skipped, без повторов) → отчёт в Telegram. Вакансии с опросом/тестом → в manual
+  (владельцу руками). Стоп при 3 фейлах подряд/4 ошибках LLM, человеческие паузы, login-gate.
+  Грабли: Groq отдаёт 403 на дефолтный urllib-UA — добавлен Mozilla-UA. Конфиг/журнал в
+  /root/.hermes/state/ (не в git). SKILL.md + INDEX-маршрут. Проверено: поиск (243→173), LLM-фильтр
+  (целевую пропускает с письмом, ML отсекает).
