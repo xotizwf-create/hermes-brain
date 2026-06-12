@@ -69,6 +69,9 @@ current task — never load the whole brain unless asked for a full audit.
   skill `skills/send-email/` (Gmail API по HTTPS; himalaya/SMTP для отправки НЕ работают — порты
   заблокированы хостером 217).
 - **Read a link / web page / Google Doc / Sheet / Slides (owner pastes a URL)** → skill `skills/read-links/`.
+- **Изометрия / аксонометрия / «начерти деталь по ГОСТ» (владелец присылает чертёж)** →
+  skill `skills/iso-drawing/` (библиотека `iso_gost.py`: ГОСТ 2.317 на А4 с рамкой,
+  основной надписью и размерами; эталон — `detail22_demo.py`; результат PDF в outbox).
 - **Read local PDF / Word / Excel / PowerPoint files** → skill `skills/markitdown-docs/`;
   convert with Microsoft MarkItDown first, then inspect the generated Markdown.
 - **Google account access (Calendar / Drive / Docs / Sheets / Gmail), re-auth, scopes** → skill
