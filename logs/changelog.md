@@ -506,3 +506,4 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   Грабли: Groq отдаёт 403 на дефолтный urllib-UA — добавлен Mozilla-UA. Конфиг/журнал в
   /root/.hermes/state/ (не в git). SKILL.md + INDEX-маршрут. Проверено: поиск (243→173), LLM-фильтр
   (целевую пропускает с письмом, ML отсекает).
+- 2026-06-12: Documented VK bridge per-event latency diagnostics after adding processing-duration logs to vk_bridge.py.

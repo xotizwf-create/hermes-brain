@@ -184,5 +184,6 @@ The proven MVP used:
 - nginx HTTPS path -> localhost bridge.
 - Hermes CLI in quiet mode with `--source vk`.
 - Stable named session fallback logic as described above.
+- Per-event timing diagnostics in bridge logs: `Processing VK event ...` at start and `Answered VK event ... in X.Xs` at completion. Use these timings for real latency checks; older logs without event ids can mispair starts/answers after restarts or long-running jobs.
 - VK old keyboard cleared with an empty keyboard payload.
 - VK Long Poll disabled so old bots do not process messages in parallel.
