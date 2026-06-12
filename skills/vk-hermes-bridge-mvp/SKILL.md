@@ -1,6 +1,6 @@
 ---
 name: vk-hermes-bridge-mvp
-description: "Use when connecting Hermes Agent to a VK community via a safe MVP bridge: VK Callback API -> localhost Python bridge -> Hermes CLI -> VK messages. For VK audio/voice attachment failures, see references/vk-audio-voice-attachments.md."
+description: "Use when connecting Hermes Agent to a VK community via a safe MVP bridge: VK Callback API -> localhost Python bridge -> Hermes CLI -> VK messages. For VK audio/voice attachment failures, see references/vk-audio-voice-attachments.md. For slow replies and access/allowlist checks, see references/latency-and-allowlist-diagnostics.md. For Telegram-like 30-minute sessions, immediate ack/reaction/typing, and outbound echo-loop guards, see references/session-and-ack-parity.md."
 version: 1.0.0
 author: Hermes Agent
 license: MIT
@@ -103,15 +103,18 @@ For a rich VK bridge, reuse Hermes' existing media/STT paths instead of inventin
 - Verify voice end-to-end with a synthetic VK Callback `audio_message` that points to a temporary local OGG file; success is a log entry showing Groq transcription and then an answered VK event.
 - Do not install local Whisper/faster-whisper on a tiny production host without preflight; prefer the existing cloud STT key if available.
 
-## Hermes CLI Session Pitfall
+## Hermes CLI Session and Inactivity Rules
 
-If the bridge uses `hermes chat --continue <name>` before that named session exists, Hermes exits with a message like “No session found matching ...”. The bridge must handle this gracefully:
+The VK bridge should behave like the Telegram gateway for conversation continuity:
 
-1. Try `--continue <stable-name>`.
-2. If the named session is missing, run a first `hermes chat --query ...` without `--continue`.
-3. Read the `session_id` printed by Hermes.
-4. Rename the created session to the stable VK session name with `hermes sessions rename <session_id> <stable-name>`.
-5. Future messages can use `--continue <stable-name>`.
+1. Store lightweight session state in the bridge directory (`session_state.json`, no secrets): last VK activity time, stable session name, idle timeout.
+2. Default idle timeout is 30 minutes (`VK_SESSION_IDLE_SECONDS=1800`).
+3. If the previous VK message is newer than the idle timeout, call Hermes with `hermes chat --continue <stable-name>`.
+4. If there was no previous activity or the idle timeout passed, start a fresh `hermes chat --query ...` session and rename the created session to the stable VK name.
+5. If `--continue <stable-name>` fails because the named session is missing, fall back to a fresh session and rename it.
+6. Keep the stable name (`HERMES_SESSION_NAME`) unchanged; duplicate historical session titles are acceptable because `--continue <name>` resumes the latest match.
+
+This replaces the old always-continue behaviour, which made VK context live forever and diverge from Telegram.
 
 This prevents the first real VK message from receiving a fake internal-error response.
 
@@ -154,22 +157,21 @@ If the VK client still shows buttons, tell the owner to close/reopen the dialog 
 те же команды, навыки, проекты, делегирование и логика, что и из Telegram. «Управлять всем из ВК как
 из ТГ» — да, можно.
 
-**Что у моста уже есть (близко к паритету):** входящие текст, фото, голосовые/аудио со STT (Groq
-whisper), документы, видео-ссылки; исходящие — текст, фото, документы, и **голосовые сообщения**
-(`upload_vk_audio_message`: аудио уходит через VK `audio_message`, а не как файл-документ). Важный
-питфолл 2026-06-10: TTS может создать `.mp3`; VK для voice-bubble надёжно принимает OGG/Opus, поэтому
-перед отправкой `.mp3/.wav/.m4a` нужно конвертировать через `ffmpeg` в mono OGG/Opus и только потом
-вызывать upload `type=audio_message`. Если upload вернул пустой `file`, не дергать `docs.save` с пустым
-значением — это даёт VK API error 100 `file is undefined`; логировать понятную ошибку. Индикатор
-«печатает» (`messages.setActivity`) есть.
+**Что уже есть близко к Telegram:**
+- Текстовые сообщения из ВК в Hermes и ответ обратно.
+- Входящие фото, документы, видео-ссылки и голосовые/аудио со STT: ВК `audio_message` скачивается, расшифровывается через cloud STT, текст вместе с контекстом уходит в Hermes.
+- Ответы с медиа: `MEDIA:/path` из Hermes парсится и отправляется в ВК как `photo`, `doc`, `audio_message` или `video`.
+- Для исходящих голосовых: если TTS создал `.mp3/.wav/.m4a`, перед `upload_vk_audio_message` конвертировать через `ffmpeg` в mono OGG/Opus; если upload вернул пустой `file`, не вызывать `docs.save` с пустым значением, а логировать понятную ошибку.
+- Markdown/служебные строки чистятся перед отправкой в ВК.
+- В начале обработки мост делает человеческий lifecycle-feedback: `messages.markAsRead`, `messages.setActivity`, опционально `messages.sendReaction`, затем короткое сообщение из `VK_PROCESSING_NOTICE_TEXT` (по умолчанию «Принял, уже смотрю…»).
+- Пока Hermes думает, мост поддерживает `messages.setActivity` keepalive примерно раз в 20 секунд.
+- Outgoing/self echo от Callback API обязательно фильтруется (`out != 0` и self-message от группы), иначе мост может начать отвечать на собственные исходящие сообщения.
 
 **Чего в ВК нет и почему (не баг моста, а ограничения платформы):**
-- **Реакции 👀/👍** на сообщение пользователя. В Telegram это нативный `set_message_reaction`
-  (lifecycle: 👀 при старте → 👍/👎 в конце). У VK Callback API для community-ботов эквивалента нет —
-  не реализуемо без костылей; принято оставить как есть. (Заменитель: индикатор «печатает».)
+- **Полного Telegram lifecycle 1:1.** ВК-реакция через `messages.sendReaction` пробуется мягко и может не поддерживаться конкретным токеном/клиентом; отказ ВК не должен ломать обработку. Надёжные fallback-сигналы: «прочитано», «печатает» и промежуточная фраза.
 - **Нативный платформенный toolset.** Telegram — встроенная платформа Hermes (полный gateway
   lifecycle), а ВК — внешний мост через `hermes chat`. Поэтому тонкие платформенные фишки
-  (inline-кнопки гейтвея, прогресс-реакции) в ВК отсутствуют by design; основная работа агента — та же.
+  (inline-кнопки гейтвея, прогресс-реакции) в ВК могут быть ограничены платформой; основная работа агента — та же.
 
 **Если нужно расширить ВК-паритет дальше** — это правки `vk_bridge.py` (surgical, с бэкапом
 `vk_bridge.py.bak.*`, `py_compile`, рестарт только `vk-hermes-bridge.service`). Менять авторизацию,
