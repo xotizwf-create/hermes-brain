@@ -26,6 +26,7 @@ import re
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -35,6 +36,7 @@ CDP = "http://127.0.0.1:9225"
 STATE_DIR = "/root/.hermes/state"
 CONFIG_PATH = STATE_DIR + "/hh_auto_config.json"
 LEDGER_PATH = STATE_DIR + "/hh_applies.json"
+MSGS_SEEN_PATH = STATE_DIR + "/hh_msgs_seen.json"
 ENV_PATH = "/root/.hermes/secure/hermes-gateway.env"
 HH_ENV_PATH = "/root/.hermes/.env"
 FAIL_SHOTS = "/opt/hh-browser/logs"
@@ -44,26 +46,48 @@ DEFAULT_CONFIG = {
     "max_applies_per_run": 8,
     "max_pages_per_query": 2,
     "delay_between_applies_sec": [25, 50],
+    "area": 113,             # 113 = вся Россия
+    "salary_from": 100000,   # фильтр hh: ЗП >= 100к ИЛИ не указана
+    "active_hours_msk": [8, 23],  # отклики только в это окно (не как бот в 4 утра)
     "queries": [
-        "внедрение ИИ в бизнес",
+        "внедрение ИИ",
+        "ИИ-агенты",
         "внедрение искусственного интеллекта",
-        "ИИ автоматизация бизнес-процессов",
-        "AI автоматизация",
-        "автоматизация бизнес-процессов нейросети",
-        "интегратор ИИ",
-        "AI-решения для бизнеса",
+        "AI автоматизация бизнес-процессов",
+        "ИИ-ассистент для бизнеса",
+        "нейросети автоматизация процессов",
+        "автоматизация отчетности",
+        "LLM интеграция",
+        "чат-бот автоматизация бизнеса",
     ],
+    # стоп-слова в НАЗВАНИИ вакансии (грубый префильтр; точную оценку делает LLM)
     "title_exclude": [
-        "ml", "machine learning", "data scien", "deep learning",
+        "ml ", "machine learning", "data scien", "deep learning",
         "computer vision", "nlp", "исследовател", "researcher",
-        "devops", "backend", "frontend", "fullstack", "тестировщ",
-        "qa", "1с", "1c", "бухгалт", "юрист", "аудит", "продаж",
-        "дизайнер", "рекрутер", "hr ", "охран", "водител", "кладовщ",
+        "devops", "backend", "frontend", "fullstack", "разработчик",
+        "программист", "тестировщ", " qa", "юрист", "продаж", "менеджер по прод",
+        "дизайнер", "рекрутер", " hr", "охран", "водител", "грузчик",
+        "контент", "копирайт", "smm", "маркетолог", "таргетолог", "редактор",
+        "монтажёр", "монтажер", "оператор", "видеограф",
     ],
-    "profile": ("Я внедряю ИИ и автоматизации в бизнес-процессы: ИИ-агенты и "
-                "ассистенты на LLM, Telegram-боты, интеграции с CRM и внутренними "
-                "системами, no-code/low-code связки. Работаю от анализа процесса "
-                "до запущенного решения. Бизнес-аналитик по бэкграунду."),
+    # части названий гос-компаний и бигтехов — такие работодатели пропускаются
+    "employer_exclude": [
+        "сбер", "яндекс", "yandex", "vk ", "вконтакте", "ozon", "озон",
+        "wildberries", "вайлдберриз", "тинькофф", "т-банк", "t-bank", "втб",
+        "альфа-банк", "газпром", "роснефт", "ржд", "ростех", "росатом",
+        "мтс", "megafon", "мегафон", "билайн", "ростелеком", "почта россии",
+        "министерств", "администрац", "госуслуг", "государствен", "фгуп",
+        "гбу", "мбу", "гку", "казённое", "казенное", "департамент",
+        "пфр", "фнс", "налогов", "муниципальн", "авито", "avito", "касперск",
+    ],
+    "profile": (
+        "Александр внедряет ИИ и автоматизации в бизнес: ИИ-агенты и ассистенты "
+        "на LLM, чат-боты, интеграции с CRM/ERP и внутренними системами, "
+        "no-code/low-code связки, автоматизация процессов и отчётности. Реальные "
+        "кейсы: бухгалтерия, склад, закупки, видео-процессы. Бизнес-аналитик по "
+        "бэкграунду: разбирает процесс, собирает требования у заказчика, внедряет "
+        "и доводит до результата. Сильная сторона — связка бизнеса и ИИ-инструментов, "
+        "а не глубокая разработка (не ML-инженер)."),
     "resume_hint": "внедрение автоматизаций",
 }
 
@@ -218,6 +242,8 @@ def search_vacancies(tab, cfg):
     for q in cfg["queries"]:
         for page in range(cfg["max_pages_per_query"]):
             url = ("https://hh.ru/search/vacancy?text=" + urllib.parse.quote(q)
+                   + f"&area={cfg['area']}&salary={cfg['salary_from']}"
+                   + "&order_by=publication_time"
                    + f"&page={page}&items_on_page=20")
             tab.goto(url, wait=6)
             items = tab.eval("""
@@ -244,6 +270,27 @@ def title_ok(title, cfg):
     return not any(x in t for x in cfg["title_exclude"])
 
 
+def employer_ok(employer, cfg):
+    e = " " + (employer or "").lower() + " "
+    return not any(x in e for x in cfg.get("employer_exclude", []))
+
+
+def salary_ok(salary_text, cfg):
+    """ЗП не указана / не в рублях → пропускаем дальше (решит LLM по описанию).
+    Указана в рублях и максимум вилки ниже порога → отсев."""
+    s = (salary_text or "").strip()
+    if not s:
+        return True
+    if "₽" not in s and "руб" not in s.lower():
+        return True
+    nums = [int(re.sub(r"\D", "", n))
+            for n in re.findall(r"\d[\d\s \xa0]*", s)]
+    nums = [n for n in nums if n >= 10000]
+    if not nums:
+        return True
+    return max(nums) >= cfg.get("salary_from", 100000)
+
+
 def read_vacancy(tab, url):
     tab.goto(url, wait=6)
     return tab.eval("""
@@ -262,24 +309,48 @@ def read_vacancy(tab, url):
 
 
 # ── LLM: релевантность + письмо ─────────────────────────────────────────
+_LAST_LLM_CALL = [0.0]
+
+
 def llm_assess(cfg, vac):
     key = env_value(ENV_PATH, r"(?:export\s+)?GROQ_API_KEY\s*=\s*(.+)")
     if not key:
         raise RuntimeError("нет GROQ_API_KEY")
+    # лимиты Groq — токены/минуту: держим паузу между вызовами
+    gap = cfg.get("llm_min_interval_sec", 15) - (time.time() - _LAST_LLM_CALL[0])
+    if gap > 0:
+        time.sleep(gap)
     system = (
-        "Ты помогаешь Александру откликаться на вакансии. Его профиль: "
+        "Ты помогаешь Александру откликаться на вакансии на hh.ru. Его профиль: "
         + cfg["profile"]
-        + " Ему интересно ТОЛЬКО внедрение ИИ/автоматизаций в бизнес и работа с "
-        "бизнес-заказчиком. НЕ интересно: ML/DS-разработка, исследования, чистая "
-        "разработка ПО, продажи, маркетинг, дизайн, поддержка.\n"
+        + "\n\nПРАВИЛА ОТБОРА (relevant=true ТОЛЬКО если выполнены ВСЕ):\n"
+        "1. Вакансия про ВНЕДРЕНИЕ ИИ/ИИ-АГЕНТОВ/АВТОМАТИЗАЦИЙ в работу компании: "
+        "ИИ-агенты и ассистенты на LLM, чат-боты, нейросети в бизнес-процессах, "
+        "автоматизация процессов и отчётности, интеграции с CRM/ERP, no-code/low-code; "
+        "либо роль бизнес/системного аналитика по таким внедрениям. Суть работы — "
+        "внедрить ИИ/автоматизацию в деятельность компании, а не разработать модель.\n"
+        "1а. Если в тексте явно указана зарплата и её максимум ниже 100 000 ₽ в месяц "
+        "— relevant=false. Если зарплата НЕ указана — это НЕ причина отклонять.\n"
+        "2. Работодатель — ЧАСТНАЯ компания. ОТКЛОНЯЙ государственные/бюджетные "
+        "организации, госкорпорации и крупные бигтехи (Сбер, Яндекс, VK, Ozon, "
+        "Wildberries, Avito, Тинькофф, МТС, Газпром, банки-гиганты, министерства, "
+        "ГБУ/ФГУП и т.п.).\n"
+        "3. ОТКЛОНЯЙ: ML/Data Science-разработку и исследования, чистую разработку "
+        "ПО (backend/frontend/программист), продажи, маркетинг, дизайн, поддержку, "
+        "а также «контент-завод» — роли, где суть в потоковом производстве контента "
+        "(контент-менеджер, SMM, копирайтинг, монтаж видео на конвейере). Если ИИ/"
+        "автоматизация в вакансии — лишь модное слово, а суть в контенте/продажах — "
+        "relevant=false.\n"
+        "4. Подходит по уровню: не требуется профильное IT-высшее или глубокий "
+        "Computer Science; ценится практический опыт внедрений.\n\n"
         "Верни строго JSON: {\"relevant\": true|false, \"reason\": \"кратко почему\", "
         "\"letter\": \"текст отклика\"}.\n"
         "Письмо: 2-4 коротких живых предложения по-русски, начни с «Здравствуйте!». "
         "Пиши как нормальный человек, простыми словами, без канцелярита и штампов "
         "(запрещено: «идеально подхожу», «рад возможности», «уникальный опыт», "
         "«не упущу шанс», длинные тире). Зацепись за одну конкретную деталь из "
-        "описания вакансии. Коротко скажи, что делал похожее (из профиля). Без "
-        "подписи и контактов. Если relevant=false — letter пустая строка."
+        "описания. Коротко свяжи с его реальным опытом (бухгалтерия/склад/закупки/"
+        "видео/внедрение). Без подписи и контактов. Если relevant=false — letter пустая."
     )
     user = (f"Вакансия: {vac['title']}\nКомпания: {vac['employer']}\n"
             f"Зарплата: {vac.get('salary','')}\n\nОписание:\n{vac['desc'][:3500]}")
@@ -298,8 +369,21 @@ def llm_assess(cfg, vac):
                  "Content-Type": "application/json",
                  # edge Groq режет дефолтный "Python-urllib" → 403; нужен обычный UA
                  "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) hermes-hh/1.0"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        out = json.load(r)
+    out = None
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                out = json.load(r)
+            break
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < 2:   # rate limit → подождать и повторить
+                wait = 35 * (attempt + 1)
+                log(f"Groq 429, ждём {wait}с")
+                time.sleep(wait)
+                continue
+            raise
+        finally:
+            _LAST_LLM_CALL[0] = time.time()
     data = json.loads(out["choices"][0]["message"]["content"])
     letter = (data.get("letter") or "").strip()
     # страховка от ИИ-маркеров
@@ -311,43 +395,73 @@ def llm_assess(cfg, vac):
 APPLY_JS = r"""
 async (letterText) => {
   const $ = s => document.querySelector(s);
+  const vis = e => e && e.offsetParent !== null;
   const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const applied = () => !!$('[data-qa="vacancy-response-link-view-topic"]')
+                     || /вы откликнулись/i.test(document.body.innerText);
+  const setVal = (el, v) => {
+    const s = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+    s.call(el, v); el.dispatchEvent(new Event("input", {bubbles: true}));
+  };
+  const clickText = re => {
+    const e = [...document.querySelectorAll("button, a")].find(b => vis(b) && re.test(b.textContent.trim()));
+    if (e) { e.click(); return true; } return false;
+  };
+  const findLetter = () => $('[data-qa="vacancy-response-popup-form-letter-input"]')
+        || $('textarea[data-qa*="letter"]') || $('textarea[name="letter"]')
+        || [...document.querySelectorAll("textarea")].find(vis);
+
+  if (applied()) return {ok: true, stage: "already"};
   const btn = $('[data-qa="vacancy-response-link-top"]');
   if (!btn) return {ok: false, stage: "no-button"};
   btn.click();
-  await sleep(2500);
-  // предупреждение о другом городе/стране
-  const reloc = $('[data-qa="relocation-warning-confirm"]');
-  if (reloc) { reloc.click(); await sleep(2000); }
-  // если открылась страница с опросом работодателя - не наш случай
-  if (document.querySelector('[data-qa="task-body"], [data-qa="vacancy-response-questions"]'))
+  await sleep(2800);
+
+  // 1) предупреждение о городе → «Все равно откликнуться»
+  if ($('[data-qa="relocation-warning-confirm"]')) {
+    $('[data-qa="relocation-warning-confirm"]').click();
+    await sleep(2800);
+  }
+  // 2) опрос/тест работодателя → отдаём на ручной отклик
+  if ($('[data-qa="task-body"]') || $('[data-qa="vacancy-response-popup-question-list"]')
+      || /ответьте на вопрос|пройдите тест/i.test((($('[role="dialog"]')||{}).innerText||"")))
     return {ok: false, stage: "questionnaire"};
-  // выбрать резюме, если предлагает (берём первое доступное)
-  const resumeOpt = document.querySelector('[data-qa="resume-title"] input, input[name="resume_hash"]');
-  // сопроводительное письмо
-  let ta = document.querySelector('[data-qa="vacancy-response-popup-form-letter-input"]')
-        || document.querySelector('textarea[data-qa*="letter"], textarea[name="letter"]');
-  if (!ta) {
-    const toggle = document.querySelector('[data-qa="add-cover-letter"], [data-qa="vacancy-response-letter-toggle"]');
-    if (toggle) { toggle.click(); await sleep(1200); }
-    ta = document.querySelector('[data-qa="vacancy-response-popup-form-letter-input"]')
-      || document.querySelector('textarea[data-qa*="letter"], textarea[name="letter"]');
+
+  // 3) попап с письмом (если показался) → заполнить и отправить
+  let ta = findLetter();
+  if (ta && letterText && vis(ta)) {
+    // раскрыть поле письма, если свёрнуто
+    if (!ta.value && /добавить сопроводительное/i.test(document.body.innerText))
+      clickText(/добавить сопроводительное/i), await sleep(800), ta = findLetter();
+    setVal(ta, letterText); await sleep(700);
+    const sub = $('[data-qa="vacancy-response-submit-popup"]')
+             || $('[data-qa="vacancy-response-popup-submit-button"]')
+             || [...document.querySelectorAll('button')].find(b => vis(b) && /^отправить/i.test(b.textContent.trim()));
+    if (sub) { sub.click(); await sleep(3200); }
   }
-  if (ta && letterText) {
-    const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
-    setter.call(ta, letterText);
-    ta.dispatchEvent(new Event("input", {bubbles: true}));
-    await sleep(600);
+
+  // 4) закрыть посторонние апселл-модалки (гео и т.п.)
+  for (let i = 0; i < 2; i++) {
+    clickText(/^(сохранить и продолжить|не сейчас|закрыть|пропустить|позже)$/i);
+    const x = $('[data-qa="bloko-modal-close"], [data-qa="magritte-modal-close"]');
+    if (x && vis(x)) x.click();
+    await sleep(1200);
   }
-  const submit = document.querySelector('[data-qa="vacancy-response-submit-popup"]')
-             || document.querySelector('form button[type="submit"][data-qa*="submit"]');
-  if (!submit) return {ok: false, stage: "no-submit", hadLetter: !!ta};
-  submit.click();
-  await sleep(3500);
-  const applied = !!document.querySelector('[data-qa="vacancy-response-link-view-topic"]')
-              || !!document.querySelector('[data-qa="chatik-open-chatik"]')
-              || !document.querySelector('[data-qa="vacancy-response-submit-popup"]');
-  return {ok: applied, stage: applied ? "done" : "submit-no-confirm", hadLetter: !!ta};
+
+  // 5) если откликнулись напрямую без письма — дослать письмо через «Сопроводительное»
+  let stage = applied() ? "direct" : "post-click";
+  let letterDone = !!(ta && letterText);
+  if (applied() && letterText && !letterDone) {
+    if (clickText(/сопроводительное письмо/i)) {
+      await sleep(1500);
+      const ta2 = findLetter();
+      if (ta2 && vis(ta2)) {
+        setVal(ta2, letterText); await sleep(600);
+        if (clickText(/^(отправить|сохранить)/i)) { letterDone = true; await sleep(2000); }
+      }
+    }
+  }
+  return {ok: applied(), stage: stage, letter: letterDone};
 }
 """
 
@@ -356,6 +470,47 @@ def apply_to(tab, vac_url, letter):
     tab.goto(vac_url, wait=6)
     expr = "(" + APPLY_JS + ")(" + json.dumps(letter, ensure_ascii=False) + ")"
     return tab.eval(expr) or {"ok": False, "stage": "eval-null"}
+
+
+# ── ЛС: новые сообщения от работодателей (список чатов hh.ru/chat) ──────
+# Каждая ячейка чата: data-qa="chatik-open-chat-<id>", innerText построчно:
+# [0] вакансия, [1] время, [2] компания, [3+] превью последнего сообщения.
+CHATS_JS = r"""
+(() => [...document.querySelectorAll('[data-qa^="chatik-open-chat-"]')].map(c => {
+  const m = (c.getAttribute('data-qa') || '').match(/(\d+)$/);
+  const lines = (c.innerText || '').split('\n').map(s => s.trim()).filter(Boolean);
+  return m ? {id: m[1], lines: lines.slice(0, 8)} : null;
+}).filter(Boolean))()
+"""
+
+
+def check_messages(tab):
+    """Сканирует список чатов; возвращает новые входящие, об отказах молчит."""
+    seen = jload(MSGS_SEEN_PATH, {})
+    first_seed = not seen
+    tab.goto("https://hh.ru/chat", wait=10)
+    rows = tab.eval(CHATS_JS) or []
+    log(f"ЛС: чатов в списке: {len(rows)}")
+    news = []
+    for r in rows:
+        lines = r.get("lines") or []
+        digest = " | ".join(lines)[:300]
+        if seen.get(r["id"]) == digest:
+            continue
+        seen[r["id"]] = digest
+        if first_seed:
+            continue          # первый запуск — только запоминаем, без спама
+        if "отказ" in digest.lower():
+            continue          # отказы — молча (правило владельца)
+        preview = " ".join(lines[3:]) if len(lines) > 3 else ""
+        if not preview or preview.lower().startswith("отклик на вакансию"):
+            continue          # это наш собственный отклик, не входящее сообщение
+        title = lines[0] if lines else "чат"
+        comp = lines[2] if len(lines) > 2 else ""
+        news.append({"text": f"{title} — {comp}: «{preview[:160]}»",
+                     "url": "https://hh.ru/chat/" + r["id"]})
+    jsave(MSGS_SEEN_PATH, seen)
+    return news
 
 
 # ── main ─────────────────────────────────────────────────────────────────
@@ -373,9 +528,16 @@ def main():
     ledger = jload(LEDGER_PATH, {"applied": {}, "manual": {}, "skipped": {}})
     max_applies = args.max if args.max is not None else cfg["max_applies_per_run"]
 
+    hour_msk = (time.gmtime().tm_hour + 3) % 24
+    lo, hi = cfg.get("active_hours_msk", [8, 23])
+    night = not (lo <= hour_msk < hi)
+    if night and not browser_alive():
+        log(f"ночь ({hour_msk}:00 МСК) и браузер не поднят — спим до утра")
+        return
+
     started = ensure_browser()
     tab = None
-    applied, manual, errors = [], [], []
+    applied, manual, errors, letters_fyi = [], [], [], []
     try:
         tab = Tab("about:blank")
         if not check_login(tab):
@@ -384,17 +546,33 @@ def main():
                     "автоотклики на паузе.")
             return
 
+        # ЛС проверяем каждый прогон (отказы фильтруются внутри)
+        try:
+            msgs = check_messages(tab)
+        except Exception as e:
+            msgs = []
+            log("ЛС-проверка упала:", e)
+        if msgs and not args.dry_run:
+            tg_send("💬 hh.ru: новые сообщения в ЛС\n\n" + "\n\n".join(
+                f"• {m['text'][:200]}\n{m['url']}" for m in msgs[:8]))
+
+        if night:
+            log(f"ночь ({hour_msk}:00 МСК) — отклики не шлём, только ЛС")
+            return
+
         cands = search_vacancies(tab, cfg)
         log(f"найдено в выдаче: {len(cands)}")
         fresh = [c for c in cands
                  if c["id"] not in ledger["applied"]
                  and c["id"] not in ledger["manual"]
                  and c["id"] not in ledger["skipped"]
-                 and title_ok(c["title"], cfg)]
+                 and title_ok(c["title"], cfg)
+                 and employer_ok(c.get("employer", ""), cfg)]
         log(f"после журнала и префильтра: {len(fresh)}")
 
         consec_fail = 0
         llm_fail = 0
+        seen_pairs = set()   # (название, работодатель) — клоны вакансии по городам
         for c in fresh:
             if len(applied) >= max_applies or consec_fail >= 3:
                 break
@@ -402,6 +580,11 @@ def main():
                 tg_send("⚠️ hh.ru: LLM-оценка недоступна (Groq), прогон прерван.")
                 log("aborting: 4 LLM failures in a row")
                 break
+            pair = (c["title"].strip().lower(), c.get("employer", "").strip().lower())
+            if pair in seen_pairs:
+                ledger["skipped"][c["id"]] = "дубль вакансии (другой город)"
+                continue
+            seen_pairs.add(pair)
             vac = read_vacancy(tab, c["url"])
             if not vac.get("title"):
                 continue
@@ -413,6 +596,13 @@ def main():
                 continue
             if not vac.get("canApply"):
                 ledger["skipped"][c["id"]] = "нет кнопки отклика"
+                continue
+            if not employer_ok(vac.get("employer", ""), cfg):
+                ledger["skipped"][c["id"]] = "гос/бигтех работодатель"
+                continue
+            if not salary_ok(vac.get("salary", ""), cfg):
+                ledger["skipped"][c["id"]] = "ЗП ниже порога: " + vac.get("salary", "")[:60]
+                log("skip (зп):", vac["title"][:50], "|", vac.get("salary", "")[:40])
                 continue
             try:
                 relevant, reason, letter = llm_assess(cfg, vac)
@@ -433,14 +623,24 @@ def main():
                 log("  [dry-run] отклик не отправлен")
                 applied.append(vac["title"])     # учитываем к лимиту --max
                 continue
+            asks_letter = bool(re.search(r"сопроводительн", vac.get("desc", ""), re.I))
             res = apply_to(tab, c["url"], letter)
             if res.get("ok"):
                 consec_fail = 0
                 ledger["applied"][c["id"]] = {
                     "title": vac["title"], "employer": vac["employer"],
                     "url": c["url"], "letter": letter,
+                    "letter_attached": bool(res.get("letter")),
+                    "asks_letter": asks_letter,
                     "applied_at": time.strftime("%Y-%m-%d %H:%M")}
-                applied.append(f"• {vac['title']} - {vac['employer']}\n{c['url']}")
+                mark = "" if res.get("letter") else " (без письма)"
+                applied.append(f"• {vac['title']} - {vac['employer']}{mark}\n{c['url']}")
+                if asks_letter:
+                    note = ("отправил с этим письмом" if res.get("letter")
+                            else "письмо прикрепить НЕ вышло — отправь его в чате отклика")
+                    letters_fyi.append(
+                        f"• {vac['title']} - {vac['employer']} ({note}):\n"
+                        f"«{letter}»\n{c['url']}")
             elif res.get("stage") == "questionnaire":
                 ledger["manual"][c["id"]] = {
                     "title": vac["title"], "employer": vac["employer"],
@@ -461,6 +661,9 @@ def main():
             if applied:
                 lines.append(f"✅ Откликнулся на {len(applied)} вакансий:\n"
                              + "\n".join(applied))
+            if letters_fyi:
+                lines.append("📩 Тут просили сопроводительное — тексты писем:\n"
+                             + "\n\n".join(letters_fyi))
             if manual:
                 lines.append(f"✍️ Требуют ручного отклика (опрос/тест), {len(manual)}:\n"
                              + "\n".join(manual))
