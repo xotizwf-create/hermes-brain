@@ -189,6 +189,17 @@ telegram.py`, `on_processing_start`/`on_processing_complete`): 👀 (U+1F440) с
 - Входящие голосовые уже расшифровываются (STT groq whisper, `GROQ_API_KEY`).
 
 ## Rich Messages — полноценный Markdown в Telegram (2026-06-11)
+> **⚠️ ОТКЛЮЧЕНО 2026-06-12** — `HERMES_TELEGRAM_RICH_DISABLE=1` в
+> `/root/.hermes/secure/hermes-gateway.env`. Причина: **Telegram Web (и старые клиенты) ещё не
+> умеют отображать тип `rich_message`** — на вебе вместо ответа бота показывалось *«This message
+> is currently not supported on Telegram Web»* (Bot API 10.1 вышел только 11.06, веб-клиент
+> отстаёт). Так как владелец читает с веб-версии, совместимость важнее нативных таблиц: с
+> выключателем шлюз откатывается на обычный MarkdownV2 (работает везде — bold/italic/code/
+> цитаты/спойлеры/списки; таблицы → буллет-группы через `_wrap_markdown_tables`).
+> **Как вернуть, когда Telegram Web начнёт поддерживать rich:** убрать строку
+> `HERMES_TELEGRAM_RICH_DISABLE` из env-файла и `systemctl restart hermes-gateway`. Сам патч и
+> код-хуки остаются на месте (выключатель работает на лету, ничего не удалено).
+
 Bot API 10.1 (вышел 11.06.2026) дал ботам **rich messages**: `sendRichMessage` /
 `editMessageText` принимают `rich_message: {"markdown": "<текст>"}` — Telegram сам парсит
 markdown в нативные таблицы, заголовки, цитаты, сворачиваемые `<details>`, LaTeX-формулы,

@@ -489,3 +489,9 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   рамку); выноски разведены без пересечений. Личный контроль качества: рендер→скачивание PNG→
   визуальная проверка→правка, 3 итерации до чистого результата. PDF доставлен (msg 5122). SKILL.md
   переписан: методика, чек-лист «смотри PNG глазами», список частых ошибок.
+- 2026-06-12: Rich Messages отключены (HERMES_TELEGRAM_RICH_DISABLE=1 в hermes-gateway.env): на
+  Telegram Web ответы бота показывались как «This message is currently not supported on Telegram
+  Web» — веб-клиент ещё не умеет тип rich_message (Bot API 10.1 от 11.06). Владелец читает с веба,
+  поэтому откат на MarkdownV2 (работает везде; таблицы → буллет-группы). Патч и код-хуки на месте,
+  выключатель работает на лету — вернуть rich = убрать строку из env + рестарт, когда Web научится.
+  Шлюз перезапущен, флаг подтверждён в живом процессе. Док: engineering/hermes-gateway-ux.md.
