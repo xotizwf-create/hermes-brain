@@ -355,11 +355,13 @@ def llm_assess(cfg, vac):
     user = (f"Вакансия: {vac['title']}\nКомпания: {vac['employer']}\n"
             f"Зарплата: {vac.get('salary','')}\n\nОписание:\n{vac['desc'][:3500]}")
     payload = {
-        "model": "llama-3.3-70b-versatile",
+        # gpt-oss-120b: отдельный от моделей гейтвея бакет лимитов Groq
+        "model": cfg.get("llm_model", "openai/gpt-oss-120b"),
         "messages": [{"role": "system", "content": system},
                      {"role": "user", "content": user}],
         "temperature": 0.4,
-        "max_tokens": 400,
+        "max_tokens": 900,
+        "reasoning_effort": "low",
         "response_format": {"type": "json_object"},
     }
     req = urllib.request.Request(

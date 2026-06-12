@@ -507,3 +507,9 @@ Append-only, newest on top. Every approved change to the brain gets one line.
   /root/.hermes/state/ (не в git). SKILL.md + INDEX-маршрут. Проверено: поиск (243→173), LLM-фильтр
   (целевую пропускает с письмом, ML отсекает).
 - 2026-06-12: Documented VK bridge per-event latency diagnostics after adding processing-duration logs to vk_bridge.py.
+
+- 2026-06-12: hh-auto-apply v2 — ежечасный cron (cfbbc44317be): вся Россия (area=113) + ЗП от 100к
+  (фильтр hh + питон-префильтр вилки + LLM-правило), фокус на внедрение ИИ/агентов; LLM → Groq
+  openai/gpt-oss-120b (отдельный от гейтвея бакет лимитов, 429-backoff + пейсинг), дедуп клонов
+  вакансий по городам; «просили сопроводительное» → отклик + копия письма владельцу; мониторинг ЛС
+  hh.ru/chat (новые входящие → TG, отказы — молча, hh_msgs_seen.json). Ночь (вне 8–23 МСК) — только ЛС.
