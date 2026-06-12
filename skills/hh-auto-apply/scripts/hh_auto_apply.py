@@ -37,12 +37,16 @@ STATE_DIR = "/root/.hermes/state"
 CONFIG_PATH = STATE_DIR + "/hh_auto_config.json"
 LEDGER_PATH = STATE_DIR + "/hh_applies.json"
 MSGS_SEEN_PATH = STATE_DIR + "/hh_msgs_seen.json"
+FEEDBACK_PATH = STATE_DIR + "/hh_feedback.json"   # {"bad": [...], "good": [...]}
 ENV_PATH = "/root/.hermes/secure/hermes-gateway.env"
 HH_ENV_PATH = "/root/.hermes/.env"
 FAIL_SHOTS = "/opt/hh-browser/logs"
 
 DEFAULT_CONFIG = {
     "paused": False,
+    # review = кандидаты владельцу в TG (без откликов), apply = автоотклики
+    "mode": "review",
+    "max_proposals_per_run": 10,
     "max_applies_per_run": 8,
     "max_pages_per_query": 2,
     "delay_between_applies_sec": [25, 50],
@@ -324,13 +328,18 @@ def llm_assess(cfg, vac):
         "Ты помогаешь Александру откликаться на вакансии на hh.ru. Его профиль: "
         + cfg["profile"]
         + "\n\nПРАВИЛА ОТБОРА (relevant=true ТОЛЬКО если выполнены ВСЕ):\n"
-        "1. Вакансия про ВНЕДРЕНИЕ ИИ/ИИ-АГЕНТОВ/АВТОМАТИЗАЦИЙ в работу компании: "
-        "ИИ-агенты и ассистенты на LLM, чат-боты, нейросети в бизнес-процессах, "
-        "автоматизация процессов и отчётности, интеграции с CRM/ERP, no-code/low-code; "
-        "либо роль бизнес/системного аналитика по таким внедрениям. Суть работы — "
-        "внедрить ИИ/автоматизацию в деятельность компании, а не разработать модель.\n"
+        "1. ИИ ОБЯЗАТЕЛЕН В СУТИ РОЛИ: вакансия про внедрение ИИ-агентов, "
+        "LLM-ассистентов, чат-ботов, нейросетей в бизнес-процессы, ИИ-автоматизацию "
+        "процессов и отчётности. Если в описании нет явного ИИ-компонента (чистый "
+        "Битрикс24/1С/BI/ERP/системный анализ без ИИ) — relevant=false. Суть работы — "
+        "внедрить ИИ в деятельность компании, а не разработать модель.\n"
         "1а. Если в тексте явно указана зарплата и её максимум ниже 100 000 ₽ в месяц "
         "— relevant=false. Если зарплата НЕ указана — это НЕ причина отклонять.\n"
+        "1б. Требуемый опыт 5+ лет, уровень Senior/Ведущий с жёсткими требованиями "
+        "к стажу — relevant=false (у Александра нет формального стажа такого уровня).\n"
+        "1в. Если суть роли — отраслевой менеджмент (управление недвижимостью, "
+        "клиникой, объектом, командой курьеров и т.п.), а ИИ лишь упомянут как "
+        "инструмент или модное слово — relevant=false.\n"
         "2. Работодатель — ЧАСТНАЯ компания. ОТКЛОНЯЙ государственные/бюджетные "
         "организации, госкорпорации и крупные бигтехи (Сбер, Яндекс, VK, Ozon, "
         "Wildberries, Avito, Тинькофф, МТС, Газпром, банки-гиганты, министерства, "
@@ -345,6 +354,16 @@ def llm_assess(cfg, vac):
         "Computer Science; ценится практический опыт внедрений.\n\n"
         "Верни строго JSON: {\"relevant\": true|false, \"reason\": \"кратко почему\", "
         "\"letter\": \"текст отклика\"}.\n"
+    )
+    fb = jload(FEEDBACK_PATH, {"bad": [], "good": []})
+    if fb.get("bad") or fb.get("good"):
+        system += ("\nФИДБЕК ВЛАДЕЛЬЦА — реальные решения по прошлым вакансиям, "
+                   "они ВАЖНЕЕ общих правил, обобщай их на похожие случаи:\n")
+        for x in fb.get("bad", [])[-20:]:
+            system += f"- НЕ подходит: {x}\n"
+        for x in fb.get("good", [])[-20:]:
+            system += f"- Подходит: {x}\n"
+    system += (
         "Письмо: 2-4 коротких живых предложения по-русски, начни с «Здравствуйте!». "
         "Пиши как нормальный человек, простыми словами, без канцелярита и штампов "
         "(запрещено: «идеально подхожу», «рад возможности», «уникальный опыт», "
@@ -520,6 +539,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--max", type=int, default=None)
+    ap.add_argument("--apply-ids", default=None,
+                    help="id,id из раздела proposed журнала — откликнуться на одобренные")
     args = ap.parse_args()
 
     cfg = {**DEFAULT_CONFIG, **jload(CONFIG_PATH, {})}
@@ -539,13 +560,65 @@ def main():
 
     started = ensure_browser()
     tab = None
-    applied, manual, errors, letters_fyi = [], [], [], []
+    mode = cfg.get("mode", "review")
+    applied, manual, errors, letters_fyi, proposed = [], [], [], [], []
+
+    def send_report():
+        lines = []
+        if applied:
+            lines.append(f"✅ Откликнулся на {len(applied)} вакансий:\n"
+                         + "\n".join(applied))
+        if letters_fyi:
+            lines.append("📩 Тут просили сопроводительное — тексты писем:\n"
+                         + "\n\n".join(letters_fyi))
+        if proposed:
+            lines.append(
+                f"🔎 Кандидаты на отклик ({len(proposed)}) — скажи, какие норм, "
+                "какие нет и почему (например: «1,3 норм — откликнись; 2 нет — "
+                "это менеджмент, а не ИИ»):\n\n" + "\n\n".join(proposed))
+        if manual:
+            lines.append(f"✍️ Требуют ручного отклика (опрос/тест), {len(manual)}:\n"
+                         + "\n".join(manual))
+        if errors:
+            lines.append("⚠️ Ошибки: " + "; ".join(errors[:5]))
+        if lines:
+            tg_send("hh.ru — поиск вакансий\n\n" + "\n\n".join(lines))
+        else:
+            log("новых релевантных вакансий/событий нет — отчёт не шлём")
+
     try:
         tab = Tab("about:blank")
         if not check_login(tab):
             tg_send("⚠️ hh.ru: сессия разлогинилась. Зайди в браузер по ссылке "
                     "из `bash /opt/hh-browser-start.sh` и войди заново — "
                     "автоотклики на паузе.")
+            return
+
+        # ── одобренные владельцем отклики (--apply-ids) ──────────────────
+        if args.apply_ids:
+            props = ledger.get("proposed", {})
+            for vid in [v.strip() for v in args.apply_ids.split(",") if v.strip()]:
+                p = props.get(vid)
+                if not p:
+                    errors.append(f"id {vid}: не найден в proposed")
+                    continue
+                res = apply_to(tab, p["url"], p["letter"])
+                if res.get("ok"):
+                    ledger["applied"][vid] = {
+                        **p, "letter_attached": bool(res.get("letter")),
+                        "applied_at": time.strftime("%Y-%m-%d %H:%M")}
+                    props.pop(vid, None)
+                    applied.append(f"• {p['title']} - {p['employer']}\n{p['url']}")
+                elif res.get("stage") == "questionnaire":
+                    ledger["manual"][vid] = {**p, "reason": "вакансия с опросом/тестом"}
+                    props.pop(vid, None)
+                    manual.append(f"• {p['title']} - {p['employer']}\n{p['url']}")
+                else:
+                    errors.append(f"{p['title'][:40]}: {res.get('stage')}")
+                    tab.screenshot(f"{FAIL_SHOTS}/fail_{vid}.png")
+                jsave(LEDGER_PATH, ledger)
+                time.sleep(random.uniform(*cfg["delay_between_applies_sec"]))
+            send_report()
             return
 
         # ЛС проверяем каждый прогон (отказы фильтруются внутри)
@@ -558,7 +631,8 @@ def main():
             tg_send("💬 hh.ru: новые сообщения в ЛС\n\n" + "\n\n".join(
                 f"• {m['text'][:200]}\n{m['url']}" for m in msgs[:8]))
 
-        if night:
+        # ночь блокирует только автоотклики; поиск кандидатов (review) — круглосуточно
+        if night and mode != "review":
             log(f"ночь ({hour_msk}:00 МСК) — отклики не шлём, только ЛС")
             return
 
@@ -568,6 +642,7 @@ def main():
                  if c["id"] not in ledger["applied"]
                  and c["id"] not in ledger["manual"]
                  and c["id"] not in ledger["skipped"]
+                 and c["id"] not in ledger.get("proposed", {})
                  and title_ok(c["title"], cfg)
                  and employer_ok(c.get("employer", ""), cfg)]
         log(f"после журнала и префильтра: {len(fresh)}")
@@ -577,6 +652,8 @@ def main():
         seen_pairs = set()   # (название, работодатель) — клоны вакансии по городам
         for c in fresh:
             if len(applied) >= max_applies or consec_fail >= 3:
+                break
+            if mode == "review" and len(proposed) >= cfg.get("max_proposals_per_run", 10):
                 break
             if llm_fail >= 4:
                 tg_send("⚠️ hh.ru: LLM-оценка недоступна (Groq), прогон прерван.")
@@ -619,6 +696,21 @@ def main():
                 log("skip:", vac["title"][:50], "|", reason[:60])
                 continue
 
+            if mode == "review":
+                ledger.setdefault("proposed", {})[c["id"]] = {
+                    "title": vac["title"], "employer": vac["employer"],
+                    "salary": vac.get("salary", ""), "url": c["url"],
+                    "letter": letter, "reason": reason,
+                    "proposed_at": time.strftime("%Y-%m-%d %H:%M")}
+                proposed.append(
+                    f"{len(proposed) + 1}) {vac['title']} — {vac['employer']}\n"
+                    f"   {vac.get('salary') or 'ЗП не указана'}\n"
+                    f"   {reason[:140]}\n"
+                    f"   id {c['id']}  {c['url']}")
+                log("PROPOSE:", vac["title"][:60], "|", vac["employer"][:40])
+                jsave(LEDGER_PATH, ledger)
+                continue
+
             log("APPLY:", vac["title"][:60], "|", vac["employer"][:40])
             log("  letter:", letter[:200].replace("\n", " "))
             if args.dry_run:
@@ -659,22 +751,7 @@ def main():
 
         jsave(LEDGER_PATH, ledger)
         if not args.dry_run:
-            lines = []
-            if applied:
-                lines.append(f"✅ Откликнулся на {len(applied)} вакансий:\n"
-                             + "\n".join(applied))
-            if letters_fyi:
-                lines.append("📩 Тут просили сопроводительное — тексты писем:\n"
-                             + "\n\n".join(letters_fyi))
-            if manual:
-                lines.append(f"✍️ Требуют ручного отклика (опрос/тест), {len(manual)}:\n"
-                             + "\n".join(manual))
-            if errors:
-                lines.append("⚠️ Ошибки: " + "; ".join(errors[:5]))
-            if lines:
-                tg_send("hh.ru — автоотклики\n\n" + "\n\n".join(lines))
-            else:
-                log("новых релевантных вакансий нет — отчёт не шлём")
+            send_report()
     except Exception as e:
         tg_send(f"⚠️ hh.ru автоотклики упали: {str(e)[:300]}")
         raise

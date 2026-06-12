@@ -105,11 +105,12 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   `/root/.hermes/chatgpt_accounts.json`.
 - `self-review` — weekly (Mon 10:00 МСК), digest of the agent's own errors from the gateway
   journal → owner in Telegram + proposed `logs/mistakes.md`/skill edits via the approval flow.
-- `hh-auto-apply` — **hourly** (job `cfbbc44317be`): автоотклики на hh.ru — внедрение ИИ/агентов
-  и автоматизаций, вся Россия, ЗП от 100к; человечные сопроводительные (Groq `openai/gpt-oss-120b`);
-  мониторинг ЛС (новые сообщения → TG, отказы — молча). Ночью (вне 8–23 МСК) только ЛС.
-  Skill: `hh-auto-apply`. Старый `hh-ai-business-automation-watch` (every 2h, только уведомления)
-  живёт отдельно.
+- `hh-auto-apply` — **hourly** (job `cfbbc44317be`): поиск вакансий hh.ru — внедрение ИИ/агентов,
+  вся Россия, ЗП от 100к; письма (Groq `openai/gpt-oss-120b`); мониторинг ЛС (новые сообщения → TG,
+  отказы — молча). **Сейчас `mode: review`** — кандидаты идут владельцу в TG на одобрение
+  («норм» → `--apply-ids`, «не норм» → `hh_feedback.json` в промпт); автоотклики включатся после
+  «фильтр норм» (`mode: apply`). Ночью (вне 8–23 МСК) автоотклики не шлются, review/ЛС работают.
+  Skill: `hh-auto-apply`. Старый `hh-ai-business-automation-watch` (every 2h) живёт отдельно.
 
 ## Open tasks (next steps, not yet done)
 - Reconcile legacy `186.246.7.32` references in `vpn-gateway.md`/`hermes.md` against the live host.
