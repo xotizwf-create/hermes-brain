@@ -7,10 +7,13 @@ Behaviour (owner's standing approval, 2026-06-11 — «чтобы всё все�
 - clean tree → silently sync (ff-pull, push unpushed commits), no output;
 - dirty tree → wait until the dirty state is STABLE for two consecutive runs
   (>= GRACE), so mid-work edits are never committed under someone's hands;
-- stable + `scripts/validate.py` passes (frontmatter + secret scan) →
-  auto-commit, rebase-pull, push, short Russian success note;
-- validator FAILS (possible secret / broken doc) or push/rebase conflict →
-  loud alert (throttled) — the only case that still needs a human.
+- stable → REGENERATE the derived indexes first (`build_registry.py` +
+  `build_section_index.py`) so registry.yaml / section-index.md never drift
+  from hand-edited docs, then `scripts/validate.py` (frontmatter + secret scan);
+  if both pass → auto-commit (docs + refreshed indexes together), rebase-pull,
+  push, short Russian success note;
+- a generator OR the validator FAILS (possible secret / broken doc) or
+  push/rebase conflict → loud alert (throttled) — the only case needing a human.
 
 Deployed at /root/.hermes/scripts/brain_dirty_watchdog.py, run by hermes cron
 job `brain-dirty-watchdog` (no_agent, every 30m, delivery to Telegram; clean
@@ -33,6 +36,9 @@ STATE = Path("/root/.hermes/state/brain_dirty_watchdog.json")
 THROTTLE_SECONDS = 6 * 60 * 60
 GRACE_SECONDS = 25 * 60  # dirty state must survive ~one cron interval
 DRY_RUN = os.environ.get("WATCHDOG_DRY_RUN") == "1"
+# Generated indexes that must be rebuilt before committing so they never drift
+# from hand-edited docs. No args = write/build; `--check` = read-only staleness probe.
+GENERATORS = ("build_registry.py", "build_section_index.py")
 
 
 def run_git(*args: str) -> str:
@@ -86,6 +92,31 @@ def validate() -> tuple[bool, str]:
     return proc.returncode == 0, out
 
 
+def regenerate() -> tuple[bool, str]:
+    """Rebuild the derived indexes so they always commit in sync with the docs.
+
+    In a real run: run each generator with no args (writes the index file). In dry-run:
+    run `--check` (read-only) and just report which would be regenerated. A generator that
+    is missing is skipped; a generator that errors (real run) is a hard failure → alert.
+    """
+    for script in GENERATORS:
+        path = REPO / "scripts" / script
+        if not path.exists():
+            continue  # older clone without this tool — nothing to keep in sync
+        args = ["--check"] if DRY_RUN else []
+        proc = subprocess.run(
+            [sys.executable, str(path), *args],
+            capture_output=True, text=True, cwd=str(REPO),
+        )
+        if DRY_RUN:
+            if proc.returncode != 0:  # --check exits 1 when stale
+                print(f"[dry-run] would regenerate {script} (stale)")
+            continue
+        if proc.returncode != 0:
+            return False, f"{script}: {(proc.stdout + proc.stderr).strip()[-200:]}"
+    return True, "ok"
+
+
 def alert(state: dict, digest: str, lines: list[str]) -> None:
     now = int(time.time())
     if state.get("alert_digest") == digest and now - int(state.get("last_alert_at", 0)) < THROTTLE_SECONDS:
@@ -124,6 +155,25 @@ def main() -> int:
         return 0
 
     # Stable dirty state → try to reconcile autonomously.
+    # 1) Rebuild derived indexes first so they never drift from hand-edited docs.
+    regen_ok, regen_msg = regenerate()
+    if not regen_ok:
+        alert(state, digest, [
+            "⚠️ Не смог обновить индексы базы знаний перед автокоммитом:",
+            "",
+            f"{regen_msg}",
+            "",
+            "Доки НЕ закоммичены, чтобы индекс не разошёлся. Скажи «разбери мозг» — починю под присмотром.",
+        ])
+        return 0
+    # Regeneration may have touched registry.yaml / section-index.md — refresh the file
+    # list so the commit message and the validate-fail alert reflect what's really staged.
+    try:
+        files = dirty_files(run_git("status", "--porcelain").strip())
+    except Exception:
+        pass
+
+    # 2) Validate the now-regenerated tree.
     ok, vout = validate()
     if not ok:
         alert(state, digest, [
