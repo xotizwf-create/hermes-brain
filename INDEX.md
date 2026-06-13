@@ -14,6 +14,11 @@ agent knows and how it acts across all projects. It is isolated from any single 
 **Read this file first in every new session.** Then load only the files relevant to the
 current task — never load the whole brain unless asked for a full audit.
 
+**To find the exact section to load, grep [`section-index.md`](section-index.md)** — a generated,
+greppable map of every doc → its H2/H3 sections (`path#anchor`) with frontmatter tags. Search a
+keyword there, open the matching `path#anchor`, and load that section instead of a whole file.
+Regenerate after editing docs: `python scripts/build_section_index.py` (like `build_registry.py`).
+
 ## Core principles
 
 1. **Canonical store = files in git.** Versioned, diffable, reviewable. No database for content.
