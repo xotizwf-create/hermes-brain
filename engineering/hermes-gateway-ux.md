@@ -80,6 +80,16 @@ Defenses now in place (217, 2026-06-11):
   check `"ok":true` (token in `/root/.hermes/.env`, chat id in `telegram.allowed_chats`).
   Note: `hermes send --file` sends a **text body**, not an attachment.
 
+Also hit on the **dedicated Albery Hermes (`186.246.7.32`) 2026-06-13**: its owner weekly-report PDF
+lands in `/root/.hermes/media_cache/…pdf` and was silently dropped (`media_delivery_allow_dirs: []`).
+Fix: `gateway.media_delivery_allow_dirs: [/root/.hermes/media_cache, /root/.hermes/outbox, /tmp]` +
+restart `hermes-gateway` (backup `config.yaml.bak.mediafix.*`). **Key gotcha:** `media_cache` is NOT
+one of the built-in `MEDIA_DELIVERY_SAFE_ROOTS` (those are `image_cache`/`audio_cache`/`cache/documents`
+/`document_cache`/…), so it must be allowlisted **explicitly**. `gateway/run.py` translates the config
+key → the `HERMES_MEDIA_ALLOW_DIRS` env var at startup (that's what `base.py` actually reads — so verify
+via that env, not by re-reading config.yaml). The rescue patch does **not** cover this case: it rejects
+everything under `~/.hermes`. Verified: `validate_media_delivery_path(<pdf>)` returns the path post-fix.
+
 **⚠️ Never put shell examples with secret-looking env vars into SOUL.md** (or any per-turn context
 file). The prompt threat scanner (`tools/threat_patterns.py`) flags `curl …$TOKEN`-shaped text as
 `exfil_curl` and **silently drops the ENTIRE file from every prompt** (journal:
