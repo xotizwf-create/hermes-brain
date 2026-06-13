@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-13
+updated: 2026-06-14
 secret_refs: []
 ---
 
@@ -269,6 +269,16 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Ключевые пути и факты](projects/albery/hermes.md#ключевые-пути-и-факты)
 - [Важные понятия (чтобы не путать)](projects/albery/hermes.md#важные-понятия-чтобы-не-путать)
 - [Подробности (разбито по темам, 2026-06-13)](projects/albery/hermes.md#подробности-разбито-по-темам-2026-06-13)
+
+## `projects/albery/operations-playbook.md` · [project] albery, hermes, operations, playbook, groq, owner-weekly, troubleshooting, reference
+- [0. Где живёт Albery-Hermes (база)](projects/albery/operations-playbook.md#0-где-живёт-albery-hermes-база)
+- [1. Groq: для чего на самом деле](projects/albery/operations-playbook.md#1-groq-для-чего-на-самом-деле)
+- [2. Недельный отчёт собственнику — КАК он генерится (ключевое!)](projects/albery/operations-playbook.md#2-недельный-отчёт-собственнику-как-он-генерится-ключевое)
+- [Эталон структуры (v3) — что хотим всегда](projects/albery/operations-playbook.md#эталон-структуры-v3-что-хотим-всегда)
+- [Как проверить готовый отчёт (без догадок)](projects/albery/operations-playbook.md#как-проверить-готовый-отчёт-без-догадок)
+- [3. Почему отчёт выходил «то густо, то пусто» (корневой разбор)](projects/albery/operations-playbook.md#3-почему-отчёт-выходил-то-густо-то-пусто-корневой-разбор)
+- [4. Рантайм-здоровье: как диагностировать «тупит / делает фигню»](projects/albery/operations-playbook.md#4-рантайм-здоровье-как-диагностировать-тупит-делает-фигню)
+- [5. Как правильно работать (золотые правила сессии)](projects/albery/operations-playbook.md#5-как-правильно-работать-золотые-правила-сессии)
 
 ## `projects/albery/overview.md` · [project] overview
 - [What it is](projects/albery/overview.md#what-it-is)

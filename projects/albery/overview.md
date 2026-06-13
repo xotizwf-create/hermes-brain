@@ -37,6 +37,11 @@ Zoom webhooks. Big external sync cron runs daily 18:00 Europe/Moscow.
 - Bitrix Marketplace subscription is mandatory for Albery. Without an active Marketplace subscription in Bitrix, message delivery and pulling information from Bitrix will not work reliably / may stop working entirely.
 
 ## Full reference
+- ⭐ [operations-playbook.md](operations-playbook.md) — **как правильно работать с Albery-Hermes**:
+  роль Groq (STT + aux + почему сжатие отключено), как генерится недельный отчёт (ДВА источника
+  промпта!), эталон v3-структуры, диагностика «тупит/фигня», золотые правила. Читать первым при
+  работе с отчётами/рантаймом.
+
 The legacy `agent.md` import (now de-mojibaked) is split into focused docs; the docs in this
 folder are the curated summary, consult these for full detail:
 - [server-context.md](server-context.md) — prod server **hub** (operating rules, host facts,
