@@ -39,11 +39,16 @@ Zoom webhooks. Big external sync cron runs daily 18:00 Europe/Moscow.
 ## Full reference
 The legacy `agent.md` import (now de-mojibaked) is split into focused docs; the docs in this
 folder are the curated summary, consult these for full detail:
-- [server-context.md](server-context.md) — prod server: nginx, systemd, HTTPS, PostgreSQL, env,
-  cron sync, backups, FAQ MCP, Google Apps Script, Bitrix MCP tools, known fixes.
+- [server-context.md](server-context.md) — prod server **hub** (operating rules, host facts,
+  git workflow, frequent commands, known fixes), routing to:
+  - [server-infra.md](server-infra.md) — nginx, systemd, HTTPS, PostgreSQL, env, deploy, backups.
+  - [server-mcp-tools.md](server-mcp-tools.md) — Bitrix/Zoom MCP tools, `fetch_url`, FAQ MCP, MCP fixes.
+  - [server-integrations-sync.md](server-integrations-sync.md) — hourly sync + Google Apps Script/Drive.
 - [vpn-gateway.md](vpn-gateway.md) — AmneziaWG outbound-via-Estonia gateway.
-- [hermes.md](hermes.md) — Hermes autonomous agent: setup, Codex provider, cron, Telegram,
-  sessions, training, roadmap.
+- [hermes.md](hermes.md) — Hermes autonomous agent **hub** (what it is, key paths), routing to:
+  - [hermes-setup.md](hermes-setup.md) — Codex provider, install, accounts, deploy, RBAC roadmap.
+  - [hermes-automations.md](hermes-automations.md) — `zoom-to-tasks` / `owner-daily` cron behavior.
+  - [hermes-operations.md](hermes-operations.md) — cron/Telegram/sessions, STT, restart rule, fixes.
 - [owner-reports.md](owner-reports.md) — owner daily/weekly/Zoom report contracts, the
   AI-instruction layer (`upsert_ai_instruction`), and hard rules (identity by transcription,
   owner not responsible, read company knowledge by file name).
