@@ -92,7 +92,7 @@ telegram_context_guard:
   message_limit: 80
 ```
 
-Current `217.198.12.236` values as of 2026-05-30:
+Current values (Albery Hermes on `186.246.7.32`) as of 2026-05-30:
 
 - `session_reset.idle_minutes=30`: if Telegram is quiet for 30 minutes, the next message starts a fresh session.
 - `telegram_context_guard.token_threshold=50000`: before running the model on a large Telegram session, gateway asks whether to compress old context and then continue with the original message.
@@ -101,7 +101,7 @@ Current `217.198.12.236` values as of 2026-05-30:
 - Persistence: context-guard UX is re-applied on every gateway start by `/root/.hermes/patches/context_guard_ux_patch.py` via `/etc/systemd/system/hermes-gateway.service.d/30-context-guard-ux.conf`.
 - Backs up before server patches: `/usr/local/lib/hermes-agent/gateway/run.py.bak.<stamp>`, `/usr/local/lib/hermes-agent/gateway/platforms/telegram.py.bak.<stamp>`, `/root/.hermes/config.yaml.bak.<stamp>`.
 
-Hermes task time budgets on `217.198.12.236` as of 2026-05-29:
+Hermes task time budgets (Albery Hermes on `186.246.7.32`) as of 2026-05-29:
 
 ```yaml
 agent:
@@ -375,7 +375,7 @@ openai-codex — 2 шт., автопереключение: fill_first
 **Как обновлять Hermes теперь:**
 
 ```bash
-ssh root@217.198.12.236 'bash /root/.hermes/patches/update.sh'
+ssh root@186.246.7.32 'bash /root/.hermes/patches/update.sh'
 # либо вручную: hermes update && systemctl restart hermes-gateway
 ```
 

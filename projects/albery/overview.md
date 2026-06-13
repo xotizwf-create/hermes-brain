@@ -27,7 +27,7 @@ A separate Hermes agent also runs on the same Albery server and is dedicated onl
 - Repo: https://github.com/xotizwf-create/Albery.git
 
 ## Domains / DNS
-`m4s.ru`, `www.m4s.ru`, `mcp.m4s.ru` → A `217.198.12.236`.
+`m4s.ru`, `www.m4s.ru`, `mcp.m4s.ru` → A `186.246.7.32` (verified by DNS 2026-06-11; `217.198.12.236` is the separate general box).
 
 ## Current state
 Active. Near-realtime Bitrix task sync (outgoing webhook), incremental Zoom recording sync,

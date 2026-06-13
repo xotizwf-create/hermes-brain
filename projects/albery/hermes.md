@@ -9,10 +9,11 @@ secret_refs: [proj/albery/ssh/root]
 
 # Albery — Hermes agent (autonomous AI employee)
 
-> ⚠ Server IP — CORRECTED 2026-06-11: the **dedicated Albery Hermes runs on `186.246.7.32`**
-> (Timeweb; m4s.ru/mcp.m4s.ru → 186 by DNS). The `217.198.12.236` references scattered below were
-> WRONG — 217 is the *separate* general Hermes Brain box. `186.246.7.32` is correct (it was the
-> original 2026-05-27 host all along). Access + topology: `servers.md`. Codex was also set up here.
+> ⚠ Hosts: the **dedicated Albery Hermes + its Codex run on `186.246.7.32`** (Timeweb; m4s.ru/mcp.m4s.ru
+> → 186 by DNS; verified 2026-06-11). `217.198.12.236` is a *separate* box — the general Hermes Brain +
+> andigital + Vault — and in this doc family it appears only where a note is explicitly about that box
+> (its own Codex install, the `--target new` account manager, the brain/Vault store). Authoritative
+> topology & access: [servers.md](servers.md).
 > Credentials by NAME only — never print or commit secrets.
 
 > Extracted from `server-context.md`. Hermes (Nous Research) is the autonomous agent that

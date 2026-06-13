@@ -10,7 +10,9 @@ secret_refs: []
 > Imported from the legacy `agent.md` (site repo). This file is the **lean orientation hub** for the
 > Albery prod server. Heavy reference moved to focused docs (see the map below): infra, MCP-tools, sync.
 > The VPN gateway and Hermes agent live in [vpn-gateway.md](vpn-gateway.md) and [hermes.md](hermes.md).
-> Note: older sections reference the historical server `186.246.7.32`; current prod is `217.198.12.236`.
+> Hosts: **Albery production runs on `186.246.7.32`** (verified by DNS 2026-06-11 — see [servers.md](servers.md)).
+> `217.198.12.236` is a *separate* server (general Hermes Brain + andigital + Vault); it appears below only
+> where a line is explicitly about that box (e.g. the brain/Vault store), never as the Albery host.
 
 # Albery Server Context
 
@@ -20,16 +22,16 @@ This file is the first place to read in every new chat. It contains the current 
 
 Server access (current project):
 
-- Active server: `root@217.198.12.236` (`andigital`).
+- Active server: `root@186.246.7.32` (dedicated Albery host; **not** the `217.198.12.236`/andigital box). Access creds live in the 217 Vault — see [servers.md](servers.md).
 - Server project: `/var/www/albery`
 - Hermes home: `/root/.hermes`
 - Local project: `G:\OneDrive\Рабочий стол\Мои проекты\Сайт мой`
 - SSH credentials are stored only in local `.env.local` as `Host_IP`, `Host_User`, `Host_Password`.
 - Do not print, quote, commit, or pass passwords/tokens through command-line arguments.
-- For automated server work from Codex, prefer Python/Paramiko or `python _deploy_helper.py new "<command>"`; it reads secrets locally and connects to `217.198.12.236`.
+- For automated server work, reach the Albery host `186.246.7.32` using the access in [servers.md](servers.md) (creds in the 217 Vault → sshpass jump). Caution: `_deploy_helper.py new` connects to `217.198.12.236` — that's the **other** (general) box, not Albery.
 - If already inside the server shell, run commands directly without `ssh root@...`.
 - Never commit `.env*`; secrets stay only in local/server env files.
-- Older sections may mention historical server `186.246.7.32`; for this current project/Hermes setup use `217.198.12.236` unless explicitly asked otherwise.
+- For this project use the Albery host `186.246.7.32`. Any `217.198.12.236` below refers to the separate general Hermes Brain / Vault box, not Albery.
 
 ## Репозиторий
 

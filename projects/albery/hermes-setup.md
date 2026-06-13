@@ -13,15 +13,16 @@ secret_refs: [proj/albery/ssh/root]
 
 ## Codex (OpenAI) на прод-сервере
 
-> ✅ **Установлено 2026-05-31 на текущем хосте `217.198.12.236`.** `codex-cli 0.135.0` →
-> `/usr/bin/codex` (`npm install -g @openai/codex`, Node 22/npm 10, prefix `/usr`).
+> ✅ **Это про Codex на общем Hermes Brain (`217.198.12.236`) — НЕ Albery.** Установлено 2026-05-31:
+> `codex-cli 0.135.0` → `/usr/bin/codex` (`npm install -g @openai/codex`, Node 22/npm 10, prefix `/usr`).
 > `auth.json` скопирован с ПК (`C:\Users\hotiz\.codex\auth.json`) в `/root/.codex/auth.json` (600);
 > `codex login status` → **Logged in using ChatGPT**. Исходящий IP `95.85.243.43` (VPN-Эстония),
 > **403 нет**. **High-reasoning кодинг включён глобально:** `/root/.codex/config.toml` (600) =
 > `model_reasoning_effort = "high"` — проверено `codex exec` (`model: gpt-5.5`,
 > `reasoning effort: high`, ответ `PING-OK`). Делегирование (`skills/codex-delegation`) на 217
 > теперь работает. Минор: bubblewrap не в PATH → Codex берёт встроенный; для полноценного
-> sandbox опц. `apt install bubblewrap`. (Раздел ниже исходно описывал прежний хост `186.246.7.32`.)
+> sandbox опц. `apt install bubblewrap`. Выделенный **Albery** Hermes+Codex — на `186.246.7.32`
+> (см. [servers.md](servers.md)); процедура установки ниже относится к нему.
 
 Установлен `@openai/codex` (codex-cli) глобально через npm (Node 20+ уже есть):
 
@@ -130,7 +131,8 @@ printf '' | hermes -z "Respond with exactly: PING-OK"
 
 ### Смена аккаунта / провайдера
 
-Для сервера `217.198.12.236` добавлен быстрый локальный менеджер аккаунтов Hermes/Codex:
+Для общего Hermes Brain (`217.198.12.236`, цель `--target new`) есть локальный менеджер аккаунтов
+Hermes/Codex (у выделенного Albery Hermes на `186.246.7.32` свой `auth.json`, см. [servers.md](servers.md)):
 
 ```powershell
 .\scripts\hermes-codex-accounts.cmd          # double-click/launcher for Windows

@@ -9,9 +9,9 @@ secret_refs: [proj/albery/ssh/root, proj/albery/vpn/estonia-root]
 
 # Albery — VPN gateway (AmneziaWG)
 
-> ⚠ Server IP: current prod is `217.198.12.236`. Some legacy commands below reference the
-> historical IP `186.246.7.32` from the 2026-05-27 setup; treat those as "the prod server"
-> and verify against the live host before running (to be reconciled during brain sync).
+> ⚠ Server IP: the Albery prod server that runs this VPN client is **`186.246.7.32`** — every command
+> below correctly targets it (verified, see [servers.md](servers.md)). `217.198.12.236` is a *separate*
+> general box, not this one (it appears once below only as a Russian-IP note for the hh.ru routing case).
 > Credentials by NAME only — never print or commit secrets.
 
 > Extracted from `server-context.md` (legacy `agent.md` import). Routes all outbound prod
