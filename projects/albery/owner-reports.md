@@ -28,10 +28,23 @@ secret_refs: []
 - **Zoom-созвоны** — инструкция `Формирование отчетов / Зум-созвоны`; JSON-контракт — промпт
   `zoom_processing` (`get_report_contract category_key=zoom_processing`). В нём же блок
   `weekly_review` для пятничной контрольной встречи (Наталья/Артур: сделано/не завершено/цели с весами KPI).
-- **Еженедельный отчёт собственнику** — инструкция `Формирование отчетов / Еженедельный отчет по
-  компании` (создана 2026-06-05). Отдельного backend-контракта нет
-  (`get_report_contract category_key=owner_weekly` → пусто), сама инструкция и есть контракт.
-  Сохраняется через `save_owner_weekly_report` (таблица `owner_weekly_reports`, versioned).
+- **Еженедельный отчёт собственнику** — ⚠️ **ДВА разных источника правды, не путать** (это сбивало
+  2026-06-13):
+  1. **UI-генерация** (кнопка в Albery, `request_type=owner_weekly_report`) использует **активный
+     промпт в `ai_prompts`** (категория `owner_weekly_report`, на 2026-06-13 это строка `b941c658`,
+     `is_active=true`). LLM возвращает JSON, app берёт его поле `report_text` напрямую; функция
+     `_build_owner_weekly_report_text` (app.py) — лишь **fallback**, если `report_text` пуст.
+     `get_report_contract category_key=owner_weekly` отдаёт пусто из-за иного маппинга категории — НЕ
+     значит, что контракта нет. Правится в `ai_prompts` (через UI «Настройка промтов» или прямой
+     UPDATE; в `ai_prompts` нет колонки `updated_at`). Бэкап: `/root/.hermes/secure/owner_weekly_prompt.bak.*`.
+  2. **Агент** (Telegram/cron Hermes) читает инструкцию `ai_instruction_folders / Еженедельный отчет
+     по компании` через `start_here_always_read_ai_instructions` и сохраняет через MCP
+     `save_owner_weekly_report` (`owner_weekly_report` в БД с `prompt_id=NULL`).
+
+  **Оба источника обязаны держать одну v3-структуру** (10 секций, раздел 6 — таблицы по руководителям).
+  Если правишь один — синхронизируй второй, иначе UI-отчёт ≠ агентский. `owner_weekly_reports` —
+  versioned (`is_current`); генерация требует, чтобы существовал отчёт за предыдущую неделю
+  (sequential-guard в app).
 
 ## Контракт еженедельного отчёта собственнику (суть)
 Управленческая записка для приёмки, обязательная структура: (1) общий вердикт по всей команде →
