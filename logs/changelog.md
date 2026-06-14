@@ -12,6 +12,15 @@ Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
 
 ## 2026-06-14
+- **Агент «умнее»: ретрив + наблюдаемость + петля обучения (пп.1–4).**
+  (#1) `scripts/brain_search.py` — единый поиск по ОБОИМ деревьям (versioned brain + bundled
+  `/root/.hermes/skills`), SQLite FTS5 + триграммы, ранжирование по типу; INDEX.md велит искать
+  ПЕРЕД выбором навыка. (#2) `scripts/hermes_selfcheck.py` + hourly cron `self-check`
+  (`e473bdb3d674`, no-agent): ловит молчаливые сбои (SOUL-blocked / token_invalidated /
+  provider-unhealthy / compression-fail / media-drop) → Telegram, тихо если чисто. (#3,#4)
+  В `update-knowledge` зашита «петля само-улучшения»: искать перед действием, повторяемое
+  оформлять СКРИПТОМ, сбои → mistakes.md с конкретным триггером/инструментом. Вывод по RAG:
+  корпус ~650 док → лексика бьёт вектора; эмбеддинги отложены (как pgvector в Albery).
 - **Росреестр/НСПД — полное извлечение участков в радиусе + разбор провальной сессии.** Агент
   1.5 ч искал участки в радиусе 100 м (`18:30:000423:1789`) и выдал 9: прямой nspd.gov.ru/pkk
   заблокирован для датацентровых IP (подтв. `http=000` даже через RU eth0), публичное зеркало

@@ -40,6 +40,26 @@ own; if none exists, create a new instruction. Do not ask separately whether to 
    operational file remains, explain it to the owner and either add it to the proper repo/skill or move
    it outside the brain.
 
+## Self-improvement loop (how the agent gets smarter over time)
+The brain is the agent's long-term memory; improvement = reliable retrieval + reusable tools +
+visible failures, not a bigger model. Four habits, always on:
+
+1. **Search before you decide you don't know or pick a skill.** Run
+   `python3 /root/.hermes/agent-knowledge/scripts/brain_search.py "<keywords>"` — one search across
+   BOTH trees (versioned brain + Hermes' bundled skills in `/root/.hermes/skills/`). Open the top hit.
+   (The 2026-06-14 Росреестр flail happened because the agent skipped this and opened the wrong skill.)
+2. **Capture repeatable work as a TOOL, not just prose.** When a non-trivial multi-step task is likely
+   to recur, ship a ready-to-run script under `scripts/` (clear docstring + the gotchas) and point the
+   nearest skill/reference at it — so next time it's one command, not a re-invention under an iteration
+   cap. Example: `scripts/nspd_parcels_local.py` turned a 1.5 h flail into one call.
+3. **Make failures visible, then turn them into triggers/tools.** Silent degradations are caught by the
+   hourly `self-check` cron (`scripts/hermes_selfcheck.py`: SOUL-blocked / codex token_invalidated /
+   provider-unhealthy / compression-fail / media-drop → Telegram). Every real failure gets a
+   `logs/mistakes.md` entry whose "avoid next time" is a concrete **trigger keyword, script, or skill
+   edit** — not advice. The weekly `self-review` digests these.
+4. **Keep retrieval honest.** If `brain_search` can't surface something that should exist, that's a gap
+   — add/clarify the doc or skill (good title + frontmatter `description`/`tags`) so it ranks next time.
+
 ## Sync model: two-way git (single source of truth)
 Canonical = the GitHub repo `hermes-brain`. Both the local working copy (`C:\hermes-brain`) and the
 server brain (`/root/.hermes/agent-knowledge`, a **git clone**) are checkouts of it. Sync = git.

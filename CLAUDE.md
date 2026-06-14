@@ -105,6 +105,10 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   `/root/.hermes/chatgpt_accounts.json`.
 - `self-review` — weekly (Mon 10:00 МСК), digest of the agent's own errors from the gateway
   journal → owner in Telegram + proposed `logs/mistakes.md`/skill edits via the approval flow.
+- `self-check` — **hourly** (job `e473bdb3d674`, `scripts/hermes_selfcheck.py`, no-agent): scans the
+  gateway journal for silent degradations (SOUL-blocked / codex `token_invalidated` / aux-provider
+  unhealthy / compression-fail / media-drop) → Telegram **only if** something crossed a threshold
+  (quiet otherwise). Catches "the model got dumb" before the owner has to notice.
 - `hh-auto-apply` — **hourly** (job `cfbbc44317be`): поиск вакансий hh.ru — внедрение ИИ/агентов,
   вся Россия, ЗП от 100к; письма (Groq `openai/gpt-oss-120b`); мониторинг ЛС (новые сообщения → TG,
   отказы — молча). **Сейчас `mode: review`** — кандидаты идут владельцу в TG на одобрение
