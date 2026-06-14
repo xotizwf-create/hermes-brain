@@ -11,6 +11,19 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
 
+## 2026-06-14
+- **Albery — гибридный поиск по знаниям компании (ступень 1 RAG-плана, в проде).**
+  `search_company_knowledge` был чистый `ILIKE` → не понимал русскую морфологию, часто возвращал
+  пусто, хотя документ есть. Переписан на гибрид: русский FTS (`to_tsvector('russian', name||content)`)
+  + триграммы `pg_trgm` (similarity) + ILIKE; ранжирование `ts_rank_cd` + similarity + бонус за точное
+  имя; fallback на ILIKE до миграции. Миграция `026_company_folders_fts.sql` (stored `content_tsv` +
+  GIN `idx_company_folders_content_tsv`), зарегистрирована в `ensure_postgres.py`. Albery-репо коммит
+  `9b56146`. **Деплой backend-only** (git pull + `ensure_postgres.py` + рестарт `albery`, БЕЗ
+  `update_server.sh`/сборки фронта — правило №7, бокс ~1 ГБ). Проверено на проде через реальный код:
+  «фиксация результатов» 0→16 релевантных, топ `Регламент_фиксации_результата`. Обновлены
+  `projects/albery/owner-reports.md` (правило 3) и `server-mcp-tools.md`. Ступень 2 (pgvector/эмбеддинги
+  для синонимов) отложена по решению владельца.
+
 ## 2026-06-11
 - **First CI contour for `prostye-postavki`** (PR #1, merged to main) — making the agent's coding
   verifiable instead of "looks right". `.github/workflows/ci.yml`: backend-smoke (a `postgres:16`

@@ -105,6 +105,32 @@ Scope: org structure, regulations/company knowledge, AI instructions, and Zoom c
 
 Unavailable there: Bitrix tasks, chats/messages, OCR processing, chat/owner report reading/generation/saving/deleting, compact export, Bitrix refresh, AI instruction editing, and Zoom report saving/deleting.
 
+### Поиск по знаниям компании — гибридный (FTS + триграммы + ILIKE), с 2026-06-14
+
+`search_company_knowledge` раньше был **чистый `ILIKE '%query%'`** — не понимал русскую морфологию
+(«отчётность» ≠ «отчёты») и часто возвращал пусто, хотя документ есть (это была документированная
+боль, см. [owner-reports.md](owner-reports.md) правило 3). Переписан на **гибрид** в
+[mcp/context_server.py](mcp/context_server.py) `tool_search_company_knowledge`:
+
+- **Русский full-text** (`to_tsvector('russian', name||' '||content)`) — совпадение по корням слов;
+- **Триграммы** `pg_trgm` (`similarity(name, query)`) — опечатки/частичные слова (GIN-индексы уже были);
+- **ILIKE** — точная подстрока как ещё один сигнал;
+- ранжирование `ts_rank_cd + 0.5*similarity + бонус за точное совпадение имени`. Интерфейс инструмента
+  не изменился; есть fallback на ILIKE, если колонка `content_tsv` ещё не создана (середина деплоя).
+
+Инфраструктура: миграция `database/migrations/026_company_folders_fts.sql` (stored generated-колонка
+`content_tsv` + GIN-индекс `idx_company_folders_content_tsv`), зарегистрирована в
+`scripts/ensure_postgres.py` (`ALWAYS_APPLY_MIGRATIONS`, идемпотентна). Коммит `9b56146`.
+Проверено на проде: «фиксация результатов» давало 0 по ILIKE → теперь 16 релевантных, топ
+`Регламент_фиксации_результата`. **Деплой был backend-only** (git pull + `ensure_postgres.py` +
+рестарт `albery`), БЕЗ `update_server.sh` — тот пересобирает фронт (`npm run build`), а это
+memory-тяжело на 1 ГБ боксе (правило №7); для чисто бэкендовой правки фронт не трогать.
+
+Возможная **ступень 2** (отложена): pgvector + эмбеддинги для семантики/синонимов («оплаты» ↔
+«платёжный календарь»). Локальную модель грузить нельзя (RAM ~1 ГБ) — только API (Google-ключ уже в
+`.env`, либо OpenAI). Корпус крошечный (42 дока), отдельная векторная БД не нужна — pgvector в той же
+Postgres.
+
 ### Bitrix-инструменты в MCP
 
 В MCP Albery доступны инструменты:
