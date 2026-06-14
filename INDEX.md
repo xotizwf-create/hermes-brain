@@ -2,7 +2,7 @@
 id: index
 type: schema
 tags: [root, routing, entrypoint]
-updated: 2026-06-10
+updated: 2026-06-14
 secret_refs: []
 ---
 
@@ -14,10 +14,18 @@ agent knows and how it acts across all projects. It is isolated from any single 
 **Read this file first in every new session.** Then load only the files relevant to the
 current task — never load the whole brain unless asked for a full audit.
 
-**To find the exact section to load, grep [`section-index.md`](section-index.md)** — a generated,
-greppable map of every doc → its H2/H3 sections (`path#anchor`) with frontmatter tags. Search a
-keyword there, open the matching `path#anchor`, and load that section instead of a whole file.
-Regenerate after editing docs: `python scripts/build_section_index.py` (like `build_registry.py`).
+**Finding things — search BEFORE you decide you don't know or pick a skill.** Run:
+`python3 /root/.hermes/agent-knowledge/scripts/brain_search.py "<keywords>"`. This is the one
+unified search across **both** trees the agent has — the versioned brain (docs + our custom
+skills in `agent-knowledge/`) AND Hermes' bundled skill library (`/root/.hermes/skills/`, e.g.
+`research`, `devops`). It returns ranked `path · title · snippet` (lexical FTS + fuzzy fallback);
+open the top hit and load that. The index self-rebuilds when stale; force with `--build`.
+*Why this exists:* knowledge and skills live in separate trees, and the agent used to miss the
+right skill entirely (e.g. the 2026-06-14 Росреестр task) — always search first.
+
+**For an in-file anchor**, also grep [`section-index.md`](section-index.md) — a generated map of
+every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
+`python scripts/build_section_index.py`.
 
 ## Core principles
 
