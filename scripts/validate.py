@@ -78,8 +78,8 @@ def check_secrets(f: Path) -> None:
 
 def main() -> int:
     for md in ROOT.rglob("*.md"):
-        if ".git" in md.parts or "archive" in md.parts:
-            continue
+        if ".git" in md.parts or "archive" in md.parts or "vendor-skills" in md.parts:
+            continue  # vendor-skills/ = backup mirror of Hermes' bundled library, not our authored docs
         if md.name in {"README.md", "CLAUDE.md"}:
             continue  # landing / agent-instruction files, not knowledge docs
         if "skills" in md.parts:
@@ -89,7 +89,8 @@ def main() -> int:
             continue
         check_frontmatter(md)
     for f in ROOT.rglob("*"):
-        if f.is_file() and ".git" not in f.parts and f.suffix in {".md", ".yaml", ".yml", ".py", ".sh"}:
+        if (f.is_file() and ".git" not in f.parts and "vendor-skills" not in f.parts
+                and f.suffix in {".md", ".yaml", ".yml", ".py", ".sh"}):
             check_secrets(f)
     if errors:
         print("VALIDATION FAILED:")

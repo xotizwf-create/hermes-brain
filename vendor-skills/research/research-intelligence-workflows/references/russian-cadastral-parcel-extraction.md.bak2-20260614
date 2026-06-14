@@ -1,0 +1,105 @@
+# Russian public cadastral parcel extraction notes
+
+Use when the user asks to collect land parcels around a cadastral number, fill addresses/VRI/distances, or produce an Excel table from the public cadastral map/НСПД.
+
+## TL;DR — run the ready-made script, do NOT hand-build this each time
+
+A tested script does the whole job (fetch geometry → buffer from the boundary → enumerate
+quarters → dedupe → distance + compass side → verified .xlsx). It lives next to this file:
+
+    /usr/local/lib/hermes-agent/venv/bin/python \
+      /root/.hermes/skills/research/research-intelligence-workflows/scripts/nspd_parcels.py \
+      18:30:000423:1789 --radius 100 --objects land
+
+- **Run it with the Hermes venv python.** The `terminal` tool's `/usr/bin/python3` (3.10)
+  has NO shapely / pyproj / openpyxl — scripts that need them die with ModuleNotFoundError.
+  The venv at `/usr/local/lib/hermes-agent/venv/bin/python` has all of them.
+- `--objects land` → only земельные участки (matches the "земельный участок / ВРИ" columns).
+- `--objects all`  → also buildings/structures (гаражи-ОКС). Use when the user says
+  "опиши каждый гараж" **and** the garages are ОКС, not separate land parcels (common around
+  industrial sites).
+- Output `.xlsx` lands in `/root/.hermes/outbox/`; deliver it as `MEDIA:<path>`.
+- Only hand-build the pipeline if the script genuinely cannot run — and then follow the
+  method below.
+
+## Hard facts confirmed 2026-06-14 (don't relearn these the slow way)
+
+- **Direct nspd.gov.ru / pkk.rosreestr.ru are DEAD from our servers** — `http=000` / timeout,
+  even via the Russian `eth0` (217.198.12.236). НСПД blocks datacenter IPs in general, not
+  only foreign ones, so routing "not through Estonia" does **not** fix it. Do not probe the
+  official API directly, and do not open the map in the `browser` tool (CDP times out).
+  (217's default route is the `awg0` VPN → egress IP `95.85.243.43`, geolocated CZ — the
+  "эстонский" exit. Even bypassing it to the RU IP still gets refused by НСПД.)
+- **The working path is the public mirror**, which proxies НСПД from an allowed IP:
+  `https://kadastrmapp.online/api.php?query=<num_or_quarter>&thematicSearchId=1` with
+  browser headers: `User-Agent: Mozilla/5.0`, `Referer: https://kadastrnomer.ru/`,
+  `Origin: https://kadastrnomer.ru`, `Accept: application/json,*/*`.
+  `https://test.fgishub.ru/api.php?query=<...>` is an on/off fallback (was down 2026-06-14).
+- A **full cadastral number** returns the parcel's real `Polygon`/`MultiPolygon`.
+  A **quarter query** (e.g. `18:30:000423`) returns ALL ~80 objects in the quarter — that is
+  how you enumerate neighbours (the official "search returns only one object" limit does not
+  apply to the mirror).
+- **CRS:** geometry is GeoJSON in **EPSG:3857 (Web Mercator)**. DO NOT measure distance in
+  raw 3857 — at Sarapul's latitude (~56°N) the Mercator scale error is ~1.8×, so a "100 m"
+  buffer becomes ~55 real metres and you badly undercount. **Reproject to local UTM**
+  (Удмуртия = EPSG:32639; the script auto-picks the zone) and measure in metres there.
+- **Garages**: around a big industrial parcel they are usually ОКС (Здания/Сооружения), not
+  separate land parcels. For `18:30:000423:1789` within 100 m there are ~13 land parcels vs
+  ~45 objects total. If the user says "очень много / каждый гараж", confirm whether they want
+  land parcels only or all objects (`--objects all`) before delivering.
+
+## Practical data path (if you must hand-build)
+
+1. Search through the mirror endpoints above (browser-like headers). The response has
+   `data.features`. Land parcels have `categoryName` containing "Земельные участки";
+   buildings/structures are "Здания"/"Сооружения"/ОНС.
+2. Useful fields live under `feature.properties.options`:
+   - cadastral number: `cad_num` (or `cad_number`)
+   - address: `readable_address`
+   - VRI: `permitted_use_established_by_document`; fallback `permitted_use`,
+     `land_record_category_type`; for ОКС `build_record_type_value`
+   - area: `specified_area`, `declared_area`, or `area`
+   - status: `common_data_status` / `status`
+   - home quarter: `quarter_cad_number`
+3. Reproject every geometry 3857→UTM (see CRS note) with
+   `shapely.ops.transform(pyproj.Transformer.from_crs(3857, utm, always_xy=True).transform, geom)`.
+4. For a radius, buffer the **central parcel boundary** (union of all contours), not the
+   centre, and keep candidates with `central.distance(candidate) <= radius` (touching/
+   intersecting = 0 m).
+5. Compass side: bearing from the central centroid to the candidate centroid; 8 sectors
+   С/СВ/В/ЮВ/Ю/ЮЗ/З/СЗ (`atan2(dEast, dNorth)`).
+
+## Finding nearby parcels beyond the same quarter
+
+- Start with the target's home quarter (`quarter_cad_number`). For a large/multi-contour
+  parcel a 100 m buffer crosses several quarters.
+- The mirror has no point/bbox endpoint (kadastrmapp `apipoint.php` → 404; fgishub often
+  down), so enumerate a **numeric window of neighbour quarters** (the script scans ±N on the
+  quarter number) and filter by real geometry intersection with the buffer — wrong quarters
+  simply contribute nothing.
+- Pre-filter quarter features by their representative point being within `radius + slack`,
+  then fetch each survivor's full polygon by full cadastral number, dedupe by `cad_num`.
+
+## Excel report pattern
+
+Columns that matched the owner's request (the script writes exactly these, +"Категория
+объекта" in `--objects all`):
+
+- `№`
+- `Номер земельного участка`
+- `Адрес земельного участка`
+- `Вид разрешенного использования участка`
+- `Расстояние от участка <cad_num>, м`
+- `Сторона света`
+- `Площадь, кв. м`, `Статус`
+- second sheet "Источник" with the method + source + ЕГРН caveat
+
+Write the `.xlsx` under `/root/.hermes/outbox/` for Telegram delivery and verify with
+`openpyxl` that it opens and the row count matches before replying.
+
+## Caveats to state to the user
+
+- These are open public cadastral-map/НСПД data, good for a working table/report.
+- For legally significant use, tell the user to confirm with an official ЕГРН extract.
+- Say the radius was computed from available public geometries; don't claim official
+  guaranteed completeness.

@@ -1,0 +1,17 @@
+{
+  "tagOwners": {
+    "tag:agent": ["andigital"],
+    "tag:personal-target": ["andigital"]
+  },
+  "acls": [
+    { "action": "accept", "src": ["tag:agent"], "dst": ["tag:personal-target:22"] }
+  ],
+  "ssh": [
+    {
+      "action": "accept",
+      "src": ["tag:agent"],
+      "dst": ["tag:personal-target"],
+      "users": ["codex", "codexadmin"]
+    }
+  ]
+}

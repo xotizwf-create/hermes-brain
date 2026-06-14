@@ -1,0 +1,4 @@
+interface:
+  display_name: "aislop Code Quality"
+  short_description: "Scan and clean AI-generated code slop"
+  default_prompt: "Use $aislop-code-quality to scan project code for AI slop and remove only safe, mechanical issues."

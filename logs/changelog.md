@@ -12,6 +12,13 @@ Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
 
 ## 2026-06-14
+- **Все навыки теперь в GitHub (бэкап «заводского» дерева).** Встроенная библиотека навыков Hermes
+  (`/root/.hermes/skills/`, не в git) и наши правки в ней (кадастровый навык) могли пропасть при
+  переустановке Hermes. Залиты в репозиторий под `vendor-skills/` (55 навыков, 151 .md; исключён
+  мусор — `.archive`/бэкап-тарболы). `scripts/sync_vendor_skills.py` — пересинхронизация (rsync,
+  запускать на сервере из `agent-knowledge/scripts/`, дальше коммит/вотчдог). `validate.py` пропускает
+  `vendor-skills/` (чужой frontmatter не ломает проверку). Риск «правки в заводском дереве не
+  версионируются» закрыт.
 - **Агент «умнее»: ретрив + наблюдаемость + петля обучения (пп.1–4).**
   (#1) `scripts/brain_search.py` — единый поиск по ОБОИМ деревьям (versioned brain + bundled
   `/root/.hermes/skills`), SQLite FTS5 + триграммы, ранжирование по типу; INDEX.md велит искать

@@ -1,0 +1,54 @@
+# Russian public cadastral parcel extraction notes
+
+Use when the user asks to collect land parcels around a cadastral number, fill addresses/VRI/distances, or produce an Excel table from the public cadastral map/НСПД.
+
+## Practical data path
+
+1. Search the cadastral number or quarter through the public-map proxy endpoints used by kadastrnomer/kadastrmapp:
+   - Primary seen in earlier sessions: `GET https://kadastrmapp.online/api.php?query=<cad_num_or_quarter>&thematicSearchId=1`
+   - Alternate mirror that returned full НСПД-style feature JSON in June 2026: `GET https://test.fgishub.ru/api.php?query=<cad_num_or_quarter>`
+   - Headers that worked: `User-Agent: Mozilla/5.0`, `Referer: https://kadastrnomer.ru/`, `Origin: https://kadastrnomer.ru`, `Accept: application/json,*/*`.
+   - If the official `nspd.gov.ru` interactive map/API returns `Forbidden` for a server/datacenter IP, do **not** stop or claim the map is unavailable. Try the public mirror endpoints with browser-like headers, and label the workbook source as public НСПД/Rosreestr mirror data.
+2. The response has `data.features`. Land parcels are usually `properties.category == 36368` / `categoryName` land parcel. Buildings/premises appear too; filter them out unless requested.
+3. Useful fields live under `feature.properties.options`:
+   - cadastral number: `cad_num` or `cad_number`
+   - address: `readable_address`
+   - VRI: `permitted_use_established_by_document`; fallback to `permitted_use`, `land_record_category_type`
+   - area: `specified_area`, `declared_area`, or `area`
+   - status: `common_data_status`/`status` depending on object variant
+4. Geometry is GeoJSON in EPSG:3857. Use `shapely.geometry.shape(feature['geometry'])` directly for metre-like distances/buffers.
+5. For a radius around a target parcel, compute distance from **parcel geometry to parcel geometry**, not centre-to-centre. Use `central_geom.distance(candidate_geom) <= radius` and include intersecting/touching parcels as distance `0`.
+6. Direction/side of light can be approximated by the bearing from the central parcel centroid to the candidate parcel centroid. Map 8 sectors: N, NE, E, SE, S, SW, W, NW.
+
+## Finding nearby parcels beyond the same quarter
+
+- First query the target parcel and its cadastral quarter prefix (for `18:30:000423:1789`, query `18:30:000423`).
+- Also query obvious adjacent quarter prefixes if the map/image suggests they border the 100 m buffer.
+- When adjacent-quarter search is uncertain, sample points in the 100 m buffer and call the WMS GetFeatureInfo proxy:
+  - URL prefix: `https://test.fgishub.ru/apipoint.php?point=`
+  - Query body example:
+    `/api/aeggis/v3/36048/wms&REQUEST=GetFeatureInfo&QUERY_LAYERS=36048&SERVICE=WMS&VERSION=1.3.0&FORMAT=image/png&STYLES=&TRANSPARENT=true&LAYERS=36048&RANDOM=0.5&INFO_FORMAT=application/json&FEATURE_COUNT=10&I=50&J=50&WIDTH=100&HEIGHT=100&CRS=EPSG:3857&BBOX=<minx>,<miny>,<maxx>,<maxy>`
+  - The cadastral parcel layer observed here is `36048`; buildings were `36049`.
+  - Keep the same browser-like headers and `Referer: https://kadastrnomer.ru/` / `Origin: https://kadastrnomer.ru`.
+  - This is useful when a first workbook only contains parcels touching the target or same-quarter objects; a 100 m report must cover the **buffer from the target parcel boundary**, so use the target geometry buffer and sample around its full outside edge, not just the screenshot viewport.
+- Avoid excessive dense grids. Start with quarter searches; only then sample coarsely/targeted (e.g. 20–30 m spacing) around the buffer edge if needed. Deduplicate by cadastral number, then fetch each unique parcel’s full card with the search API.
+
+## Excel report pattern
+
+Columns that matched the user’s cadastral-neighbour request:
+
+- `№`
+- `Номер земельного участка`
+- `Адрес земельного участка`
+- `Вид разрешенного использования участка`
+- `Расстояние от участка <cad_num>, м`
+- `Сторона света`
+- optional: `Площадь, кв. м`, `Статус`, `Источник/примечание`
+
+Write the `.xlsx` under `/root/.hermes/outbox/` for Telegram delivery. Verify with `openpyxl` that the workbook opens and row counts/content match before replying.
+
+## Caveats to state to the user
+
+- These are open public cadastral-map/НСПД data, good for a working table/report.
+- For legally significant use, tell the user to confirm with an official ЕГРН extract.
+- Do not claim a universal official guarantee of completeness if some adjacent quarters were inferred; say the radius was calculated from available public geometries.
