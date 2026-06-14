@@ -65,6 +65,22 @@ def check_skill(md: Path) -> None:
             errors.append(f"{md.relative_to(ROOT)}: skill frontmatter missing '{field}'")
 
 
+def check_mojibake(md: Path) -> None:
+    """Flag cp1251→utf8 double-encoded text (the 2026-05-29 legacy-import bug).
+
+    Mojibake renders every Cyrillic letter as `Р?`/`С?`, so `Р`+`С` dominate the Cyrillic
+    (~90%), whereas real Russian keeps them under ~7%. Threshold 25% has a huge safety margin.
+    """
+    text = md.read_text(encoding="utf-8", errors="replace")
+    cyr = sum(1 for ch in text if ("А" <= ch <= "я") or ch in "Ёё")
+    if cyr < 200:
+        return  # too little Cyrillic to judge reliably
+    rs = sum(1 for ch in text if ch in ("Р", "С"))
+    if rs / cyr > 0.25:
+        errors.append(f"{md.relative_to(ROOT)}: looks like mojibake "
+                      f"(Р/С = {rs / cyr:.0%} of Cyrillic; real Russian is <7%) — re-check encoding")
+
+
 def check_secrets(f: Path) -> None:
     if any(part in SECRET_ALLOWLIST for part in f.relative_to(ROOT).parts):
         return
@@ -80,6 +96,7 @@ def main() -> int:
     for md in ROOT.rglob("*.md"):
         if ".git" in md.parts or "archive" in md.parts or "vendor-skills" in md.parts:
             continue  # vendor-skills/ = backup mirror of Hermes' bundled library, not our authored docs
+        check_mojibake(md)  # encoding sanity for every doc, incl. skills
         if md.name in {"README.md", "CLAUDE.md"}:
             continue  # landing / agent-instruction files, not knowledge docs
         if "skills" in md.parts:

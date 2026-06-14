@@ -11,6 +11,30 @@ secret_refs: []
 Append-only, newest on top. Concrete mistakes + how to avoid repeating them. Pulled from
 incidents and review feedback so the same error doesn't happen twice.
 
+## 2026-06-14 — Status audit (are past mistakes actually fixed?)
+Reviewed every entry below + verified live on the server:
+- **Росреестр/НСПД (06-14)** — ✅ fixed: tools shipped (`nspd_parcels_local.py` complete via tiling,
+  `nspd_parcels.py` fallback), verified 329 objects. Only the server-side 24/7 automation is open
+  (needs a RU residential proxy — owner decision, not a bug).
+- **«Модель долго работала» cascade (06-11)** — ✅ fixed for normal ops, ⚠️ residual. Verified: the
+  06-11 config fix is live (`compression.threshold 0.05`, `protect_last_n 10`, `compression.timeout
+  45`, aux split 8b/70b). The 53× "unhealthy" + 28× compression-fail counts in the journal are **all
+  from one day** — today's Росреестр storm — and **zero on every other day**, i.e. normal operation
+  has been clean for a week. The storm's trigger (the agent flailing into a pathological huge context)
+  is now removed by `brain_search` + ready tools. **Residual amplifier:** a Groq free-tier TPM/size
+  rejection is still classified as a "payment error" and disables the WHOLE Groq aux for 600 s — a
+  free-tier limitation, not a blind-patchable bug. Full elimination needs either a paid/larger
+  compression provider or a tested patch to `auxiliary_client._is_payment_error` — owner's call.
+- **PDF /root denylist (06-11)** — ✅ fixed & robust: rescue patch present AND **re-applied on every
+  start** via `ExecStartPre` (`apply_patches.py` + `media_rescue_patch.py`); 0 media drops in 7 days.
+- **dotfile-blind listing (06-10)** — behavioural lesson, no code to fix; guidance stands (use
+  `find`/`ls -A`, never a `^\.` filter when checking if a store has content).
+- **.env tar leak (05-30)** — ✅ fixed: `.env`/`.env.*` gitignored, absent from git history, server
+  clone tracks 0 `.env`, no stale `.bak` snapshots. Git transport physically can't carry it.
+- **Mojibake import (05-29)** — ✅ now fully closed: the "consider a validate.py heuristic" to-do is
+  **implemented** — `check_mojibake()` flags any doc where `Р`+`С` exceed 25 % of Cyrillic (real
+  Russian <7 %, mojibake ~90 %); calibrated + tested both ways, no false positives on the real brain.
+
 ## 2026-06-14 — Росреестр/НСПД: 1.5 часа на участки в радиусе 100 м, выдал 9 вместо десятков
 - **What:** owner asked for all land parcels within 100 m of `18:30:000423:1789` (Сарапул) as an
   Excel. The agent flailed for ~1.5 h across several compaction-split sessions, delivered a table
