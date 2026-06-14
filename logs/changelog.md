@@ -12,6 +12,12 @@ Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
 
 ## 2026-06-14
+- **Albery — наблюдаемость как у Hermes brain (self-check на 186).** У Albery были те же молчаливые
+  сбои, но за ними никто не следил (за 7д: codex-лимит 11×, Groq unhealthy 78×, сжатие 8×, медиа-дроп 1× —
+  диагностировали вручную). Перенёс `hermes_selfcheck.py` на 186 + ежечасный no-agent cron `self-check`
+  (`4e496f64fade`, доставка Александру `telegram:1451982360`, тихо если чисто). В скрипт добавлена CRIT-
+  сигнатура **codex usage-limit** (`usage_limit_reached`) — killer Albery (один аккаунт без фолбэка);
+  полезно и для 217. Read-only диагностика 186 — preflight чист (~1.1ГБ free, swap, load 0.08).
 - **Аудит всех прошлых ошибок (mistakes.md) — проверено вживую, что пофикшено.** Итог в шапке
   `logs/mistakes.md`: Росреестр ✅, медиа-дроп ✅ (rescue-патч + авто-переприменение, 0 дропов/7д),
   .env-утечка ✅ (gitignore, нет в истории/бэкапах), mojibake ✅ — **дореализована** эвристика

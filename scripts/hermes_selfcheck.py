@@ -23,6 +23,8 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 CHECKS = {
     "soul_blocked":  (r"Context file .*blocked|SOUL\.md blocked|exfil_?curl", 1,
                       "SOUL.md/системные правила вырезаются сканером (агент теряет инструкции)", "CRIT"),
+    "codex_limit":   (r"usage_limit_reached|usage limit reached|plan_type.*resets_in", 1,
+                      "Codex/ChatGPT ЛИМИТ исчерпан — агент не отвечает до сброса (один аккаунт без фолбэка)", "CRIT"),
     "codex_auth":    (r"token_invalidated|auth(entication)?[^a-z]*invalid|401 Unauthorized", 1,
                       "Codex (основной мозг) теряет авторизацию — token_invalidated", "CRIT"),
     "media_drop":    (r"Skipping unsafe MEDIA|unsafe MEDIA", 1,

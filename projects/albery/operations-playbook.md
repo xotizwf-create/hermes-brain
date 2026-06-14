@@ -73,7 +73,11 @@ Groq-ключ Albery — в `/root/.hermes/secure/hermes-gateway.env` (`GROQ_API
 сжатие** (раздел 1) — инструкция всегда целиком в контексте.
 
 ## 4. Рантайм-здоровье: как диагностировать «тупит / делает фигню»
-Не гадать — смотреть журнал шлюза на 186 (`journalctl -u hermes-gateway`):
+**Автоматизировано (2026-06-14):** на 186 стоит ежечасный cron `self-check` (`4e496f64fade`,
+`/root/.hermes/scripts/hermes_selfcheck.py`, no-agent) — сам сканит журнал и шлёт Александру в Telegram
+алерт, **только если** найден сбой (codex-лимит / Groq unhealthy / падение сжатия / медиа-дроп); тихо,
+когда чисто. То есть про лимит codex и падение Groq узнаёшь сразу, а не постфактум. Ниже — что значат
+сигнатуры (для ручного разбора `journalctl -u hermes-gateway`):
 - `Auxiliary: marking local/custom unhealthy (payment / credit error)` → Groq aux упал (лимит/ключ).
 - `HTTP 429 usage_limit_reached` (`openai-codex`) → **лимит ChatGPT исчерпан** (1 аккаунт, без фолбэка;
   сброс ~раз в N часов). Сообщения провайдера теперь внятные (патч `hermes_provider_error_patch.py`:
