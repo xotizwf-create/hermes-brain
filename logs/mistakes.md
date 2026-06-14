@@ -2,7 +2,7 @@
 id: mistakes
 type: log
 tags: [mistakes, postmortem]
-updated: 2026-06-11
+updated: 2026-06-14
 secret_refs: []
 ---
 
@@ -10,6 +10,58 @@ secret_refs: []
 
 Append-only, newest on top. Concrete mistakes + how to avoid repeating them. Pulled from
 incidents and review feedback so the same error doesn't happen twice.
+
+## 2026-06-14 — Росреестр/НСПД: 1.5 часа на участки в радиусе 100 м, выдал 9 вместо десятков
+- **What:** owner asked for all land parcels within 100 m of `18:30:000423:1789` (Сарапул) as an
+  Excel. The agent flailed for ~1.5 h across several compaction-split sessions, delivered a table
+  with only **9 участков**, then kept retrying: dozens of dead DDGS web-searches, `web_extract`
+  errors (ddgs backend can't extract URLs), `pynspd` cache-arg crash, direct `nspd.gov.ru`/
+  `a.nspd.su`/`pkk.rosreestr.ru` hits and a `browser_navigate` — all timing out (300/240/80 s each)
+  — and finally hit the tool-iteration cap with no usable result.
+- **Why it failed (root causes):**
+  1. **nspd.gov.ru / pkk.rosreestr.ru are IP-blocked for our servers.** Confirmed 2026-06-14:
+     `http=000` even via the Russian `eth0` (217.198.12.236). НСПД blocks datacenter IPs in
+     general; the owner's hunch "route not through the эстонский IP" doesn't help. (217 egresses
+     through the `awg0` VPN → `95.85.243.43`, geo CZ.) The official site is simply unreachable
+     from the box — every direct probe is a guaranteed multi-minute timeout.
+  2. **The agent never opened its own skill** `research-intelligence-workflows /
+     references/russian-cadastral-parcel-extraction.md`, which already documented the working
+     public mirror. It opened `document-production-workflows` instead.
+  3. **No ready-to-run tool** → it hand-built the geometry/Excel pipeline from scratch each turn
+     under the iteration cap, and ran scripts with `/usr/bin/python3` (the terminal tool's python,
+     which has **no shapely/pyproj/openpyxl** — only the hermes venv does), so geo steps died.
+  4. **Method bug:** distances/buffer in raw EPSG:3857 (×1.8 scale error at 56°N → "100 m" ≈ 55 m)
+     and from the centre, not the boundary → undercount.
+- **Public mirror = partial only.** `scripts/nspd_parcels.py` uses the `kadastrmapp.online`
+  mirror (the one source reachable from the VPN egress) with the 3857→UTM + boundary-buffer
+  method. But the mirror's `api.php` is **hard-capped at 81 objects/quarter and ignores
+  pagination**, while the quarter actually holds 173 land parcels + 156 buildings + ... — so it
+  can only ever return a slice (~13 land / 28 objects here). Keep it as a best-effort fallback,
+  not the source of truth.
+- **The COMPLETE solution (done + verified 2026-06-14): official НСПД spatial search via `pynspd`,
+  run from a Russian RESIDENTIAL IP.** See `scripts/nspd_parcels_local.py`.
+  - НСПД blocks datacenter/foreign IPs, so it needs a RU residential/mobile egress. We don't have
+    one on the server; for this run we used the **owner's home PC with AmneziaVPN turned off for
+    ~2 min** (its real RU home IP). A detached "armed" capture script polled НСПД by DIRECT IP
+    (`2.63.246.75`, DNS-free — DNS dies when the VPN drops) and ran the instant the path opened, so
+    the Claude session dropping during the VPN-off window didn't matter. (A route-only split-tunnel
+    does NOT work: WireGuard's kill-switch WFP blocks untunneled traffic.)
+  - **Critical gotcha — silent 300 cap:** `pynspd.search_*_in_contour` sends ONE
+    `/api/geoportal/v1/intersects` POST and НСПД **silently truncates at ~300** (no error, so the
+    library's built-in recursive splitter never triggers). You MUST tile yourself: recursively
+    split the bbox into quadrants, re-querying any tile that returns ≥~250 or raises `TooBigContour`,
+    dedupe by `cad_num`, then filter by real boundary distance. `nspd_parcels_local.py` does this
+    (`collect_complete`). Result: **329 objects = 299 land parcels + 30 buildings** within 100 m
+    (vs the capped 300 / the mirror's 13 / the agent's original 9).
+  - `pynspd` returns lon/lat (EPSG:4326); reproject to local UTM (Удмуртия = 32639) for metres.
+    Use `Nspd(client_dns_resolve=True, client_retry_on_blocked_ip=True)` in IP-mode.
+- **To automate on the server (any user, 24/7):** give the agent a RU residential/mobile **proxy**
+  and call `Nspd(client_proxy=...)`; store the proxy secret in the secure zone. A RU VPS/datacenter
+  proxy will NOT work (still blocked).
+- **Avoid next time:** for Росреестр/кадастр/НСПД — use `nspd_parcels_local.py` (pynspd, tiled,
+  from a RU residential IP/proxy), venv python; treat the mirror script as fallback only; never
+  trust a single intersects call (cap 300); never probe nspd.gov.ru directly from a datacenter IP;
+  never measure in raw 3857.
 
 ## 2026-06-11 — «модель ОЧЕНЬ долго работала» на prostavki-MCP: каскад из трёх невидимых поломок
 - **What:** the owner's prostavki MCP-надстройка session crawled for ~2 hours. Journal showed the
