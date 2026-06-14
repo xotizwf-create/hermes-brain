@@ -18,7 +18,8 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 SRC = os.environ.get("HERMES_SKILLS_DIR", "/root/.hermes/skills")
 REPO = os.environ.get("BRAIN_REPO", "/root/.hermes/agent-knowledge")
 DST = os.path.join(REPO, "vendor-skills")
-EXCLUDES = [".curator_backups", ".archive", "__pycache__", "*.pyc", "*.tar.gz", "*.gz", ".git"]
+EXCLUDES = [".curator_backups", ".archive", "__pycache__", "*.pyc", "*.tar.gz", "*.gz", ".git",
+            ".usage.json", "*.log"]  # skip mutable telemetry/state so the backup doesn't churn daily
 COMMIT_NAME = "hermes-server"
 COMMIT_EMAIL = "hermes-server@users.noreply.github.com"
 

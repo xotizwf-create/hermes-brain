@@ -17,7 +17,8 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 SRC = os.environ.get("HERMES_SKILLS_DIR", "/root/.hermes/skills")
 DST = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "vendor-skills")
-EXCLUDES = [".curator_backups", ".archive", "__pycache__", "*.pyc", "*.tar.gz", "*.gz", ".git"]
+EXCLUDES = [".curator_backups", ".archive", "__pycache__", "*.pyc", "*.tar.gz", "*.gz", ".git",
+            ".usage.json", "*.log"]  # skip mutable telemetry/state
 
 
 def main():
