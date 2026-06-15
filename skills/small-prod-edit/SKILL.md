@@ -46,6 +46,7 @@ avoid.
 - Stay in scope — no subsystem fishing.
 - Prefer git-first (`engineering/agentic-coding.md`) when the file lives in a repo; direct live edit
   is for the truly tiny tail-end case.
+- If a hotfix touches live data and the API/UI still shows the bug after the DB looks correct, treat it as a data+serializer issue: verify through the same outward layer and patch the smallest serving code path too. See `references/live-data-plus-serializer-fix.md`.
 - Secrets: references only; never printed or committed.
 
 ## Done when
