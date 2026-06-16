@@ -120,10 +120,10 @@ Current values (Albery Hermes on `186.246.7.32`) as of 2026-05-30:
 - `telegram_context_guard.token_threshold=50000`: before running the model on a large Telegram session, gateway asks whether to compress old context and then continue with the original message.
 - `telegram_context_guard.message_limit=80`: extra safety valve for very long chats even if token estimate is unavailable.
 - Context guard buttons: `Compress and continue` (`Сжать и продолжить`) sends visible Telegram chat messages `Сжимаю контекст...` before `/compress` and `Контекст сжат, думаю, как ответить на ваше сообщение...` after successful compression, suppresses the raw technical `/compress` result, then repeats the original message. `Continue without compression` (`Продолжить без сжатия`) runs the original message once without compression.
-- Persistence: context-guard UX is re-applied on every gateway start by `/root/.hermes/patches/context_guard_ux_patch.py` via `/etc/systemd/system/hermes-gateway.service.d/30-context-guard-ux.conf`.
+- Persistence: context-guard UX is re-applied on every gateway start by `/root/.hermes/patches/context_guard_ux_patch.py` via `/etc/systemd/system/hermes-gateway.service.d/30-context-guard-ux.conf`. **(⚠️ СТЁРТО к 2026-06-16 — этого патча и drop-in больше нет; сам context guard жив нативно. См. таблицу аудита ниже.)**
 - Backs up before server patches: `/usr/local/lib/hermes-agent/gateway/run.py.bak.<stamp>`, `/usr/local/lib/hermes-agent/gateway/platforms/telegram.py.bak.<stamp>`, `/root/.hermes/config.yaml.bak.<stamp>`.
 
-Hermes task time budgets (Albery Hermes on `186.246.7.32`) as of 2026-05-29:
+Hermes task time budgets (Albery Hermes on `186.246.7.32`) as of 2026-05-29 — **⚠️ СТЁРТО к 2026-06-16: ручной wall-clock guard (`task_wall_timeout_seconds`) больше не применён, остался только нативный таймаут простоя; ниже — история**:
 
 ```yaml
 agent:
@@ -321,7 +321,29 @@ ssh root@186.246.7.32 'hermes mcp test albery 2>&1 | grep -E "Tools discovered|<
 - После правки сделан `systemctl restart hermes-gateway`; в активном Telegram-чате нужен `/reset`,
   чтобы сессия подтянула новый режим.
 
-### Фикс падения Hermes `NameError: name 'event'` + команды `/accounts` `/limits` + авто-переприменение правок (29.05.2026)
+### ⚠️ СТАТУС ручных патчей gateway — аудит 2026-06-16 (читать перед разделами ниже)
+
+Апдейт/переустановка Hermes ~13.06 **стёрла большинство ручных патчей** ниже, а
+авто-восстановление (`apply_patches.py`) тоже исчезло. Фактическое состояние на 186
+(Hermes v0.14.0, код gateway от 13.06; на сервере в `/root/.hermes/patches/` остался только
+`provider_error_patch.py`, в systemd drop-ins — лишь `20-provider-errors.conf` + `40-groq-env.conf`):
+
+| Что описано ниже | Реальность 2026-06-16 |
+|---|---|
+| Context guard (анти-раздувание контекста) | ✅ **жив** — НАТИВНО в `run.py`, читает `config.yaml`→`telegram_context_guard` |
+| `session_reset` / `compression` / `reasoning_effort: medium` | ✅ **живы** (через `config.yaml`, апдейт его не трогает) |
+| Фикс `NameError: name 'event'` | ✅ **неактуален** — патч, вносивший баг (wall-clock guard), тоже стёрт → бага нет, агент работает |
+| Команды бота `/accounts` `/limits` | ❌ **СТЁРТЫ** (нет в `telegram.py`); восстановить можно через `apply_patches.py`+systemd, если понадобятся |
+| Wall-clock лимит задач (`task_wall_timeout_seconds` 600/3600) | ❌ **стёрт** — остался только нативный таймаут простоя |
+| Русский UX кнопок сжатия (`context_guard_ux_patch.py`) | ❌ **стёрт** (косметика; нативные англ. подсказки) |
+| `apply_patches.py` + `update.sh` авто-переприменение | ❌ **нет** (есть только `provider_error_patch.py`) |
+
+**Важно:** Hermes **на ~2090 коммитов позади** (версия от 16.05). `hermes update` — большой
+рискованный прыжок, который **снова сотрёт ручные патчи**. Не обновлять без отдельной подготовки.
+
+Разделы ниже (29.05) сохранены как ИСТОРИЯ того, как патчи делались; по факту см. таблицу выше.
+
+### Фикс падения Hermes `NameError: name 'event'` + команды `/accounts` `/limits` + авто-переприменение правок (29.05.2026, частично СТЁРТО — см. таблицу выше)
 
 **Симптом.** В Telegram-чате с Hermes любое сообщение (даже «Как меня зовут») падало с
 `Sorry, I encountered an error (NameError). name 'event' is not defined`. В журнале
