@@ -11,6 +11,7 @@ it sees everything the owner can. Set up 2026-05-30.
 ## What the agent can read & how
 - **Google Doc / Sheet / Slides / Drive file** — owner pastes a link → `read-links/fetch_url.py "<url>"`
   (uses the token automatically; Docs/Slides → text, Sheets → all tabs as CSV, `--gid N` for one tab).
+- **Google Sheets / Drive write + Apps Script projects** — full-access token installed 2026-06-16 at the same secure token paths. Verified after enabling `script.googleapis.com` for project `700568547840`: creating a spreadsheet, writing cells, creating a bound Apps Script project, uploading `Code` + `appsscript` files, reading script content back, and building a working Sheets dashboard with formulas, validation, formatting, Apps Script menu, and charts all work. If Apps Script REST calls fail with `SERVICE_DISABLED`, use activation URL `https://console.developers.google.com/apis/api/script.googleapis.com/overview?project=700568547840`. The `script.google.com/home/usersettings` toggle alone is not enough for REST project creation. For the repeatable build/verify workflow, see `references/sheets-apps-script-automation.md`.
 - **Google Calendar (read + WRITE)** — read agenda via `skills/google-account/scripts/gcal_read.py
   [--days N] [--max N]` (Russian) or the bundled `google_api.py calendar list`. **Create/delete events**
   via the bundled tool: `python3 /root/.hermes/skills/productivity/google-workspace/scripts/google_api.py
@@ -113,6 +114,32 @@ Pattern (done for Calendar 2026-05-30 and for `gmail.send` 2026-06-11): add the 
 and the bundled-tool compat path `/root/.hermes/google_token.json` (600), then use the action tool
 (`google_api.py`). For more: `gmail.send`, `drive.file`/`drive`, `spreadsheets`. Keep every write behind
 explicit owner confirmation, like other outward-facing actions.
+
+### Apps Script / full Google automation scopes
+If the owner wants the agent to create/edit Sheets and bind/manage Apps Script projects, the existing
+read-only Drive/Sheets token is not enough. Prepare a PC-side OAuth login bundle that requests at least:
+
+- `https://www.googleapis.com/auth/drive`
+- `https://www.googleapis.com/auth/spreadsheets`
+- `https://www.googleapis.com/auth/script.projects`
+- `https://www.googleapis.com/auth/script.deployments`
+- keep any already-needed Calendar/Gmail scopes if the same token should replace the existing one.
+
+Owner-side prerequisites/pitfalls:
+
+1. The owner must enable Apps Script API at `https://script.google.com/home/usersettings` before Apps
+   Script API calls work.
+2. Windows `.bat` launchers are fragile with Cyrillic paths/OneDrive/Desktop folders and UTF-8 BOM/codepage
+   quirks. Prefer giving a simple manual fallback in every bundle README:
+   - unpack to `C:\google-auth` (ASCII path, no spaces/Cyrillic);
+   - open that folder, type `cmd` in Explorer address bar;
+   - run `py -3 authorize_google_full_access.py`, or `python authorize_google_full_access.py` if `py` is absent.
+3. If a screenshot shows commands like `orize_google_full_access.py`, Russian explanatory text being executed
+   as commands, or `@echo off` rendered incorrectly, do not debug Google/OAuth first — the batch file text or
+   quoting/encoding is broken and the Python script never started. Use the manual command above or replace the
+   launcher with a minimal ASCII-path-safe version.
+4. The resulting token file is secret-bearing. Ask the owner to send it as a document/file, never paste token
+   contents into chat.
 
 ## Pointers
 - Reading links/docs/sheets/web: skill `read-links`. Mail watcher: skill `reminders-and-watchers`.
