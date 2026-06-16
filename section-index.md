@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-15
+updated: 2026-06-16
 secret_refs: []
 ---
 
@@ -168,6 +168,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-06-16](logs/changelog.md#2026-06-16)
 - [2026-06-15](logs/changelog.md#2026-06-15)
 - [2026-06-14](logs/changelog.md#2026-06-14)
 - [2026-06-11](logs/changelog.md#2026-06-11)
@@ -229,6 +230,27 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reasoning](profile/preferences.md#reasoning)
 - [Working style](profile/preferences.md#working-style)
 
+## `projects/albery/bitrix-bot.md` · [project] albery, bitrix, imbot, chatbot, hermes, mcp
+- [Текущее состояние (2026-06-15)](projects/albery/bitrix-bot.md#текущее-состояние-2026-06-15)
+- [Архитектура](projects/albery/bitrix-bot.md#архитектура)
+- [Почему локальное приложение, а не вебхук](projects/albery/bitrix-bot.md#почему-локальное-приложение-а-не-вебхук)
+- [Эндпоинты (Albery, через mcp.m4s.ru)](projects/albery/bitrix-bot.md#эндпоинты-albery-через-mcpm4sru)
+- [Модель авторизации и состояние](projects/albery/bitrix-bot.md#модель-авторизации-и-состояние)
+- [Мост к Мозгу Гермеса](projects/albery/bitrix-bot.md#мост-к-мозгу-гермеса)
+- [Безопасность (важно)](projects/albery/bitrix-bot.md#безопасность-важно)
+- [MCP-коннекторы Гермеса (на 186, `/root/.hermes/config.yaml` → `mcp_servers`)](projects/albery/bitrix-bot.md#mcp-коннекторы-гермеса-на-186-roothermesconfigyaml-mcp_servers)
+- [Реакции](projects/albery/bitrix-bot.md#реакции)
+- [Tiered-доступ (по личности)](projects/albery/bitrix-bot.md#tiered-доступ-по-личности)
+- [Сессии (жизненный цикл) — `bitrix_bot_sessions` (миграция 028)](projects/albery/bitrix-bot.md#сессии-жизненный-цикл-bitrix_bot_sessions-миграция-028)
+- [Ручной сброс «🆕 Новая сессия» (2026-06-16, миграция 030)](projects/albery/bitrix-bot.md#ручной-сброс-новая-сессия-2026-06-16-миграция-030)
+- [Аналитика](projects/albery/bitrix-bot.md#аналитика)
+- [Само-описание возможностей агента (tier-aware, 2026-06-16, миграция 031)](projects/albery/bitrix-bot.md#само-описание-возможностей-агента-tier-aware-2026-06-16-миграция-031)
+- [Env (на 186, `/var/www/albery/.env`)](projects/albery/bitrix-bot.md#env-на-186-varwwwalberyenv)
+- [Ключевые коммиты (репо Albery, ветка main)](projects/albery/bitrix-bot.md#ключевые-коммиты-репо-albery-ветка-main)
+- [Деплой (бэкенд-only, правило #7)](projects/albery/bitrix-bot.md#деплой-бэкенд-only-правило-7)
+- [Реализовано 2026-06-15 (коммиты Albery)](projects/albery/bitrix-bot.md#реализовано-2026-06-15-коммиты-albery)
+- [Open tasks](projects/albery/bitrix-bot.md#open-tasks)
+
 ## `projects/albery/decisions.md` · [project] decisions, adr
 - [2026-05-29 — Brain extracted to isolated repo](projects/albery/decisions.md#2026-05-29-brain-extracted-to-isolated-repo)
 - [(historical) Daily sync cron, not hourly](projects/albery/decisions.md#historical-daily-sync-cron-not-hourly)
@@ -245,12 +267,15 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 
 ## `projects/albery/hermes-operations.md` · [project] albery, hermes, cron, telegram, sessions, stt, operations, reference
 - [Cron, Telegram и управление сессиями (операционка)](projects/albery/hermes-operations.md#cron-telegram-и-управление-сессиями-операционка)
+- [Управление доступом к TG-агенту (кто может писать) — `tg_access.py` + skill `tg-access` (2026-06-16)](projects/albery/hermes-operations.md#управление-доступом-к-tg-агенту-кто-может-писать-tg_accesspy-skill-tg-access-2026-06-16)
 - [Голосовые сообщения — распознавание речи (STT), Groq (31.05.2026)](projects/albery/hermes-operations.md#голосовые-сообщения-распознавание-речи-stt-groq-31052026)
 - [Cron script timeout (увеличен 28.05.2026 до 900s)](projects/albery/hermes-operations.md#cron-script-timeout-увеличен-28052026-до-900s)
 - [Деплой Hermes-промптов](projects/albery/hermes-operations.md#деплой-hermes-промптов)
 - [Правило: после любых изменений в Hermes / MCP — рестартить gateway и писать дальнейшие шаги владельцу](projects/albery/hermes-operations.md#правило-после-любых-изменений-в-hermes-mcp-рестартить-gateway-и-писать-дальнейшие-шаги-владельцу)
 - [Command approval mode = off (полный авто-доступ codex, 2026-06-05)](projects/albery/hermes-operations.md#command-approval-mode-off-полный-авто-доступ-codex-2026-06-05)
-- [Фикс падения Hermes `NameError: name 'event'` + команды `/accounts` `/limits` + авто-переприменение правок (29.05.2026)](projects/albery/hermes-operations.md#фикс-падения-hermes-nameerror-name-event-команды-accounts-limits-авто-переприменение-правок-29052026)
+- [⚠️ СТАТУС ручных патчей gateway — аудит 2026-06-16 (читать перед разделами ниже)](projects/albery/hermes-operations.md#статус-ручных-патчей-gateway-аудит-2026-06-16-читать-перед-разделами-ниже)
+- [Молчаливый дроп вложений на 186 — фикс 2026-06-16 (БЕЗ патча кода)](projects/albery/hermes-operations.md#молчаливый-дроп-вложений-на-186-фикс-2026-06-16-без-патча-кода)
+- [Фикс падения Hermes `NameError: name 'event'` + команды `/accounts` `/limits` + авто-переприменение правок (29.05.2026, частично СТЁРТО — см. таблицу выше)](projects/albery/hermes-operations.md#фикс-падения-hermes-nameerror-name-event-команды-accounts-limits-авто-переприменение-правок-29052026-частично-стёрто-см-таблицу-выше)
 - [Локальный веб-интерфейс базы знаний agent-knowledge (29.05.2026)](projects/albery/hermes-operations.md#локальный-веб-интерфейс-базы-знаний-agent-knowledge-29052026)
 
 ## `projects/albery/hermes-setup.md` · [project] albery, hermes, codex, install, deploy, accounts, reference
@@ -273,6 +298,15 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Ключевые пути и факты](projects/albery/hermes.md#ключевые-пути-и-факты)
 - [Важные понятия (чтобы не путать)](projects/albery/hermes.md#важные-понятия-чтобы-не-путать)
 - [Подробности (разбито по темам, 2026-06-13)](projects/albery/hermes.md#подробности-разбито-по-темам-2026-06-13)
+
+## `projects/albery/knowledge-rag.md` · [project] albery, mcp, rag, search, knowledge, postgres, optimization, reference
+- [Зачем чанкинг (Ступень A)](projects/albery/knowledge-rag.md#зачем-чанкинг-ступень-a)
+- [Архитектура](projects/albery/knowledge-rag.md#архитектура)
+- [Query expansion (синонимы, 2026-06-16)](projects/albery/knowledge-rag.md#query-expansion-синонимы-2026-06-16)
+- [Гигиена индекса (2026-06-16)](projects/albery/knowledge-rag.md#гигиена-индекса-2026-06-16)
+- [Самообновление (ничего руками не надо)](projects/albery/knowledge-rag.md#самообновление-ничего-руками-не-надо)
+- [Деплой (бэкенд-only, правило #7)](projects/albery/knowledge-rag.md#деплой-бэкенд-only-правило-7)
+- [Ступень B — семантика (эмбеддинги), не сделано](projects/albery/knowledge-rag.md#ступень-b-семантика-эмбеддинги-не-сделано)
 
 ## `projects/albery/operations-playbook.md` · [project] albery, hermes, operations, playbook, groq, owner-weekly, troubleshooting, reference
 - [0. Где живёт Albery-Hermes (база)](projects/albery/operations-playbook.md#0-где-живёт-albery-hermes-база)
@@ -492,7 +526,20 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [⚠ Keep the token alive — publish the app to Production](skills/google-account/SKILL.md#keep-the-token-alive-publish-the-app-to-production)
 - [Security & rotation](skills/google-account/SKILL.md#security-rotation)
 - [Adding write access later (separate trust step)](skills/google-account/SKILL.md#adding-write-access-later-separate-trust-step)
+- [Apps Script / full Google automation scopes](skills/google-account/SKILL.md#apps-script-full-google-automation-scopes)
 - [Pointers](skills/google-account/SKILL.md#pointers)
+
+## `skills/google-sheets-dashboard-automation/SKILL.md` · [skill] google-sheets-dashboard-automation
+- [First principles](skills/google-sheets-dashboard-automation/SKILL.md#first-principles)
+- [Recommended build workflow](skills/google-sheets-dashboard-automation/SKILL.md#recommended-build-workflow)
+- [References](skills/google-sheets-dashboard-automation/SKILL.md#references)
+- [Formula rules that prevent broken dashboards](skills/google-sheets-dashboard-automation/SKILL.md#formula-rules-that-prevent-broken-dashboards)
+- [Avoid this pattern](skills/google-sheets-dashboard-automation/SKILL.md#avoid-this-pattern)
+- [Prefer this pattern for monthly finance charts](skills/google-sheets-dashboard-automation/SKILL.md#prefer-this-pattern-for-monthly-finance-charts)
+- [Visual design checklist](skills/google-sheets-dashboard-automation/SKILL.md#visual-design-checklist)
+- [Mechanical verification checklist](skills/google-sheets-dashboard-automation/SKILL.md#mechanical-verification-checklist)
+- [Common pitfalls](skills/google-sheets-dashboard-automation/SKILL.md#common-pitfalls)
+- [Reporting to the owner](skills/google-sheets-dashboard-automation/SKILL.md#reporting-to-the-owner)
 
 ## `skills/hermes-self-repair/SKILL.md` · [skill] hermes-self-repair
 - [Cardinal rules](skills/hermes-self-repair/SKILL.md#cardinal-rules)
@@ -1270,6 +1317,10 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Downloads directory](vendor-skills/email/himalaya/references/configuration.md#downloads-directory)
 - [Editor for composing](vendor-skills/email/himalaya/references/configuration.md#editor-for-composing)
 
+## `vendor-skills/email/himalaya/references/legacy-word-attachment-extraction.md` · [?]
+- [Workflow](vendor-skills/email/himalaya/references/legacy-word-attachment-extraction.md#workflow)
+- [Reading old Word specs](vendor-skills/email/himalaya/references/legacy-word-attachment-extraction.md#reading-old-word-specs)
+
 ## `vendor-skills/email/himalaya/references/message-composition.md` · [?]
 - [Basic Message Structure](vendor-skills/email/himalaya/references/message-composition.md#basic-message-structure)
 - [Headers](vendor-skills/email/himalaya/references/message-composition.md#headers)
@@ -1913,6 +1964,15 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Pitfalls](vendor-skills/productivity/document-production-workflows/SKILL.md#pitfalls)
 - [Verification Checklist](vendor-skills/productivity/document-production-workflows/SKILL.md#verification-checklist)
 
+## `vendor-skills/productivity/document-production-workflows/references/legacy-doc-contract-editing.md` · [?]
+- [Approach](vendor-skills/productivity/document-production-workflows/references/legacy-doc-contract-editing.md#approach)
+- [Pitfalls](vendor-skills/productivity/document-production-workflows/references/legacy-doc-contract-editing.md#pitfalls)
+
+## `vendor-skills/productivity/document-production-workflows/references/prostye-postavki-incoming-contracts.md` · [?]
+- [Safe processing sequence](vendor-skills/productivity/document-production-workflows/references/prostye-postavki-incoming-contracts.md#safe-processing-sequence)
+- [Line-item verification pitfall](vendor-skills/productivity/document-production-workflows/references/prostye-postavki-incoming-contracts.md#line-item-verification-pitfall)
+- [Reporting](vendor-skills/productivity/document-production-workflows/references/prostye-postavki-incoming-contracts.md#reporting)
+
 ## `vendor-skills/productivity/hh-ru-semiauto-job-search/SKILL.md` · [?]
 - [Key constraints](vendor-skills/productivity/hh-ru-semiauto-job-search/SKILL.md#key-constraints)
 - [Network/VPN notes](vendor-skills/productivity/hh-ru-semiauto-job-search/SKILL.md#networkvpn-notes)
@@ -1980,7 +2040,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Главный принцип](vendor-skills/productivity/prostye-postavki-price-lookup/SKILL.md#главный-принцип)
 - [Обязательный workflow](vendor-skills/productivity/prostye-postavki-price-lookup/SKILL.md#обязательный-workflow)
 - [Расчёт рабочих дней в договорах](vendor-skills/productivity/prostye-postavki-price-lookup/SKILL.md#расчёт-рабочих-дней-в-договорах)
-- [Коммерческие предложения по коду из прайса](vendor-skills/productivity/prostye-postavki-price-lookup/SKILL.md#коммерческие-предложения-по-коду-из-прайса)
+- [Коммерческие предложения](vendor-skills/productivity/prostye-postavki-price-lookup/SKILL.md#коммерческие-предложения)
 - [Входящие договоры и спецификации](vendor-skills/productivity/prostye-postavki-price-lookup/SKILL.md#входящие-договоры-и-спецификации)
 - [Нюанс импорта прайса](vendor-skills/productivity/prostye-postavki-price-lookup/SKILL.md#нюанс-импорта-прайса)
 - [Для входящих договоров](vendor-skills/productivity/prostye-postavki-price-lookup/SKILL.md#для-входящих-договоров)
@@ -1990,6 +2050,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 ## `vendor-skills/productivity/prostye-postavki-price-lookup/references/commercial-offers-by-price-code.md` · [?]
 - [Рабочий порядок](vendor-skills/productivity/prostye-postavki-price-lookup/references/commercial-offers-by-price-code.md#рабочий-порядок)
 - [Известная пользовательская настройка](vendor-skills/productivity/prostye-postavki-price-lookup/references/commercial-offers-by-price-code.md#известная-пользовательская-настройка)
+
+## `vendor-skills/productivity/prostye-postavki-price-lookup/references/commercial-offers-from-email-specs.md` · [?]
+- [Рабочий порядок](vendor-skills/productivity/prostye-postavki-price-lookup/references/commercial-offers-from-email-specs.md#рабочий-порядок)
+- [Формат ответа Александру](vendor-skills/productivity/prostye-postavki-price-lookup/references/commercial-offers-from-email-specs.md#формат-ответа-александру)
+- [Мини-пример](vendor-skills/productivity/prostye-postavki-price-lookup/references/commercial-offers-from-email-specs.md#мини-пример)
 
 ## `vendor-skills/productivity/prostye-postavki-price-lookup/references/incoming-contract-item-name-mapping.md` · [?]
 - [Урок из сессии](vendor-skills/productivity/prostye-postavki-price-lookup/references/incoming-contract-item-name-mapping.md#урок-из-сессии)
