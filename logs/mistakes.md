@@ -2,7 +2,7 @@
 id: mistakes
 type: log
 tags: [mistakes, postmortem]
-updated: 2026-06-14
+updated: 2026-06-16
 secret_refs: []
 ---
 
@@ -10,6 +10,28 @@ secret_refs: []
 
 Append-only, newest on top. Concrete mistakes + how to avoid repeating them. Pulled from
 incidents and review feedback so the same error doesn't happen twice.
+
+## 2026-06-16 — Groq снова ломал auxiliary/compression: free-tier 12k TPM несовместим с тяжёлым сжатием
+- **What:** hourly `hermes_selfcheck.py` alerted: `Auxiliary: marking ... unhealthy for 600s (payment /
+  credit error)` and then `Failed to generate context summary: Codex auxiliary Responses stream exceeded
+  45.0s total timeout`. Live config still had `auxiliary.compression` and `auxiliary.web_extract`
+  on Groq `llama-3.3-70b-versatile`; real compression requests in ordinary long Telegram sessions
+  exceeded Groq's free-tier 12k tokens/min cap, so Groq returned a hard 413/rate-limit style error.
+- **Why the 06-11 fix was insufficient:** lowering `compression.threshold` and `protect_last_n` reduces
+  frequency/size, but Hermes still has an internal minimum context window for compression. Therefore a
+  long enough session can still produce a payload above Groq free-tier TPM. Do **not** keep trying to
+  fix this by shaving percentages.
+- **Fix applied:** removed Groq from heavy auxiliary roles (`auxiliary.compression` and
+  `auxiliary.web_extract` now use `provider: auto`), kept Groq only for small auxiliary tasks/titles;
+  `hermes config check` passes. Also changed `hermes_selfcheck.py` so after a config repair it starts
+  its journal window no earlier than the config mtime, avoiding one extra stale hourly alert while still
+  catching new post-fix failures.
+- **Operational note:** before restarting Hermes gateway, run server preflight. This incident also found
+  `/` at 99%; cleaned old `/tmp` workdirs and vacuumed journal, freeing ~1.7 GB. Low disk can masquerade
+  as agent flakiness too.
+- **How to avoid:** if Groq free-tier appears in any heavy auxiliary path (compression, large extraction,
+  summarisation), treat it as misconfigured unless there is a paid/larger-limit key and a live long-context
+  test. Groq 8b/70b is fine for short title/approval helpers, not for guaranteed compression reliability.
 
 ## 2026-06-14 — Status audit (are past mistakes actually fixed?)
 Reviewed every entry below + verified live on the server:
