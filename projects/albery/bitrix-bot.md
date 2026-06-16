@@ -108,6 +108,20 @@ hermes -z "<подсказка>+<сообщение>" --continue "bitrix-<dialog
 floor выставляется, history после сброса = []); кнопка/команда — best-effort (зависят от портала,
 не ломают ответ). Приветствие при входе в чат рекламирует сброс.
 
+**Грабли (важно, проверено 2026-06-16):**
+- `imbot.command.register` работает ТОЛЬКО через app `access_token` (per-event), НЕ через вебхук
+  (вебхук → `403 ACCESS_DENIED "Client ID not specified"`, как и `imbot.register`). Регистрируем
+  лениво на любом событии (`_b24_ensure_command_registered`, фоновый поток, флаг `cmd_new_registered`
+  в state).
+- **После регистрации `/new` приходит НЕ как сообщение, а как событие `ONIMCOMMANDADD`** с совершенно
+  другим layout полей: `data[COMMAND][<idx>][COMMAND|COMMAND_ID|MESSAGE_ID|BOT_ID]`, а `DIALOG_ID` —
+  в `data[PARAMS][DIALOG_ID]`. Обычный `_imbot_event_param` (читает `data[PARAMS][<name>]`) их не
+  находит → ввели `_imbot_scan` (ищет по ХВОСТУ нормализованного ключа, `COMMAND` не цепляет
+  `COMMAND_ID`). Симптом неправильного парсинга: бот возвращает 200, но не отвечает.
+- **Команду ОБЯЗАТЕЛЬНО подтверждать** `imbot.command.answer` (COMMAND_ID) — иначе Bitrix считает её
+  необработанной, **ретраит 3× и показывает вечное «печатает…»** (наблюдали 3 POST подряд). С ack —
+  один чистый POST. Это и был «всё зависло» при первом тесте кнопки.
+
 ## Аналитика
 - `bitrix_bot_interactions` (миграция 027): строка на запрос (диалог, user, tier, вопрос, ответ,
   латентность, статус). Запись best-effort, не ломает ответ.
