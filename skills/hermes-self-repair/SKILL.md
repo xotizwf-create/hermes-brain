@@ -23,6 +23,9 @@ start. If it's broken on disk, **the next restart loads the broken file** — so
 5. **Idempotent self-patchers only.** Anything that runs on every gateway start (ExecStartPre,
    `apply_patches.py`) must be safe to run 1000× — it must check "already applied?" and do nothing if
    so. A self-patcher that *appends* unconditionally is a time bomb (it grows the file every boot).
+6. **Auxiliary failures are runtime failures too.** If self-check reports `unhealthy`, Groq/TPM,
+   compression, compaction, or summary timeouts, treat it as a gateway repair path: inspect config,
+   provider health, disk headroom, and only then restart. See `references/auxiliary-provider-health.md`.
 
 ## Phase 1 — Diagnose (read-only, no writes, no restart)
 Run these and read the actual numbers. Nothing here changes state.
@@ -114,6 +117,16 @@ De-duplicate `config.yaml` (e.g. a tripled `model:` block — keep one). Back up
 Keep `reasoning_effort: medium` for the shared 5h limit; get high reasoning for code via Codex
 delegation, not a global bump (see `engineering/agentic-coding.md`).
 
+## Phase 4.5 — Auxiliary/provider health alerts
+When the symptom is a self-check alert about auxiliary providers, Groq/free-tier limits, compression,
+web extraction, or context-summary timeouts, use `references/auxiliary-provider-health.md` before
+changing providers. In short: inspect the active auxiliary routing without printing secrets; do not
+assume a provider that works for tiny helper calls can handle compression; validate real credentials
+before switching to OpenRouter/Google/etc.; move heavy auxiliary roles only to a verified high-budget
+provider or to the already-working `auto` route; then run `hermes config check` and the self-check
+script. If the self-check scans a rolling journal window, make it ignore pre-fix journal lines by
+starting no earlier than the config/script mtime, so the next hourly alert is not stale noise.
+
 ## Phase 5 — One controlled restart + health check
 ```bash
 systemctl restart hermes-gateway
@@ -144,6 +157,9 @@ systemctl restart hermes-gateway && systemctl is-active hermes-gateway
 
 ## Done when
 Phase 1 numbers are clean (run.py compiles, markers == 1, config parses, no looping appender), the
-classifier gives code/server edits the 3600s budget via an idempotent guarded patch, one observed
-restart left the gateway `active` with a fresh PID and clean logs, the bot answers Telegram, and the
-fix is mirrored to the site repo. Log it in `logs/changelog.md` + `projects/albery/incidents.md`.
+classifier gives code/server edits the 3600s budget via an idempotent guarded patch, auxiliary/provider
+routes are validated for the workload that triggered the alert (not just for tiny helper calls), one
+observed restart left the gateway `active` with a fresh PID and clean logs when a restart was needed,
+the bot answers Telegram, and the fix is mirrored to the site repo when it changes canonical runtime
+code. Log operational lessons in the relevant brain file (`logs/changelog.md`, `logs/mistakes.md`, or
+a project incident file) rather than relying only on chat history.

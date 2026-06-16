@@ -187,6 +187,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [2026-05-30 — two-way git brain sync is live (verified from the server)](logs/learning-log.md#2026-05-30-two-way-git-brain-sync-is-live-verified-from-the-server)
 
 ## `logs/mistakes.md` · [log] mistakes, postmortem
+- [2026-06-16 — Groq снова ломал auxiliary/compression: free-tier 12k TPM несовместим с тяжёлым сжатием](logs/mistakes.md#2026-06-16-groq-снова-ломал-auxiliarycompression-free-tier-12k-tpm-несовместим-с-тяжёлым-сжатием)
 - [2026-06-14 — Status audit (are past mistakes actually fixed?)](logs/mistakes.md#2026-06-14-status-audit-are-past-mistakes-actually-fixed)
 - [2026-06-14 — Росреестр/НСПД: 1.5 часа на участки в радиусе 100 м, выдал 9 вместо десятков](logs/mistakes.md#2026-06-14-росреестрнспд-15-часа-на-участки-в-радиусе-100-м-выдал-9-вместо-десятков)
 - [2026-06-11 — «модель ОЧЕНЬ долго работала» на prostavki-MCP: каскад из трёх невидимых поломок](logs/mistakes.md#2026-06-11-модель-очень-долго-работала-на-prostavki-mcp-каскад-из-трёх-невидимых-поломок)
@@ -547,6 +548,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Phase 2 — Repair the file (only if Phase 1 confirms a problem)](skills/hermes-self-repair/SKILL.md#phase-2-repair-the-file-only-if-phase-1-confirms-a-problem)
 - [Phase 3 — Code-task time-budget classifier (the 2026-05-31 lesson)](skills/hermes-self-repair/SKILL.md#phase-3-code-task-time-budget-classifier-the-2026-05-31-lesson)
 - [Phase 4 — Config hygiene](skills/hermes-self-repair/SKILL.md#phase-4-config-hygiene)
+- [Phase 4.5 — Auxiliary/provider health alerts](skills/hermes-self-repair/SKILL.md#phase-45-auxiliaryprovider-health-alerts)
 - [Phase 5 — One controlled restart + health check](skills/hermes-self-repair/SKILL.md#phase-5-one-controlled-restart-health-check)
 - [Rollback (always ready before Phase 5)](skills/hermes-self-repair/SKILL.md#rollback-always-ready-before-phase-5)
 - [Hard rules](skills/hermes-self-repair/SKILL.md#hard-rules)
