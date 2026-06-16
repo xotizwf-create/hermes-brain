@@ -343,6 +343,26 @@ ssh root@186.246.7.32 'hermes mcp test albery 2>&1 | grep -E "Tools discovered|<
 
 Разделы ниже (29.05) сохранены как ИСТОРИЯ того, как патчи делались; по факту см. таблицу выше.
 
+### Молчаливый дроп вложений на 186 — фикс 2026-06-16 (БЕЗ патча кода)
+
+Симптом (self-check): `WARNING gateway.platforms.base: Skipping unsafe MEDIA directive path outside
+allowed roots` — агент «отправил файл», а он не дошёл. Причина: Albery-Гермес крутится под **root**,
+пишет файлы в `/root/...`, а `/root` — в денилисте доставки; нативный recency-rescue денилист не
+обходит. Патч 217 (`hermes_media_rescue_patch.py`) сюда НЕ ложится — у 186 другая версия `base.py`,
+анкоры не совпадают.
+
+Фикс нативный, переживает `hermes update` (правки вне кода gateway):
+1. `mkdir -p /root/.hermes/outbox` (chmod 700).
+2. Код читает **ENV `HERMES_MEDIA_ALLOW_DIRS`** (а НЕ config-ключ `media_delivery_allow_dirs` — тот не
+   подхватывается!). Добавлено `HERMES_MEDIA_ALLOW_DIRS=/root/.hermes/outbox` в
+   `/root/.hermes/secure/hermes-gateway.env` (грузится drop-in’ом `40-groq-env.conf`; бэкап `.bak.<ts>`).
+3. Правило в `/root/.hermes/memories/USER.md`: файлы для отправки сохранять в `/root/.hermes/outbox`.
+
+Проверено: runtime-env гейта содержит переменную; `validate_media_delivery_path('/root/.hermes/outbox/x.pdf')`
+возвращает путь. Бонус: `/tmp/<файл>` доставляется нативно (recency 600с). Остаточный риск: USER.md —
+мягкое правило; если агент снова напишет в `/root` — дроп повторится (ловит self-check), тогда
+портировать rescue-патч под анкоры 186.
+
 ### Фикс падения Hermes `NameError: name 'event'` + команды `/accounts` `/limits` + авто-переприменение правок (29.05.2026, частично СТЁРТО — см. таблицу выше)
 
 **Симптом.** В Telegram-чате с Hermes любое сообщение (даже «Как меня зовут») падало с
