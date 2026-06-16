@@ -33,6 +33,10 @@ Use this when the owner asks to create or fix a Google Sheet, calculator, dashbo
 6. Add Apps Script `onOpen()` menu for owner-friendly actions when useful: current month, add row, clear demo data, refresh dashboard.
 7. Run mechanical verification before reporting success.
 
+## References
+
+- `references/finance-dashboard-debugging.md` — concrete debugging pattern for income/expense dashboards where a chart exists but shows `Нет данных`, including source-table fixes and verification assertions.
+
 ## Formula rules that prevent broken dashboards
 
 ### Avoid this pattern
