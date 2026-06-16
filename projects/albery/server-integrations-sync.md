@@ -85,11 +85,24 @@ AUTO_SYNC_CHAT_GENERATE_REPORTS=1
 лежит в репозитории и деплоится через `clasp` (а НЕ через `update_server.sh`).
 
 - Проект: `scripts/google_drive_company_sync_project/` (`Code.gs`, `appsscript.json`)
-- `.clasp.json` в корне: `scriptId = 1ga97W3bs386A00JokAHZyiQffEC1fFFjOoyzJm5GXUYkKjd3aXiRUoO9`
-- Логин clasp: владелец скрипта `xotizwf@gmail.com` (`clasp show-authorized-user`)
-- Прод web app deployment (это и есть `/exec` в `GOOGLE_APPS_SCRIPT_SYNC_URL`):
-  - deploymentId = `AKfycbwsEL8z_HAoNmLP9utV4HCtkNDAcgbaAxnWsZ1Njs7h4L6DcrmRzcehzxB1y070CarBgA`
-  - `/exec` URL = `https://script.google.com/macros/s/<deploymentId>/exec`
+
+**⚠️ Перенесено на новый аккаунт `a9ent.ai@gmail.com` (2026-06-16)** — старый `xotizwf@gmail.com`
+выведен из проекта (по запросу владельца: «не должен светиться»). Актуальное:
+- Владелец скрипта/деплоя: **`a9ent.ai@gmail.com`**.
+- `scriptId = 1khAaE0YrQFoshNOwJtjxuCHSYPO0NU4Ysz0QMrw7V70qaf-nLABnT4_R`
+- deploymentId = `AKfycbzAe7IYeurSZA5KU4xuX20LSGE37wXFe3FXoVATyZ3KSObCBBRbGFRW8_UM17Ew5sXM`
+- `/exec` (это `GOOGLE_APPS_SCRIPT_SYNC_URL` в проде) = `https://script.google.com/macros/s/<deploymentId>/exec`
+- **Папка «созвоны» убрана** из `Code.gs` (`CALLS_FOLDER_ID` неактивен).
+- Скрипт **создан/задеплоен через Apps Script API** (а НЕ clasp): у агента есть durable OAuth-токен
+  `a9ent.ai` (Drive+Sheets+Apps Script) в `/opt/hermes/secure/projects/albery/google_oauth.json` (600,
+  на 217; refresh_token + client_id/secret). Им я могу сам создавать/деплоить скрипты и
+  создавать/удалять/править таблицы. См. [[albery-google-account-a9ent]].
+- Авторизацию скрипта (Drive-доступ) и триггер `setupDriveChangeTrigger` владелец подтвердил один раз
+  в редакторе под `a9ent.ai` (интерактивный consent — единственное, что нельзя сделать с сервера).
+- Запись в таблицы включается флагом `ALBERY_ALLOW_SHEET_WRITE=1` (в `/var/www/albery/.env`).
+- Старый `xotizwf`-деплой (`scriptId 1ga97W3bs…`) больше НЕ используется; можно удалить под xotizwf.
+
+Историческая справка по clasp (старый аккаунт) ниже — оставлена как референс по deploy-механике.
 
 Обновление кода Apps Script (обновляет существующий `/exec`, URL не меняется):
 
