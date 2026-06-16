@@ -2,7 +2,7 @@
 id: index
 type: schema
 tags: [root, routing, entrypoint]
-updated: 2026-06-14
+updated: 2026-06-16
 secret_refs: []
 ---
 
@@ -93,6 +93,9 @@ every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
   convert with Microsoft MarkItDown first, then inspect the generated Markdown.
 - **Google account access (Calendar / Drive / Docs / Sheets / Gmail), re-auth, scopes** → skill
   `skills/google-account/`; connector ref `connectors/google-workspace.md`.
+- **Create/fix Google Sheets dashboards, calculators, charts, formulas, dropdowns, or bound Apps Script** →
+  skill `skills/google-sheets-dashboard-automation/` (readable formulas, visual dashboard structure,
+  and mechanical chart/data verification).
 - **Add/manage a GitHub repo** → use skill `skills/new-repo/`.
 - **Credentials, SSH, tokens, DB URLs** → `engineering/secrets-access.md` + skill `secure-access`.
 - **Database / migrations / Postgres** → `engineering/database.md` + skill `postgres-production`.
