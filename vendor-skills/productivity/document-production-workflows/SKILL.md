@@ -34,6 +34,7 @@ Umbrella for document-heavy work: produce editable artifacts, preserve formattin
 3. Create or edit the artifact using a format-aware library/tool.
 4. Validate the resulting file opens/parses and contains the expected content.
 5. Provide the file path/attachment and concise change summary.
+6. For owner-facing deliverables, route delivery from the user's wording: “пришли/прислать мне” means deliver back to the current Telegram/user chat (usually as a real attachment from `/root/.hermes/outbox/`), not to a third party mentioned in the source material. Only email an external person when the user explicitly says to send/email/forward to that person and the recipient is confirmed.
 
 ## Subdomains
 
@@ -59,12 +60,17 @@ When the user asks for a report/document “from the database” as PDF, treat t
 
 Respect domain-specific MCP/tool prompts and confirmation rules before saving or dispatching tasks.
 
+For «Простые поставки» incoming contract documents, use `references/prostye-postavki-incoming-contracts.md`: read the MCP prompt first, save parsed fields, search duplicates before creating/updating, then read back the visible contract card and verify line-item quantity/price/sum/total. Do not report completion if the connector saved extracted data but the created card shows mis-mapped prices or totals.
+
+For legacy Word `.doc` contracts that need a few field/specification edits, use the workflow in `references/legacy-doc-contract-editing.md`: convert a copy to `.docx` with LibreOffice headless, edit targeted paragraphs/table cells with `python-docx`, verify required values and absence of stale values, confirm the file opens by converting to PDF, then render/inspect changed PDF pages so tables/prices did not shift before sending Word+PDF.
+
 ## Pitfalls
 
 - Returning prose instead of the requested editable file.
 - Trusting OCR blindly for legal/financial fields.
 - Editing a PDF without verifying the changed page visually or structurally.
 - Creating downstream tasks/contracts before required confirmations.
+- Inferring an external recipient from the document/email context and sending there when the owner asked to “send me” the finished document.
 
 ## Verification Checklist
 

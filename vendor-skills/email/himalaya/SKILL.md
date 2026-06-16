@@ -26,6 +26,7 @@ requires the external `himalaya` CLI.
 
 - `references/configuration.md` (config file setup + IMAP/SMTP authentication)
 - `references/message-composition.md` (MML syntax for composing emails)
+- `references/legacy-word-attachment-extraction.md` (recovering text from old `.doc`/OLE or inline `application/octet-stream` attachments)
 
 ## Prerequisites
 
@@ -164,6 +165,8 @@ Use this workflow when Александр asks in Russian to find a Gmail messag
 
 Pitfalls for this workflow:
 - Do not trust `has_attachment:false` alone; always try `attachment download` if the body contains a part marker or the user asked for attachments.
+- `message read --preview` can inline binary `application/octet-stream` parts, producing multi-megabyte mixed text/binary output. Save it for context, but extract attachments separately; for old Word/OLE `.doc` files use LibreOffice/soffice first and `strings -el -n 2` as a fallback (see `references/legacy-word-attachment-extraction.md`).
+- For forwarded commercial-offer requests, do not summarize only the visible email body. If the body says «согласно прилагаемой спецификации», extract the attachment/specification, recover product rows and links, then hand off to the relevant «Простые поставки» КП workflow (see `prostye-postavki-price-lookup/references/commercial-offers-from-email-specs.md`).
 - Cyrillic IMAP search terms can fail; retry with email address, Latin transliteration, date-only listing, or `[Gmail]/All Mail`.
 - Message IDs are folder-relative; use the ID from the folder you will read/download from.
 - Avoid exposing tool names, raw paths, command output, or technical errors in the chat; send only a short human status while working and the final email content.
