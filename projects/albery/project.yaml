@@ -37,4 +37,5 @@ links:
   - decisions.md
   - incidents.md
   - owner-reports.md     # owner daily/weekly/Zoom report contracts + hard rules (AI-instruction layer)
+  - knowledge-rag.md     # RAG/chunked search_company_knowledge (stage A done; embeddings stage B planned)
   - server-context.md   # full legacy reference (imported from agent.md)

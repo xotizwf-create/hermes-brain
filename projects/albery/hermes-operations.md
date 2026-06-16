@@ -34,7 +34,29 @@ hermes send --to telegram:<TG_ID> "..." # тестовый пуш в Telegram
 ```
 
 Telegram-бот принимает команды только от `TG_ID`. Снаружи бот работает через
-polling, поэтому отдельный webhook/Nginx не нужен. Для проверки логов:
+polling, поэтому отдельный webhook/Nginx не нужен.
+
+### Управление доступом к TG-агенту (кто может писать) — `tg_access.py` + skill `tg-access` (2026-06-16)
+
+**Реальный гейт DM-доступа = env `TELEGRAM_ALLOWED_USERS` в `/root/.hermes/.env`** (читает
+`_is_user_authorized` в `gateway/run.py`; по умолчанию остальным — отказ/pairing). `config.yaml`
+`telegram.allowed_chats` синхронизируем для консистентности. Разрешены ровно двое (оба full-tier,
+полные руки): **Александр `1451982360` (@alexxandrn, владелец) + Евгений `6514126096` (@Evgenii_Pal)**.
+Отрицательные id в `allowed_chats` (`-528…`/`-524…`) — **групповые чаты** (home-channel + командная
+группа), инфраструктура доставки, не трогать.
+
+Управление **из чата**: навык `tg-access` (`/root/.hermes/skills/tg-access/SKILL.md`) + скрипт
+[scripts/tg_access.py](scripts/tg_access.py) репо Albery (на проде копия `/root/.hermes/scripts/tg_access.py`,
+700). Владелец просит «покажи/выдай/убери доступ» → агент зовёт `python3 .../tg_access.py
+list|add <id> [имя]|remove <id>|whoami`. Скрипт правит env+config (бэкап), хранит имена в
+`tg_access_names.json`, и **перезапускает gateway ОТЛОЖЕННО/detached** (`systemd-run --on-active=4s`):
+агент сам крутится внутри gateway, мгновенный рестарт убил бы его до ответа. Владельца удалить нельзя.
+@username бот не резолвит, пока человек не написал → сначала `/start`, потом `whoami` (id из лога), `add`.
+
+**Почему skill, а не патч ядра:** кастомные slash-команды/патчи `telegram.py`/`run.py` **НЕ переживают
+`hermes update`** — задокументированные ранее `/accounts`/`/limits` и `apply_patches.py` уже исчезли с
+186. Поэтому управление — через native config/env + навык. Деплой скрипта: `git pull` в `/var/www/albery`
++ `cp scripts/tg_access.py /root/.hermes/scripts/`. Коммиты Albery: `da87823`, `e2b82ac`. Для проверки логов:
 `tail -f /root/.hermes/logs/gateway.log` и `journalctl -u hermes-gateway -f`.
 Если в Telegram снова появятся строки `⚙️ mcp_albery_...`, вернуть тихий режим:
 

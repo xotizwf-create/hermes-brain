@@ -1,0 +1,78 @@
+---
+id: albery-knowledge-rag
+type: project
+project: albery
+tags: [albery, mcp, rag, search, knowledge, postgres, optimization, reference]
+updated: 2026-06-16
+secret_refs: []
+---
+
+# Albery — поиск по знаниям (RAG / чанки)
+
+`search_company_knowledge` (Albery MCP, [mcp/context_server.py](mcp/context_server.py)) ищет по
+корпоративным документам («О компании», зеркало Google Drive в таблице `company_folders`). История
+улучшений:
+
+1. **Ступень 0 (было):** чистый `ILIKE '%query%'` — не знал русской морфологии, часто пусто.
+2. **Ступень 1 (2026-06-14):** гибрид русский FTS (`to_tsvector('russian')`) + `pg_trgm` + `ILIKE`,
+   миграция `026_company_folders_fts.sql`. Но возвращал **целые документы**.
+3. **Ступень A — RAG-чанкинг (2026-06-16, эта страница):** возвращает не целые документы, а
+   несколько релевантных **пассажей** (чанков).
+4. **Ступень B — эмбеддинги (план, не сделано):** семантический поиск по смыслу (синонимы).
+
+## Зачем чанкинг (Ступень A)
+
+Поиск отдавал `f.content` целиком, до 50 строк. Документы в среднем ~24 КБ, максимум **413 КБ**,
+35 из 42 — больше 4 КБ. Один запрос вываливал в контекст модели сотни КБ → жёг 5-часовой лимит
+Codex и замедлял ответ. Теперь документы порезаны на ~400-токенные чанки, поиск возвращает **топ-6
+пассажей** (макс 2 на документ для разнообразия). Замер на проде: 42 дока → **971 чанк**, экономия
+текста **98.8–99.2% (×86–130)**, релевантные доки всплывают (напр. «фиксация результатов» →
+`Регламент_фиксации_результата`).
+
+## Архитектура
+
+- **Миграция `029_company_knowledge_chunks.sql`**: таблица `company_knowledge_chunks`
+  (`folder_id`, `chunk_index`, `name`, `path`, `content`, генерируемый `content_tsv`) +
+  GIN-индексы (FTS + `gin_trgm_ops`). Плюс `company_knowledge_chunk_state` (хэш контента на документ)
+  и `company_knowledge_meta` (сигнатура корпуса). Зарегистрирована в `ensure_postgres.py`
+  `REQUIRED_TABLE_MIGRATIONS`.
+- **Чанкер `shared/knowledge_chunks.py`**: `chunk_text` (абзацный, нахлёст `200`,
+  `CHUNK_TARGET_CHARS=1400`, hard-split гигантских блоков); `rebuild`/`ensure_fresh` (инкрементально);
+  `search_chunks` (гибрид FTS+trgm+ILIKE, окно `row_number()` для лимита на документ).
+- **Поиск** в `tool_search_company_knowledge`: зовёт `ensure_fresh(conn)`, потом `search_chunks`,
+  возвращает чанки с `folder_id`/`name`/`path`/`content` и подсказкой читать целое через
+  `get_company_file(folder_id)`. Без `query` — лёгкий список (имена/пути/превью 200 симв.), НЕ тела.
+- **Warm-build:** `scripts/rebuild_knowledge_chunks.py [--force]`.
+
+## Самообновление (ничего руками не надо)
+
+`ensure_fresh` на каждом поиске считает **дешёвую сигнатуру корпуса**
+(`count + max(updated_at) + sum(length(content))` по `company_folders`) и сравнивает с сохранённой.
+Если изменилось — пере-чанкит **только изменившиеся документы** (по хэшу контента), под
+транзакционным `pg_try_advisory_xact_lock` (параллельные поиски не дублируют работу). Поэтому синк
+Google Drive и ручные правки знаний подхватываются автоматически. Чанкинг в Python (качество);
+**pgvector не ставили** — корпус крошечный.
+
+## Деплой (бэкенд-only, правило #7)
+
+`git pull` → `.venv/bin/python scripts/ensure_postgres.py` (миграция) →
+`.venv/bin/python scripts/rebuild_knowledge_chunks.py --force` → `systemctl restart albery hermes-gateway`.
+БЕЗ `update_server.sh` (он пересобирает фронт = тяжело для 1 ГБ RAM). После рестарта — в TG `/reset`,
+чтобы сессия подтянула новое описание инструмента. Коммиты Albery: `e2b82ac`.
+
+## Ступень B — семантика (эмбеддинги), не сделано
+
+Лексический поиск не знает смысла: «испытательный срок» даёт 0, если в доке «период адаптации»
+(старый поиск тоже давал 0 — не регресс). Эмбеддинги кодируют **смысл** чанка в вектор (~1500 чисел);
+запрос → вектор → ищем близкие по косинусу; сливаем с FTS-скором (гибрид). Реализация: `ALTER TABLE
+company_knowledge_chunks ADD COLUMN embedding` (float-массив), косинус в Python (~971 вектор — мс),
+без pgvector.
+
+**Нужен ключ эмбеддингов — через Codex НЕЛЬЗЯ.** `openai-codex` — это OAuth к подписке ChatGPT (только
+чат-модель, эндпоинт `/codex/responses`); эмбеддинги — отдельный продукт `/v1/embeddings`, работает
+только по **API-ключу** platform.openai.com (отдельный биллинг). Варианты:
+- **OpenAI `text-embedding-3-small`** (рекоменд.) — копейки, отдельно от лимитов Codex, лучший русский;
+- **Google `text-embedding-004`** — `GOOGLE_API_KEY` уже есть, но квота ~0 (риск 429);
+- локальную модель — нельзя (RAM, правило #7).
+
+Связано: [hermes-operations.md](hermes-operations.md) (правило рестарта gateway после правок MCP).
