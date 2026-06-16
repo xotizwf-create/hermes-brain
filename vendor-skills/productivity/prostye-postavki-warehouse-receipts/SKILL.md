@@ -29,7 +29,11 @@ Use this skill when the user asks whether goods are ordered, on the way, already
    - order date if not today;
    - supplier if known;
    - receipt/order/invoice number if known.
-2. Search product first (`search`, `read_table_rows`, or item lookup in app context). Prefer exact existing `productId` when available.
+2. Search product first (`search`, `read_table_rows`, `get_inventory_balances`, or item lookup in app context). Prefer exact existing **active** `productId` from the warehouse/catalog when available.
+   - Always compare the user's spoken/typed item with existing warehouse products before creating anything.
+   - Treat visually similar Latin/Cyrillic codes as possible aliases and check both variants: e.g. `SM04`/`SM02` from speech may mean existing Russian `СМ04`/`СМ02` (Cyrillic `СМ`), not new English `SM04`/`SM02`.
+   - If an active product exists in the warehouse/catalog under the Russian code/name, use that `productId`; do **not** create a new inactive duplicate under the Latin spelling.
+   - If only inactive or newly-created-looking Latin products are found, keep searching by the Cyrillic variant and by current stock balances before writing.
 3. Run `create_expected_warehouse_receipt` with `dryRun: true` first.
 4. Inspect the dry-run result:
    - correct product resolved;
