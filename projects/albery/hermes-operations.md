@@ -359,9 +359,20 @@ allowed roots` — агент «отправил файл», а он не дош
 3. Правило в `/root/.hermes/memories/USER.md`: файлы для отправки сохранять в `/root/.hermes/outbox`.
 
 Проверено: runtime-env гейта содержит переменную; `validate_media_delivery_path('/root/.hermes/outbox/x.pdf')`
-возвращает путь. Бонус: `/tmp/<файл>` доставляется нативно (recency 600с). Остаточный риск: USER.md —
-мягкое правило; если агент снова напишет в `/root` — дроп повторится (ловит self-check), тогда
-портировать rescue-патч под анкоры 186.
+возвращает путь. Бонус: `/tmp/<файл>` доставляется нативно (recency 600с).
+
+**Железобетон (2026-06-16) — rescue-патч под 186.** Чтобы дроп был исключён даже если агент забудет
+правило USER.md и напишет в `/root`: портирован rescue-патч под версию 186 —
+[scripts/hermes_media_rescue_patch_186.py](scripts/hermes_media_rescue_patch_186.py) → на проде
+`/root/.hermes/patches/media_rescue_patch.py`, ExecStartPre drop-in
+`/etc/systemd/system/hermes-gateway.service.d/25-media-rescue.conf`. Патч заменяет финальный
+`return None` в `validate_media_delivery_path` на `_rescue_media_path_to_outbox(resolved)`: **любой**
+свежий (≤30 мин) некредентный файл из денилист-пути копируется в `/root/.hermes/outbox` и доставляется;
+`~/.ssh`, `/root/.hermes`, `/etc`, `/usr`, … остаются заблокированы. Анкоры 217 не подошли (у 186 нет
+`_media_delivery_strict_mode`), helper использует только имена, что есть в 186. Идемпотентен,
+py_compile-safe, при смене анкоров печатает SKIP. **Живучесть к `hermes update` доказана**: восстановил
+непропатченный `base.py` → рестарт → ExecStartPre переприменил (marker 0→2, `applied` в логе, gateway
+active). Killer-тест: `/root/x.pdf` → спасён в outbox, `~/.ssh/key` → None.
 
 ### Фикс падения Hermes `NameError: name 'event'` + команды `/accounts` `/limits` + авто-переприменение правок (29.05.2026, частично СТЁРТО — см. таблицу выше)
 
