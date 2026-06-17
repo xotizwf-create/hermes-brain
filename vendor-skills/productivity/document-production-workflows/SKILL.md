@@ -26,6 +26,7 @@ Umbrella for document-heavy work: produce editable artifacts, preserve formattin
 - Teams/meeting summary pipelines.
 - Contract processing in domain-specific systems.
 - Excel/CSV deliverables built from researched or computed data, especially when the user requests “в виде таблицы / формат Excel”.
+- ГОСТ-style research reports and PDF deliverables that combine source-backed analysis with formal Russian document formatting.
 
 ## Common Workflow
 
@@ -49,6 +50,10 @@ Keep slide structure, notes, and media paths consistent. Validate the `.pptx` pa
 ### Excel / Spreadsheet Reports
 
 When the user asks for Excel, deliver a real `.xlsx`, not just a Markdown table. Use `pandas`/`openpyxl` or another format-aware writer, add readable headers/widths/wrapping when helpful, and save owner-facing files under `/root/.hermes/outbox/` for Telegram delivery. Before replying, reopen the workbook and verify sheet names, row/column counts, and at least one expected row/value. If the data came from public research or computations, include a source/notes column or separate notes sheet so the artifact is self-explanatory.
+
+### ГОСТ-style Reports and Source-Backed PDFs
+
+When the user requests a formal PDF report “по ГОСТ” from research findings, create an editable source document first (`.docx` when practical), then convert to PDF with LibreOffice/headless tooling. Use a formal Russian structure: title page, contents/sections, source methodology, main tables/schemes, limitations, and source list/appendix. Keep evidentiary caveats inside the report rather than only in the chat reply (for example, unresolved AO shareholder layers that require register extracts). Save owner-facing files under `/root/.hermes/outbox/`, verify the PDF exists, has non-trivial size, opens/parses, and contains expected title/key sections before sending via `MEDIA:`.
 
 ### PDF and OCR
 

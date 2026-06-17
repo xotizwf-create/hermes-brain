@@ -22,6 +22,8 @@ Use this skill when the user asks whether goods are ordered, on the way, already
 
 ## Safe workflow for creating an expected receipt
 
+Reference: `references/product-code-aliases.md` contains the durable Cyrillic/Latin alias lesson (`SM04`/`SM02` vs `СМ04`/`СМ02`) and the lookup sequence to avoid duplicate products.
+
 1. Confirm all required business facts with the user before writing:
    - item name/code or product id;
    - quantity;

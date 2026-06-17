@@ -30,6 +30,7 @@ Class-level research workflow for finding sources, monitoring feeds, querying do
 - Find and deliver source-backed public images/media from the web.
 - Check local retail availability or delivery eligibility for a product at a specific address.
 - Collect Russian public cadastral-map/НСПД parcel data around a cadastral number and produce source-backed neighbour/distance tables.
+- Build Russian corporate ownership / beneficiary schemes from official evidence such as ЕГРЮЛ extracts, issuer disclosures, and shareholder-register extracts.
 
 ## Workflow
 
@@ -74,6 +75,10 @@ When the user asks whether a law, ГОСТ, СанПиН, methodology, or agency
 
 Lab/protocol examples and Russian ГОСТ notes live in `references/regulatory-standards-evidence.md`.
 
+### Russian Corporate Ownership / Beneficiary Schemes
+
+For Russian company ownership reports, use official evidence hierarchy: ФНС ЕГРЮЛ extracts first, issuer disclosures second, shareholder-register extracts for AO/PAO shareholder percentages. Commercial aggregators and media are discovery aids only unless the user explicitly allows them. For non-public AOs, do not infer exact shareholders from ЕГРЮЛ: ЕГРЮЛ usually names the registrar, not the shareholder list. If the official trail stops at an AO or registrar, state that boundary and list the exact register extracts needed for full beneficiary disclosure. Detailed workflow and report fields live in `references/russian-corporate-ownership-evidence.md`.
+
 ### Public Image / Media Retrieval
 
 When the user asks for internet photos or source-backed media, optimize for delivering usable media, not just links:
@@ -115,6 +120,7 @@ Preserve link structure and provenance when building local wikis. Do not invent 
 - For cadastral/НСПД work, stopping at an official-site IP block. Try the documented public mirror endpoints with proper `Origin`/`Referer`, then clearly label the data source and caveats.
 - Producing a first narrow cadastral table from only the target card/same visible area; a radius request needs a buffer around the target geometry and deduped parcel collection from quarter searches plus targeted GetFeatureInfo sampling.
 - Mixing buildings/premises into land-parcel lists; filter cadastral-map features to land parcels unless the user explicitly asks for all objects.
+- For Russian ownership charts, filling AO shareholder gaps with plausible beneficiary claims from unofficial sources. If official ЕГРЮЛ/disclosure evidence stops at an AO/registrar, report the gap and required shareholder-register extracts instead.
 
 ## Verification Checklist
 
