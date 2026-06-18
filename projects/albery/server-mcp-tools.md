@@ -256,6 +256,51 @@ Postgres.
 
 **Flow в Telegram после /reset:** «Прочитай таблицу <ссылка> и создай задачи в Битриксе» → Hermes сам зовёт `fetch_url(...)` → парсит CSV → резолвит ФИО исполнителей/наблюдателей через `_resolve_active_bitrix_user(s)` → показывает план → ждёт «создавай» → циклом `create_bitrix_task` на каждую строку (с `auditor_names`, `periodic` если есть).
 
+### Google Sheets + Apps Script — полноценные инструменты (2026-06-18, MCP `0.10.0`)
+
+**Проблема.** В Битриксе агент с полным доступом отвечал «красивое оформление, графические дашборды
+и перенос в папку Drive недоступны»: единственным гугл-инструментом был `create_google_sheet`
+([app.py](app.py) `create_google_sheet`), умевший только задать название, залить строки
+(`valueInputOption=USER_ENTERED` — формулы в ячейках работают) и выдать доступ «по ссылке —
+редактор». Форматирования, charts, папок и Apps Script в коде не было. При этом **креды и scope уже
+полные**: OAuth-токен `a9ent.ai` лежит на 186 в `/root/.hermes/secure/google_oauth_token.json`
+(`_google_user_credentials()`), scopes `drive, spreadsheets, script.projects, script.deployments,
+documents`. То есть не хватало только кода инструментов. (Скилл `google-sheets-dashboard-automation` —
+это скилл *мозга* Hermes, в инструменты задеплоенного агента Albery он не подключён.)
+
+**Что добавлено** (бэкенд-only, без пересборки фронта — правило №7). Функции в [app.py](app.py)
+(вызываются через `app_workflow_function` = getattr из `app`):
+- `format_google_sheet(spreadsheet_id, requests)` — тонкая обёртка над `spreadsheets.batchUpdate`:
+  форматирование, числовые/валютные форматы, условное форматирование, закрепление строк, ширины
+  колонок, объединение, **charts (addChart) для дашбордов**. Агент собирает стандартные объекты
+  запросов Sheets API.
+- `write_google_sheet_values(spreadsheet_id, cell_range, values, value_input_option)` — запись
+  значений/формул в A1-диапазон (USER_ENTERED).
+- `get_google_sheet_meta(spreadsheet_id)` — вкладки с `sheetId`/названием/размером (нужно, чтобы
+  знать `sheetId` для batchUpdate).
+- `move_drive_file_to_folder(file_id, folder)` — перенос файла в папку Drive (id или ссылка).
+- `manage_apps_script(action, ...)` — Apps Script API: `create`/`get`/`update`/`deploy`/`run`.
+
+5 MCP-инструментов в [mcp/context_server.py](mcp/context_server.py) (описания английские, чтобы не
+ловить mojibake при патче). Тиринг: добавлены в `TOOLS` → автоматически в **`/mcp` (Полный)** и
+**`/mcp-ops` (Все функции)**; НЕ в `FAQ_TOOL_NAMES`, НЕ в `OWNER_ONLY_TOOL_NAMES`. `manage_apps_script`
+требует `confirm=true`. Версия MCP `0.9.0` → `0.10.0` (теперь ~62 инструмента). Возможности агента
+обновлены в БД `ai_agent_capabilities` (tier `full`), чтобы он знал о новых умениях и не отвечал
+«недоступно». Коммит Albery-репо `9cbc570`.
+
+**Два «человеческих» нюанса (headless-ограничения a9ent.ai), которые агент сообщает сам:**
+1. **Папка Drive.** Чтобы класть таблицу в конкретную папку, её надо **один раз** расшарить на
+   `a9ent.ai@gmail.com` (редактор) — иначе `move_drive_file_to_folder` отдаёт `404 File not found`.
+   Без этого таблица создаётся в Drive аккаунта агента и доступна по ссылке (anyone-editor).
+2. **Apps Script API** должен быть включён в Google Cloud проекте `a9ent.ai` — иначе
+   `manage_apps_script(create)` вернёт 403 «Apps Script API … is disabled». Создание/оформление
+   таблиц и charts от этого НЕ зависят (это Sheets/Drive API).
+
+Проверено сквозным тестом в venv (create + формулы + 8 запросов форматирования + chart) и живым
+MCP-вызовом `tools/call get_google_sheet_meta` через `/mcp`. Демо-таблица:
+`docs.google.com/spreadsheets/d/1XsacfTQdgPeV3BO62XFeLmbqR8mq3C11WxCnanGihF0/edit`. Связано:
+[[albery-google-account-a9ent]].
+
 ### Известный баг: 120s таймаут `create_bitrix_task` / `delete_bitrix_task` (исправлено 28.05.2026)
 
 **Симптом.** Hermes в Telegram отвечал: «Не удалось создать задачу» или «MCP call timed out after 120.0s». В журнале `journalctl -u hermes-gateway`:
