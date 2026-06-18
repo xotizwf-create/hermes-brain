@@ -3,7 +3,7 @@ id: albery-hermes
 type: project
 project: albery
 tags: [albery, hermes, agent, codex, cron, telegram, mcp, reference]
-updated: 2026-06-13
+updated: 2026-06-18
 secret_refs: [proj/albery/ssh/root]
 ---
 
@@ -68,5 +68,9 @@ secret_refs: [proj/albery/ssh/root]
 | [hermes-setup.md](hermes-setup.md) | Codex-auth на сервере, WSL2/VPN, установка, подключение/смена аккаунта ChatGPT, провайдер/модель, запуск, перенос на прод, чек-лист, прод-развёртывание, RBAC-роадмап |
 | [hermes-automations.md](hermes-automations.md) | cron `zoom-to-tasks` и `owner-daily` (обе фазы), где править поведение отчётов |
 | [hermes-operations.md](hermes-operations.md) | cron/Telegram/сессии, STT (Groq), таймауты, деплой промптов, правило рестарта gateway, approval=off, фикс `NameError` + `/accounts`/`/limits` + авто-переприменение, веб-UI знаний |
+
+### Google Sheets через битрикс-агента
+
+Фикс 2026-06-18: инструменты `create_google_sheet` и `write_google_sheet_values` в live-коде Альбери (`/var/www/albery/app.py`, плюс MCP-описание в `mcp/context_server.py`) нормализуют формулы под локаль Google Sheets. Для `ru_RU` сервер автоматически заменяет разделители аргументов формул с запятых на точки с запятой вне строковых литералов и после записи проверяет диапазон на ошибки формул. Если ошибки остаются, инструмент падает, чтобы агент не мог сказать «готово» про битую таблицу. Проверка: временная таблица с `=SUM(A2,B2)` в `ru_RU` дала рабочий результат без ошибок; созданная пользователем таблица `Калькулятор доходов и расходов` была исправлена — 20 формул конвертировано, ошибок формул не осталось.
 
 См. также [overview.md](overview.md), [server-context.md](server-context.md), [vpn-gateway.md](vpn-gateway.md).
