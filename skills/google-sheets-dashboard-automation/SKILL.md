@@ -13,6 +13,7 @@ Use this when the owner asks to create or fix a Google Sheet, calculator, dashbo
 2. **Simple formulas beat clever formulas.** The owner prefers readable, stable spreadsheets. Avoid one huge `IFERROR(QUERY({ ... }))` formula that builds the whole dashboard at once. Split logic into understandable helper blocks/columns.
 3. **Design is part of correctness.** Dashboards must be visually scannable: KPI cards, clear section headers, divider bands/lines, framed table zones, framed chart zones, consistent colors and spacing.
 4. **Charts are not verified by existence.** A chart object can exist and still show `Нет данных`. Always verify the chart source range contains non-empty numeric rows.
+5. **A raw grid is not a finished deliverable.** Even a simple task/list table needs a readable header, frozen top row when useful, borders, wrapping, sensible widths, alternating/status colors, and number/date/currency formats that match the meaning.
 
 ## Recommended build workflow
 
@@ -77,7 +78,7 @@ F9 = ARRAYFORMULA(IF($D$9:$D$24=""; ; IF($D$9:$D$24="Нет доходов"; 0; 
 
 ## Visual design checklist
 
-Before saying a dashboard is ready, check that it has:
+Before saying a dashboard or task/list table is ready, check that it has:
 
 - large title and clear period controls;
 - KPI cards with visible borders/backgrounds;
@@ -87,6 +88,8 @@ Before saying a dashboard is ready, check that it has:
 - chart cards with visible frames/backgrounds, not floating charts on raw grid;
 - frozen header or enough spacing so the sheet does not look like one merged blob;
 - number formats that match meaning: counts are plain numbers, money is ₽, shares are %, dates are dates.
+
+For a simple generated task/list table, the minimum acceptable style is: contrast header band, bold readable header text, frozen header row when the list is longer than one screen, wrapped text, useful column widths, borders, alternating rows, and status/deadline colors when the table contains tasks.
 
 ## Mechanical verification checklist
 

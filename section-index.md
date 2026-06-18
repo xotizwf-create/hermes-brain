@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-16
+updated: 2026-06-18
 secret_refs: []
 ---
 
@@ -168,6 +168,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-06-18](logs/changelog.md#2026-06-18)
 - [2026-06-16](logs/changelog.md#2026-06-16)
 - [2026-06-15](logs/changelog.md#2026-06-15)
 - [2026-06-14](logs/changelog.md#2026-06-14)
@@ -187,6 +188,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [2026-05-30 — two-way git brain sync is live (verified from the server)](logs/learning-log.md#2026-05-30-two-way-git-brain-sync-is-live-verified-from-the-server)
 
 ## `logs/mistakes.md` · [log] mistakes, postmortem
+- [2026-06-18 — `auxiliary.compression` silently demoted to the 6k-TPM model](logs/mistakes.md#2026-06-18-auxiliarycompression-silently-demoted-to-the-6k-tpm-model)
 - [2026-06-16 — Groq снова ломал auxiliary/compression: free-tier 12k TPM несовместим с тяжёлым сжатием](logs/mistakes.md#2026-06-16-groq-снова-ломал-auxiliarycompression-free-tier-12k-tpm-несовместим-с-тяжёлым-сжатием)
 - [2026-06-14 — Status audit (are past mistakes actually fixed?)](logs/mistakes.md#2026-06-14-status-audit-are-past-mistakes-actually-fixed)
 - [2026-06-14 — Росреестр/НСПД: 1.5 часа на участки в радиусе 100 м, выдал 9 вместо десятков](logs/mistakes.md#2026-06-14-росреестрнспд-15-часа-на-участки-в-радиусе-100-м-выдал-9-вместо-десятков)
@@ -299,6 +301,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Ключевые пути и факты](projects/albery/hermes.md#ключевые-пути-и-факты)
 - [Важные понятия (чтобы не путать)](projects/albery/hermes.md#важные-понятия-чтобы-не-путать)
 - [Подробности (разбито по темам, 2026-06-13)](projects/albery/hermes.md#подробности-разбито-по-темам-2026-06-13)
+- [Google Sheets через битрикс-агента](projects/albery/hermes.md#google-sheets-через-битрикс-агента)
 
 ## `projects/albery/knowledge-rag.md` · [project] albery, mcp, rag, search, knowledge, postgres, optimization, reference
 - [Зачем чанкинг (Ступень A)](projects/albery/knowledge-rag.md#зачем-чанкинг-ступень-a)
@@ -374,6 +377,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Поиск по знаниям компании — гибридный (FTS + триграммы + ILIKE), с 2026-06-14](projects/albery/server-mcp-tools.md#поиск-по-знаниям-компании-гибридный-fts-триграммы-ilike-с-2026-06-14)
 - [Bitrix-инструменты в MCP](projects/albery/server-mcp-tools.md#bitrix-инструменты-в-mcp)
 - [MCP-инструмент `fetch_url` (добавлено 28.05.2026)](projects/albery/server-mcp-tools.md#mcp-инструмент-fetch_url-добавлено-28052026)
+- [Google Sheets + Apps Script — полноценные инструменты (2026-06-18, MCP `0.10.0`)](projects/albery/server-mcp-tools.md#google-sheets-apps-script-полноценные-инструменты-2026-06-18-mcp-0100)
 - [Известный баг: 120s таймаут `create_bitrix_task` / `delete_bitrix_task` (исправлено 28.05.2026)](projects/albery/server-mcp-tools.md#известный-баг-120s-таймаут-create_bitrix_task-delete_bitrix_task-исправлено-28052026)
 - [Известная гран. ситуация: time-зоны в title «Итоги созвона ЧЧ:ММ»](projects/albery/server-mcp-tools.md#известная-гран-ситуация-time-зоны-в-title-итоги-созвона-ччмм)
 
@@ -1961,6 +1965,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Word / Academic Documents](vendor-skills/productivity/document-production-workflows/SKILL.md#word-academic-documents)
 - [PowerPoint](vendor-skills/productivity/document-production-workflows/SKILL.md#powerpoint)
 - [Excel / Spreadsheet Reports](vendor-skills/productivity/document-production-workflows/SKILL.md#excel-spreadsheet-reports)
+- [ГОСТ-style Reports and Source-Backed PDFs](vendor-skills/productivity/document-production-workflows/SKILL.md#гост-style-reports-and-source-backed-pdfs)
 - [PDF and OCR](vendor-skills/productivity/document-production-workflows/SKILL.md#pdf-and-ocr)
 - [Meeting and Contract Pipelines](vendor-skills/productivity/document-production-workflows/SKILL.md#meeting-and-contract-pipelines)
 - [Pitfalls](vendor-skills/productivity/document-production-workflows/SKILL.md#pitfalls)
@@ -2076,6 +2081,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Owner rule: partial arrivals and unordered arrivals](vendor-skills/productivity/prostye-postavki-warehouse-receipts/SKILL.md#owner-rule-partial-arrivals-and-unordered-arrivals)
 - [Production implementation note](vendor-skills/productivity/prostye-postavki-warehouse-receipts/SKILL.md#production-implementation-note)
 
+## `vendor-skills/productivity/prostye-postavki-warehouse-receipts/references/product-code-aliases.md` · [?]
+- [Durable lesson](vendor-skills/productivity/prostye-postavki-warehouse-receipts/references/product-code-aliases.md#durable-lesson)
+- [Practical lookup sequence](vendor-skills/productivity/prostye-postavki-warehouse-receipts/references/product-code-aliases.md#practical-lookup-sequence)
+- [Reporting back](vendor-skills/productivity/prostye-postavki-warehouse-receipts/references/product-code-aliases.md#reporting-back)
+
 ## `vendor-skills/productivity/telegram-reminders-msk/SKILL.md` · [?]
 - [Core rule](vendor-skills/productivity/telegram-reminders-msk/SKILL.md#core-rule)
 - [Procedure](vendor-skills/productivity/telegram-reminders-msk/SKILL.md#procedure)
@@ -2151,6 +2161,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Official Municipal / Public-Fact Evidence](vendor-skills/research/research-intelligence-workflows/SKILL.md#official-municipal-public-fact-evidence)
 - [Russian Public Cadastral Map / НСПД Parcel Tables](vendor-skills/research/research-intelligence-workflows/SKILL.md#russian-public-cadastral-map-нспд-parcel-tables)
 - [Regulatory Standards / Legal-Normative Evidence](vendor-skills/research/research-intelligence-workflows/SKILL.md#regulatory-standards-legal-normative-evidence)
+- [Russian Corporate Ownership / Beneficiary Schemes](vendor-skills/research/research-intelligence-workflows/SKILL.md#russian-corporate-ownership-beneficiary-schemes)
 - [Public Image / Media Retrieval](vendor-skills/research/research-intelligence-workflows/SKILL.md#public-image-media-retrieval)
 - [Academic Search and Paper Writing](vendor-skills/research/research-intelligence-workflows/SKILL.md#academic-search-and-paper-writing)
 - [Blog/RSS Monitoring](vendor-skills/research/research-intelligence-workflows/SKILL.md#blogrss-monitoring)
@@ -2178,6 +2189,13 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [pynspd method (the complete one) — and the silent-300 gotcha](vendor-skills/research/research-intelligence-workflows/references/russian-cadastral-parcel-extraction.md#pynspd-method-the-complete-one-and-the-silent-300-gotcha)
 - [Geometry / table rules (both engines)](vendor-skills/research/research-intelligence-workflows/references/russian-cadastral-parcel-extraction.md#geometry-table-rules-both-engines)
 - [Caveats to state to the user](vendor-skills/research/research-intelligence-workflows/references/russian-cadastral-parcel-extraction.md#caveats-to-state-to-the-user)
+
+## `vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md` · [?]
+- [Evidence hierarchy](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#evidence-hierarchy)
+- [Reporting rules](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#reporting-rules)
+- [Practical workflow](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#practical-workflow)
+- [ФНС ЕГРЮЛ recursive extraction pattern](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#фнс-егрюл-recursive-extraction-pattern)
+- [Pitfall](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#pitfall)
 
 ## `vendor-skills/smart-home/openhue/SKILL.md` · [?]
 - [Prerequisites](vendor-skills/smart-home/openhue/SKILL.md#prerequisites)
