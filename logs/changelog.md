@@ -11,6 +11,9 @@ secret_refs: []
 Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
 
+## 2026-06-18
+- **Hermes (217) — починено автосжатие контекста.** Авто-проход по конфигу 16.06 сбросил `auxiliary.compression` на `llama-3.1-8b-instant` (6k TPM); payload'ы 9–12k всю ночь падали с `413 Request too large`, сессия не сжималась → «compressed N times, accuracy may degrade», агент тупил. Агент аварийно переключил сжатие на `openai-codex/gpt-5.5` (анти-паттерн: связь с мозгом-блокером №1, медленно). Восстановлено на `llama-3.3-70b-versatile` (12k TPM, timeout 45, развязано). `compression.threshold` оставлен 0.05 (владелец: важнее не терять контекст); редкий payload >12k падает мягко через `abort_on_summary_failure: false` (пропуск одной компакции, без потери сообщений) — против старого 8b, где падали ВСЕ. Бэкапы config на сервере. Обновлён `engineering/hermes-gateway-ux.md`, `logs/mistakes.md`.
+
 ## 2026-06-16
 - **Google Sheets — отдельный навык для дашбордов и проверок.** После поломки финансового дашборда, где график существовал, но показывал `Нет данных` из-за скрытой ошибки в сводной формуле, добавлен skill `google-sheets-dashboard-automation`: простые проверяемые формулы вместо больших «магических» spill-формул, визуальные правила читаемости, и обязательная механическая проверка числовых данных в диапазонах графиков. Обновлён INDEX.md и заметки Google Sheets/App Script.
 

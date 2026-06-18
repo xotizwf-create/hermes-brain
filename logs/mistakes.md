@@ -11,7 +11,41 @@ secret_refs: []
 Append-only, newest on top. Concrete mistakes + how to avoid repeating them. Pulled from
 incidents and review feedback so the same error doesn't happen twice.
 
+## 2026-06-18 — `auxiliary.compression` silently demoted to the 6k-TPM model
+**Symptom (owner):** «Гермес неправильно сжимает контекст» — agent dumb/slow, chat spammed with
+"Compacting context…" / "Session compressed N times — accuracy may degrade".
+**Root cause:** an aux-config pass on 16-06 (`config.yaml.bak-aux-auto-20260616`) reset *every*
+`auxiliary.*` task to `llama-3.1-8b-instant` (**6 000** TPM), including `compression`. Compaction
+payloads are 9–12k tokens → `413 Request too large … Limit 6000` on every attempt → the middle never
+summarized → context grew unbounded → repeated failed re-compaction. The journal failures were
+log-only (`WARNING agent.context_compressor: Failed to generate context summary … 413`), so the chat
+just "felt slow". The agent's own emergency fix (06:46) — switch `compression` → `openai-codex/gpt-5.5`
+— stopped the 413s but is the documented anti-pattern (couples compaction to the main brain = blocker
+#1, slow up to its 360s timeout).
+**Fix (applied, 217):** `auxiliary.compression` → `provider: custom, model: llama-3.3-70b-versatile`
+(12k TPM, free, decoupled), `timeout: 45`, `api_mode: ''`. `compression.threshold` kept at 0.05
+(owner: prefer keeping context); 70b's 12k cap covers the typical 9–10k payload, and the rare 12k+
+(real failed payloads 9892/12183/9291/12099 — half >12k) fails gracefully via
+`abort_on_summary_failure: false` (skip one cycle, no message loss) — vs old 8b where *every* attempt
+413'd. Verified the 70b id is live via openai-SDK (raw urllib → Cloudflare 1010 = false negative).
+**Reconciled with the 2026-06-16 entry below** (which moved compression OFF Groq → `provider: auto`):
+that call was driven by the old amplifier where a Groq TPM-reject got misclassified as a *payment*
+error and disabled the WHOLE Groq aux for **600 s**. Re-checked on 217 on 2026-06-18 — today's many
+413s produced only the compression-specific **60 s** pause and **zero** `marking … unhealthy` lines:
+the 600 s cascade no longer fires. And `auto` here resolves to the **single openai-codex account**
+(no openrouter/paid key on 217 → blocker #1, slow up to 360 s). Owner's complaint was *speed*, so on
+2026-06-18 the **owner chose to keep compression on Groq 70b** (fast/free/decoupled) over `auto→codex`.
+**Trip-wire:** if `marking … unhealthy (600s)` from a Groq compaction ever reappears in the journal,
+revert `auxiliary.compression` → `provider: auto`.
+**Avoid next time:** `auxiliary.compression`/`web_extract` (big payloads) MUST stay on 70b (12k),
+never 8b (6k); after any aux-config/`hermes update` pass, re-check `grep -A2 'compression:' config.yaml`
+and that compression isn't silently demoted. `self-check` already flags the `compression_fail` signature.
+See `engineering/hermes-gateway-ux.md` (compression section).
+
 ## 2026-06-16 — Groq снова ломал auxiliary/compression: free-tier 12k TPM несовместим с тяжёлым сжатием
+> **Обновление 2026-06-18:** этот вывод пересмотрен — амплификатор «600s unhealthy» больше не
+> срабатывает (413 даёт лишь паузу 60с), а `auto` на 217 резолвится в единственный codex (медленно).
+> По решению владельца сжатие возвращено на Groq 70b. Детали — в записи 2026-06-18 выше.
 - **What:** hourly `hermes_selfcheck.py` alerted: `Auxiliary: marking ... unhealthy for 600s (payment /
   credit error)` and then `Failed to generate context summary: Codex auxiliary Responses stream exceeded
   45.0s total timeout`. Live config still had `auxiliary.compression` and `auxiliary.web_extract`

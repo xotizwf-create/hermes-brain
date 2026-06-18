@@ -149,6 +149,22 @@ Three mechanisms manage a growing dialog; know which is which:
   the Groq section — this is what made the 2026-06-11 prostavki MCP session crawl for ~2 hours).
   Requires a working `auxiliary.compression` provider; without it compression degrades to a
   deterministic static summary / dropping middle turns.
+  > **REGRESSION + FIX (2026-06-18).** An aux-config pass on 16-06 (`config.yaml.bak-aux-auto-20260616`)
+  > reset **every** `auxiliary.*` task — including `compression` — to `llama-3.1-8b-instant` (**6 000**
+  > TPM). Compaction payloads of 9–12k tokens then 413'd all night (`Request too large … Limit 6000`),
+  > the session never shrank, "Session compressed N times — accuracy may degrade" spammed, the agent
+  > looked dumb/slow. At 06:46 the agent itself emergency-switched `compression` → `openai-codex/gpt-5.5`
+  > (timeout 360) to stop the bleeding — but that is the documented anti-pattern: it couples compaction
+  > to the main brain (codex = blocker #1) and is slow. **Correct fix (applied):** `auxiliary.compression`
+  > → `provider: custom, model: llama-3.3-70b-versatile` (12k TPM, free, decoupled), `timeout: 45`,
+  > `api_mode: ''`. `compression.threshold` **kept at 0.05** (owner: prefer keeping more context over
+  > fewer compactions); the 70b's 12k cap covers the typical 9–10k payload, and the rare 12k+ payload
+  > (real failed ones were 9892/12183/9291/12099 — half exceeded 12k) fails *gracefully* via
+  > `abort_on_summary_failure: false` (skip one compaction cycle, never drop messages) — vs the old 8b
+  > where *every* attempt 413'd. Verified the 70b model id is live on the Groq key (openai-SDK ping; a
+  > raw-urllib ping gets Cloudflare 1010 — false negative). **Sizing law: `auxiliary.compression` must be
+  > 70b (12k), never 8b (6k), never codex; never let an "aux-auto" pass demote it.** `self-check` cron
+  > already alerts on the `compression_fail` signature.
 - **`telegram_context_guard`** — the «Сжать контекст?» inline-button prompt in Telegram. It was a
   band-aid added while auto-compression was broken (no aux model). **Disabled 2026-06-10**
   (`enabled: false`): with working auto-compression it only added manual confirmations. Re-enable
