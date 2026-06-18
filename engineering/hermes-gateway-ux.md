@@ -2,7 +2,7 @@
 id: hermes-gateway-ux
 type: engineering
 tags: [hermes, gateway, telegram, ux, config, display, reasoning, progress, media, attachments]
-updated: 2026-06-11
+updated: 2026-06-18
 secret_refs: []
 ---
 
@@ -157,7 +157,7 @@ Three mechanisms manage a growing dialog; know which is which:
   > (timeout 360) to stop the bleeding — but that is the documented anti-pattern: it couples compaction
   > to the main brain (codex = blocker #1) and is slow. **Correct fix (applied):** `auxiliary.compression`
   > → `provider: custom, model: llama-3.3-70b-versatile` (12k TPM, free, decoupled), `timeout: 45`,
-  > `api_mode: ''`. `compression.threshold` **kept at 0.05** (owner: prefer keeping more context over
+  > `api_mode: ''`. `compression.threshold` **kept at 0.05** ⚠️ **(WRONG — this was the real codex-burner; see CORRECTION below)** (owner: prefer keeping more context over
   > fewer compactions); the 70b's 12k cap covers the typical 9–10k payload, and the rare 12k+ payload
   > (real failed ones were 9892/12183/9291/12099 — half exceeded 12k) fails *gracefully* via
   > `abort_on_summary_failure: false` (skip one compaction cycle, never drop messages) — vs the old 8b
@@ -165,6 +165,25 @@ Three mechanisms manage a growing dialog; know which is which:
   > raw-urllib ping gets Cloudflare 1010 — false negative). **Sizing law: `auxiliary.compression` must be
   > 70b (12k), never 8b (6k), never codex; never let an "aux-auto" pass demote it.** `self-check` cron
   > already alerts on the `compression_fail` signature.
+  >
+  > ⚠️ **CORRECTION (2026-06-18, afternoon — live-diagnosed on 217). `threshold: 0.05` was itself the
+  > bug.** 0.05 × 320k context ≈ a **16k trigger**, so the middle handed to the summarizer is ~16–17k
+  > tokens (observed payloads up to **17632**) and **cannot fit even the 70b's 12k TPM** → it 413s anyway.
+  > And the failure is **not** graceful: on any aux-summary error the compressor calls
+  > `_fallback_to_main_for_compression` (in `agent/context_compressor.py`), which sets `summary_model = ""`
+  > for the **rest of the session**, so every later compaction runs on the **main model (codex gpt-5.5)**.
+  > With codex at `usage_limit_reached` the summary never succeeds, context never shrinks, and the turn
+  > **death-spirals** (seen live: "Session compressed 40 times" + "Iteration budget exhausted 60/60").
+  > **That spiral — not the model id — is what burned codex "ненормально быстро".**
+  > **Fix applied: `compression.threshold` 0.05 → 0.025** (≈8k trigger → payload ~5–9k → fits 12k with
+  > margin → Groq summary succeeds → codex never touched; backup `config.yaml.bak.threshold025.*`, gateway
+  > restarted). A smaller window *also* means a smaller codex context per turn = **less** codex burn, so
+  > lowering it is strictly *more* efficient, not "less context for nothing". **Hard sizing law (do not
+  > regress): keep `auxiliary.compression` on 70b (12k) AND `compression.threshold` ≤ ~0.025 so the payload
+  > fits 12k. 0.05 is incompatible with free Groq and has re-broken this twice (06-11, 06-18) — raise it
+  > only with a paid Groq Dev tier (higher TPM).** Residual (the 2026-06-16 concern): a single >12k message
+  > in the middle can still 413 → one codex fallback; the bulletproof fix is a gateway patch to fall back to
+  > the deterministic static summary instead of codex — deferred (patch fragility, see `hermes-self-repair`).
 - **`telegram_context_guard`** — the «Сжать контекст?» inline-button prompt in Telegram. It was a
   band-aid added while auto-compression was broken (no aux model). **Disabled 2026-06-10**
   (`enabled: false`): with working auto-compression it only added manual confirmations. Re-enable

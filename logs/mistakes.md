@@ -2,7 +2,7 @@
 id: mistakes
 type: log
 tags: [mistakes, postmortem]
-updated: 2026-06-16
+updated: 2026-06-18
 secret_refs: []
 ---
 
@@ -10,6 +10,31 @@ secret_refs: []
 
 Append-only, newest on top. Concrete mistakes + how to avoid repeating them. Pulled from
 incidents and review feedback so the same error doesn't happen twice.
+
+## 2026-06-18 (afternoon) — `compression.threshold: 0.05` was the real codex-burner (corrects the entry below)
+**Symptom (owner):** «кодекс на 217 расходуется слишком быстро, ненормально». The morning fix (entry
+below) moved compression back to Groq 70b but **kept `threshold: 0.05`** and claimed >12k payloads "fail
+gracefully via `abort_on_summary_failure: false`". Live diagnosis on 217 showed that claim is **false**.
+**Root cause (verified in the journal + `agent/context_compressor.py`):**
+- `threshold: 0.05` × 320k context ≈ a **16k trigger** → the middle handed to the summarizer is ~16–17k
+  tokens (observed payloads up to **17632**) → 413 **even on the 70b** (12k TPM). 0.05 can never fit 12k.
+- The failure is **not** graceful: on the first aux-summary error the compressor calls
+  `_fallback_to_main_for_compression`, which sets `summary_model = ""` and it **sticks for the rest of the
+  session** → every subsequent compaction runs on the **main model (codex `gpt-5.5`)**.
+- With codex itself at `usage_limit_reached`, compaction never succeeds → context never shrinks → the turn
+  **death-spirals** (caught live: "Session compressed 40 times", "Iteration budget exhausted 60/60", 22×
+  `usage_limit_reached` in 8h). That spiral — not the model id — is what burned codex.
+**Fix (applied, 217):** `compression.threshold` **0.05 → 0.025** (backup `config.yaml.bak.threshold025.*`,
+gateway restarted). ≈8k trigger → payload ~5–9k → fits Groq 12k → summary succeeds → codex untouched. A
+smaller window also shrinks the codex context per turn = **less** codex burn, so it is strictly *more*
+efficient (not "less context for nothing").
+**Sizing law (hard, do not regress):** keep `auxiliary.compression` on 70b (12k) AND keep
+`compression.threshold ≤ ~0.025` so the payload fits 12k. **0.05 is incompatible with free Groq and has
+re-broken this twice (06-11, 06-18). Raise it only with a paid Groq Dev tier.**
+**Residual:** a single >12k message in the middle can still 413 → one codex fallback (the 2026-06-16
+"internal minimum" concern). Bulletproof fix = a gateway patch to fall back to the static deterministic
+summary instead of codex; deferred (patch fragility). Trip-wire: `self-check` `compression_fail`.
+See `engineering/hermes-gateway-ux.md` (compression section, CORRECTION block).
 
 ## 2026-06-18 — `auxiliary.compression` silently demoted to the 6k-TPM model
 **Symptom (owner):** «Гермес неправильно сжимает контекст» — agent dumb/slow, chat spammed with
@@ -27,7 +52,9 @@ just "felt slow". The agent's own emergency fix (06:46) — switch `compression`
 (owner: prefer keeping context); 70b's 12k cap covers the typical 9–10k payload, and the rare 12k+
 (real failed payloads 9892/12183/9291/12099 — half >12k) fails gracefully via
 `abort_on_summary_failure: false` (skip one cycle, no message loss) — vs old 8b where *every* attempt
-413'd. Verified the 70b id is live via openai-SDK (raw urllib → Cloudflare 1010 = false negative).
+413'd. **⚠️ SUPERSEDED 2026-06-18 (afternoon, entry above): this is wrong — 0.05 still 413s on the 70b
+(payloads up to 17632 > 12k), and the failure does NOT skip gracefully, it sticks the session onto codex.
+`threshold` lowered to 0.025.** Verified the 70b id is live via openai-SDK (raw urllib → Cloudflare 1010 = false negative).
 **Reconciled with the 2026-06-16 entry below** (which moved compression OFF Groq → `provider: auto`):
 that call was driven by the old amplifier where a Groq TPM-reject got misclassified as a *payment*
 error and disabled the WHOLE Groq aux for **600 s**. Re-checked on 217 on 2026-06-18 — today's many
