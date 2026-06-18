@@ -3,7 +3,7 @@ id: albery-server-mcp-tools
 type: project
 project: albery
 tags: [albery, mcp, bitrix, zoom, fetch-url, webhooks, reference]
-updated: 2026-06-13
+updated: 2026-06-18
 secret_refs: []
 ---
 
@@ -278,15 +278,27 @@ documents`. То есть не хватало только кода инстру
   значений/формул в A1-диапазон (USER_ENTERED).
 - `get_google_sheet_meta(spreadsheet_id)` — вкладки с `sheetId`/названием/размером (нужно, чтобы
   знать `sheetId` для batchUpdate).
-- `move_drive_file_to_folder(file_id, folder)` — перенос файла в папку Drive (id или ссылка).
+- `move_drive_file_to_folder(file_id|item_id, folder)` — перенос файла, таблицы, документа **или папки**
+  в другую папку Drive (id или ссылка). Технически папки в Drive тоже являются `files`, поэтому тот же
+  parents API работает для вложенных папок.
+- `remove_drive_item_from_folder(item_id|file_id, folder, confirm=true)` — убрать файл, таблицу, документ
+  **или папку** из конкретной родительской папки Drive без полного удаления объекта из Google Drive.
+  Требует предварительно показать человеку точный элемент и папку и получить подтверждение.
 - `manage_apps_script(action, ...)` — Apps Script API: `create`/`get`/`update`/`deploy`/`run`.
 
-5 MCP-инструментов в [mcp/context_server.py](mcp/context_server.py) (описания английские, чтобы не
+6 MCP-инструментов в [mcp/context_server.py](mcp/context_server.py) (описания английские, чтобы не
 ловить mojibake при патче). Тиринг: добавлены в `TOOLS` → автоматически в **`/mcp` (Полный)** и
 **`/mcp-ops` (Все функции)**; НЕ в `FAQ_TOOL_NAMES`, НЕ в `OWNER_ONLY_TOOL_NAMES`. `manage_apps_script`
 требует `confirm=true`. Версия MCP `0.9.0` → `0.10.0` (теперь ~62 инструмента). Возможности агента
 обновлены в БД `ai_agent_capabilities` (tier `full`), чтобы он знал о новых умениях и не отвечал
 «недоступно». Коммит Albery-репо `9cbc570`.
+
+**Drive-файлы/папки внутри папок (фикс 18.06, MCP `0.10.1`).** После жалобы владельца Bitrix-агент
+отказывался «удалить таблицу из указанной папки» и не умел перемещать папки внутри папок. Исправлено
+backend-only: `move_drive_file_to_folder` теперь принимает и обычные ссылки/ID папок как `file_id` или
+`item_id`, а новый `remove_drive_item_from_folder` снимает конкретного родителя (`removeParents`) без
+удаления объекта из Drive. Проверено после рестарта: `/mcp` и `/mcp-ops` отдают оба инструмента через
+`tools/list`; FAQ-тир их не видит, как и должно быть.
 
 **Два «человеческих» нюанса (headless-ограничения a9ent.ai), которые агент сообщает сам:**
 1. **Папка Drive.** Чтобы класть таблицу в конкретную папку, её надо **один раз** расшарить на
