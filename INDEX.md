@@ -96,6 +96,9 @@ every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
 - **Create/fix Google Sheets dashboards, calculators, charts, formulas, dropdowns, or bound Apps Script** →
   skill `skills/google-sheets-dashboard-automation/` (readable formulas, visual dashboard structure,
   and mechanical chart/data verification).
+- **Build an Albery web app (mini-CRM / form / dashboard) — branded like the prod site + opens for all
+  without Google login** → skill `skills/albery-webapp-design/` (Albery design system via
+  `get_webapp_template` + anonymous data via the applet API; never put SpreadsheetApp in doGet).
 - **Add/manage a GitHub repo** → use skill `skills/new-repo/`.
 - **Credentials, SSH, tokens, DB URLs** → `engineering/secrets-access.md` + skill `secure-access`.
 - **Database / migrations / Postgres** → `engineering/database.md` + skill `postgres-production`.
