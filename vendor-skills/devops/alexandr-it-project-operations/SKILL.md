@@ -54,6 +54,7 @@ Do not use this skill for purely personal preferences, one-off chat style prefer
 - **Hermes Brain project registry/runbooks:** load `hermes-brain-project-registry`.
 - **Direct project-instruction updates** (owner says “запиши/добавь в инструкции по проекту X”): treat the wording as approval for a narrow Hermes Brain mutation; edit the closest `projects/<slug>/` doc, update `logs/changelog.md`, run `python scripts/validate.py`, commit, push, and verify a clean `git status`.
 - **Hermes/Codex account pool, ChatGPT usage limits, or “which account am I on?” checks:** use `references/hermes-codex-credential-pool.md`; load `hermes-agent` for official commands but do not edit that bundled skill.
+- **Albery Google Drive MCP/agent operations** (moving files/folders, removing a file/table/folder from a folder without deleting it): use `references/albery-drive-folder-operations.md`; verify tool registry, access tiers, confirmation gates, running services, and Hermes Brain docs.
 - **Root-cause debugging:** load `systematic-debugging`.
 - **Code quality / pre-commit review:** load `requesting-code-review` and, where relevant, `aislop-code-quality`.
 - **Implementation plans:** load `writing-plans`; for execution with subagents, load `subagent-driven-development`.
@@ -92,6 +93,7 @@ For MCP/AI-agent boundary audits, confirmation-gate matrices, and interrupted-co
 For quality/risk Stage C audits after component and boundary mapping, see `references/project-audit-quality-risk-standard.md`.
 For turning audit outputs into layered project documentation and architecture standards, see `references/project-audit-documentation-convergence.md`.
 For Albery Zoom transcript/report recovery and Bitrix dispatch readiness checks, see `references/albery-zoom-report-recovery.md`.
+For Albery Bitrix AI-agent Google Sheets quality regressions (bad formulas, unreadable formatting, poor column widths, bad palette), see `references/albery-google-sheets-agent-quality.md`.
 For checking Hermes/Codex credential-pool state, active ChatGPT account labels, and usage-limit rotation, see `references/hermes-codex-credential-pool.md`.
 
 ## Albery Zoom Report Recovery Add-on

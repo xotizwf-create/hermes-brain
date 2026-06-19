@@ -19,11 +19,13 @@ Use this when a user needs a Russian contract based on an existing old Word `.do
    - quantity/unit/price cells match the request;
    - contract number/date match in both the main text and appendix when the user specified them.
 7. Do an openability check by converting the final `.docx` to PDF with LibreOffice headless. A non-empty PDF confirms the Word package is structurally valid, but not sufficient for delivery quality.
-8. Render the PDF pages (for example with `pdftoppm`/`convert`) and visually inspect the changed pages before sending. In particular check that the appendix starts where expected, tables are not shifted, prices stay on one line, and no cells overlap after edits. If layout shifted, adjust column widths/font size/paragraph spacing in the `.docx`, reconvert, and re-render.
-9. Save owner-facing files under `/root/.hermes/outbox/` before attaching in Telegram, and verify the send tool reports successful delivery before saying the files were sent.
+8. Render the PDF pages (for example with `pdftoppm`/`convert`) and visually inspect the changed pages before sending. In particular check that the appendix starts where expected, tables are not shifted, prices stay on one line, and no cells overlap after edits. If layout shifted, adjust column widths/font size/paragraph spacing in the `.docx`, reconvert, and re-render. Also inspect appendix/specification headers for duplicated contract numbers: BusinessPack-style templates may have a separate orphan `№ <old/new number>` paragraph in addition to the normal `от «…» … г.` line, so text checks can pass while the rendered page still shows two numbers.
+9. For compact specification tables, keep the original multi-column layout but normalize the actual edited cells: product name in both name columns when required, blank unknown registry/catalog cells as `—`, unit (`шт`), quantity, unit price, line total, and the `ИТОГО` row. Do not rely only on formulas surviving conversion; compute dependent values yourself from the user-provided quantity/price/VAT and write the final displayed numbers into the cells.
+10. Save owner-facing files under `/root/.hermes/outbox/` before attaching in Telegram, and verify the send tool reports successful delivery before saying the files were sent.
 
 ## Pitfalls
 
 - Old `.doc` files often contain binary/control characters if treated as plain text; do not edit them with raw string replacement.
 - A legal reference can appear both in real contract text and in hidden hyperlink metadata. Verify the actual paragraph text after conversion, not just a byte grep.
 - Price edits must update all dependent fields: title/subject if needed, clause “Цена договора”, specification unit price, quantity, and line total.
+- Delivery deadline wording can appear in several variants (`в течение ... дней`, `календарных/рабочих`, numeric plus words). Search for stale deadline phrases and verify the final PDF/text contains the requested term, not merely one edited occurrence.

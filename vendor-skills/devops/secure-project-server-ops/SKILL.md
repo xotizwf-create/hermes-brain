@@ -135,6 +135,10 @@ Use this when the local secure project file contains only connection credentials
 
 When an MCP tool that creates external side effects times out (for example a project tool that creates Bitrix tasks), do not retry blindly. First verify whether the side effect happened using the project’s read-only search/list tools or DB-backed status: check the pending queue, search for created external objects by title/date/id, and only then decide whether retry is safe. If the side effect did not happen and the queue remains open, inspect the production service logs around the timestamp; MCP client timeouts often hide the real internal exception. Keep output redacted. For Albery Zoom → Bitrix dispatch, see `references/albery-bitrix-rest-dispatch.md`.
 
+### Albery Google Sheets quality guard
+
+When the Albery Bitrix AI agent creates or edits a Google Sheet and the owner says the result is “плохой”, do not stop at checking that a link was created. Read the bot session, locate the generated sheet, inspect the server-side Sheets write path, and verify formulas in the actual spreadsheet. Russian-locale spreadsheets can require semicolon formula separators; English comma-separated examples may create broken formulas. Fix the generated sheet if possible, then harden the tool so it locale-normalizes formulas and fails loudly if post-write formula verification finds errors. Detailed runbook: `references/albery-google-sheets-formula-locale.md`.
+
 **Do not assume credential key names.** Secure project env files may use variants like `IP`/`USER`/`PASSWORD` instead of `Host_IP`/`Host_User`/`Host_Password`. If a connection fails or the schema is unknown, inspect and report only the available key names, never values, then map the correct keys in memory for the command.
 
 ### Remote Hermes cron inspection
