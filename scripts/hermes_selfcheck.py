@@ -15,7 +15,7 @@ Signatures (grounded in the real journal, 2026-06-14):
   - context compression/compaction failing     -> degraded multi-turn behaviour, slow turns
   - media/attachment drop                      -> "I sent the file" but nothing arrives
 """
-import argparse, re, subprocess, sys
+import argparse, os, re, subprocess, sys, time
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -25,21 +25,32 @@ CHECKS = {
                       "SOUL.md/системные правила вырезаются сканером (агент теряет инструкции)", "CRIT"),
     "codex_limit":   (r"usage_limit_reached|usage limit reached|plan_type.*resets_in", 1,
                       "Codex/ChatGPT ЛИМИТ исчерпан — агент не отвечает до сброса (один аккаунт без фолбэка)", "CRIT"),
-    "codex_auth":    (r"token_invalidated|auth(entication)?[^a-z]*invalid|401 Unauthorized", 1,
-                      "Codex (основной мозг) теряет авторизацию — token_invalidated", "CRIT"),
+    "codex_auth":    (r"token_invalidated|auth(entication)?[^a-z]*invalid|401 Unauthorized|missing access_token|refresh_token_reused|credential_pool_refresh_failure|Primary provider auth failed|relogin_required", 1,
+                      "Codex (основной мозг) ПОТЕРЯЛ авторизацию (token_invalidated / refresh_token_reused / missing access_token) — нужен hermes auth add openai-codex", "CRIT"),
     "media_drop":    (r"Skipping unsafe MEDIA|unsafe MEDIA", 1,
                       "вложения молча дропаются (файл «отправлен», но не дошёл)", "CRIT"),
     "provider_unhealthy": (r"marking .*unhealthy|provider .*unhealthy", 8,
                       "вспомогательный провайдер (Groq) уходит в unhealthy — лимиты токенов/мин", "WARN"),
-    "compression_fail": (r"compress(ion)?.*(fail|error|timeout)|compaction.*(fail|error)|summar(y|ize|ization).*(fail|timeout)", 3,
+    "compression_fail": (r"compress(ion)?.*(fail|error|timeout)|compaction.*(fail|error)|summar(y|ize|ization).*(fail|timeout)|failed to generate context summary", 1,
                       "сжатие/компакция контекста падает (тупит/медленные ходы)", "WARN"),
 }
+
+
+def _since_arg(minutes):
+    """Look back at most `minutes`, but after a config repair don't re-alert on stale pre-fix lines."""
+    window_start = time.time() - minutes * 60
+    cfg_path = "/root/.hermes/config.yaml"
+    try:
+        window_start = max(window_start, os.path.getmtime(cfg_path))
+    except OSError:
+        pass
+    return "@" + str(int(window_start))
 
 
 def journal(minutes):
     try:
         out = subprocess.run(
-            ["journalctl", "-u", "hermes-gateway", "--since", f"-{minutes}min", "--no-pager"],
+            ["journalctl", "-u", "hermes-gateway", "--since", _since_arg(minutes), "--no-pager"],
             capture_output=True, text=True, timeout=60).stdout
         return out.splitlines()
     except Exception as e:
