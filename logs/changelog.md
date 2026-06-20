@@ -2,7 +2,7 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-06-18
+updated: 2026-06-20
 secret_refs: []
 ---
 
@@ -10,6 +10,9 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
+
+## 2026-06-20
+- **Hermes Brain 217 — `claude-tg` бот больше не молчит и не жжёт Claude Code лимит через Opus по умолчанию.** Жалоба владельца: Telegram-бот на 217 принимает запрос, расходует весь Claude лимит и ничего не отвечает/не показывает ход работы. Диагноз: PM2 app `claude-tg` (`/root/claude-agent/bridge.js`) запускал Claude Code как `opus` + единый JSON-результат, а в Telegram слал только typing до полного завершения; при rate-limit/длинной сессии владелец видел тишину. Исправлено: Sonnet + medium effort + `stream-json` + per-request budget cap, мгновенное подтверждение, периодические статусы, статусы по tool-use, понятное сообщение о лимите. Проверено: `node --check`, PM2 online; прямой минимальный Claude Code тест подтвердил текущий 5h rate-limit и сброс 2026-06-21 02:40 МСК. Док: `projects/hermes-brain/runbook.md`, `projects/hermes-brain/incidents.md`.
 
 ## 2026-06-19
 - **Albery — анализ созвонов сверяет исполнителей задач с матрицей решений и картой процессов.** Запрос владельца: задачи с созвона сверять с матрицей/картой; если повесили не на того (пример: пересорт повесили на Оксану/Олесю, хотя ответственный по матрице иной) — дописать рекомендацию в исходную задачу + создать задачу-дубль правильному ответственному. Сначала разобрал переписку владельца с Евгением за сегодня (тот же кейс пересорта халата 50/52 → цепочка Бахтиёр→Дмитрий→Артур). Важно: живой путь генерации зум-отчётов — НЕ мёртвая openai-функция `generate_zoom_call_report_if_needed` (ключ убрали 11.06), а **codex-агент**: cron `zoom-to-tasks` → `zoom_watchdog.sh` → промпт `.txt` + `get_report_contract zoom_processing` (= БД-промпт). Фикс: в контракт `zoom_processing` (v11→v13) добавлен раздел сверки (агент сам читает матрицу/карту через MCP, при расхождении — рекомендация в task_text + дубль `responsibility_duplicate=true`); в агент-промпт `.txt` — шаг c2. Review-gated (превью в TG → «ставь» → Bitrix). Проверено вживую на 19.06: mismatch помечается, дубль уходит Тагировой (исполнитель по матрице); использует ТЕКУЩУЮ матрицу, подхватит обновления. Коммиты Albery `0822222`+`e6ab5d0`. Память `albery-zoom-matrix-crosscheck`.
