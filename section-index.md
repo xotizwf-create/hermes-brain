@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-18
+updated: 2026-06-20
 secret_refs: []
 ---
 
@@ -168,6 +168,8 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-06-20](logs/changelog.md#2026-06-20)
+- [2026-06-19](logs/changelog.md#2026-06-19)
 - [2026-06-18](logs/changelog.md#2026-06-18)
 - [2026-06-16](logs/changelog.md#2026-06-16)
 - [2026-06-15](logs/changelog.md#2026-06-15)
@@ -188,6 +190,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [2026-05-30 — two-way git brain sync is live (verified from the server)](logs/learning-log.md#2026-05-30-two-way-git-brain-sync-is-live-verified-from-the-server)
 
 ## `logs/mistakes.md` · [log] mistakes, postmortem
+- [2026-06-18 (afternoon) — `compression.threshold: 0.05` was the real codex-burner (corrects the entry below)](logs/mistakes.md#2026-06-18-afternoon-compressionthreshold-005-was-the-real-codex-burner-corrects-the-entry-below)
 - [2026-06-18 — `auxiliary.compression` silently demoted to the 6k-TPM model](logs/mistakes.md#2026-06-18-auxiliarycompression-silently-demoted-to-the-6k-tpm-model)
 - [2026-06-16 — Groq снова ломал auxiliary/compression: free-tier 12k TPM несовместим с тяжёлым сжатием](logs/mistakes.md#2026-06-16-groq-снова-ломал-auxiliarycompression-free-tier-12k-tpm-несовместим-с-тяжёлым-сжатием)
 - [2026-06-14 — Status audit (are past mistakes actually fixed?)](logs/mistakes.md#2026-06-14-status-audit-are-past-mistakes-actually-fixed)
@@ -246,6 +249,10 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Tiered-доступ (по личности)](projects/albery/bitrix-bot.md#tiered-доступ-по-личности)
 - [Сессии (жизненный цикл) — `bitrix_bot_sessions` (миграция 028)](projects/albery/bitrix-bot.md#сессии-жизненный-цикл-bitrix_bot_sessions-миграция-028)
 - [Ручной сброс «🆕 Новая сессия» (2026-06-16, миграция 030)](projects/albery/bitrix-bot.md#ручной-сброс-новая-сессия-2026-06-16-миграция-030)
+- [Память: агент помнит свою прошлую работу (recall, 2026-06-18)](projects/albery/bitrix-bot.md#память-агент-помнит-свою-прошлую-работу-recall-2026-06-18)
+- [Картинки (скрины) и ответы на сообщения — vision OCR + reply-контекст (2026-06-18)](projects/albery/bitrix-bot.md#картинки-скрины-и-ответы-на-сообщения-vision-ocr-reply-контекст-2026-06-18)
+- [Документы (pdf/docx/xlsx/md/txt/csv) + ответ файлом PDF/Excel/Word (2026-06-18, **исправлено 2026-06-19**)](projects/albery/bitrix-bot.md#документы-pdfdocxxlsxmdtxtcsv-ответ-файлом-pdfexcelword-2026-06-18-исправлено-2026-06-19)
+- [Возможность «Создаю приложения» (эксклюзивный пункт, 2026-06-18)](projects/albery/bitrix-bot.md#возможность-создаю-приложения-эксклюзивный-пункт-2026-06-18)
 - [Аналитика](projects/albery/bitrix-bot.md#аналитика)
 - [Само-описание возможностей агента (tier-aware, 2026-06-16, миграция 031)](projects/albery/bitrix-bot.md#само-описание-возможностей-агента-tier-aware-2026-06-16-миграция-031)
 - [Env (на 186, `/var/www/albery/.env`)](projects/albery/bitrix-bot.md#env-на-186-varwwwalberyenv)
@@ -264,6 +271,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Commands (on server / via _deploy_helper.py)](projects/albery/deploy.md#commands-on-server-via-_deploy_helperpy)
 - [Post-deploy checks](projects/albery/deploy.md#post-deploy-checks)
 - [Notes](projects/albery/deploy.md#notes)
+- [Pushing a server-made commit when the box has no `gh` / SSH key (2026-06-18)](projects/albery/deploy.md#pushing-a-server-made-commit-when-the-box-has-no-gh-ssh-key-2026-06-18)
 
 ## `projects/albery/hermes-automations.md` · [project] albery, hermes, cron, zoom, owner-report, bitrix, reference
 - [Обучение Hermes (где править поведение, по убыванию силы)](projects/albery/hermes-automations.md#обучение-hermes-где-править-поведение-по-убыванию-силы)
@@ -441,6 +449,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Checks](projects/hermes-brain/deploy.md#checks)
 - [Rollback](projects/hermes-brain/deploy.md#rollback)
 
+## `projects/hermes-brain/incidents.md` · [project] incidents
+- [2026-06-20 — `claude-tg` bot spent Claude Code limit and stayed silent](projects/hermes-brain/incidents.md#2026-06-20-claude-tg-bot-spent-claude-code-limit-and-stayed-silent)
+
 ## `projects/hermes-brain/overview.md` · [project] overview
 - [What it is](projects/hermes-brain/overview.md#what-it-is)
 - [Criticality](projects/hermes-brain/overview.md#criticality)
@@ -453,6 +464,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Updating instructions](projects/hermes-brain/runbook.md#updating-instructions)
 - [Validation](projects/hermes-brain/runbook.md#validation)
 - [Troubleshooting](projects/hermes-brain/runbook.md#troubleshooting)
+- [Side service: `claude-tg` Telegram → Claude Code bridge on the 217 box](projects/hermes-brain/runbook.md#side-service-claude-tg-telegram-claude-code-bridge-on-the-217-box)
 
 ## `projects/hermes-brain/servers.md` · [project] servers, access
 - [Current production/runtime host](projects/hermes-brain/servers.md#current-productionruntime-host)
@@ -500,6 +512,14 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Install prerequisite](skills/aislop-code-quality/SKILL.md#install-prerequisite)
 - [Commands](skills/aislop-code-quality/SKILL.md#commands)
 - [Fix rules](skills/aislop-code-quality/SKILL.md#fix-rules)
+
+## `skills/albery-webapp-design/SKILL.md` · [skill] albery-webapp-design
+- [Goal](skills/albery-webapp-design/SKILL.md#goal)
+- [Rule 1 — анонимность: Apps Script doGet отдаёт ТОЛЬКО HTML/JS](skills/albery-webapp-design/SKILL.md#rule-1-анонимность-apps-script-doget-отдаёт-только-htmljs)
+- [Rule 2 — фирменный дизайн: всегда через get_webapp_template](skills/albery-webapp-design/SKILL.md#rule-2-фирменный-дизайн-всегда-через-get_webapp_template)
+- [Build flow (для data-приложения)](skills/albery-webapp-design/SKILL.md#build-flow-для-data-приложения)
+- [Why this exists / pitfalls](skills/albery-webapp-design/SKILL.md#why-this-exists-pitfalls)
+- [Реализация (где живёт)](skills/albery-webapp-design/SKILL.md#реализация-где-живёт)
 
 ## `skills/codex-delegation/SKILL.md` · [skill] codex-delegation
 - [Why](skills/codex-delegation/SKILL.md#why)
@@ -924,6 +944,18 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Common Pitfalls](vendor-skills/devops/alexandr-it-project-operations/SKILL.md#common-pitfalls)
 - [Verification Checklist](vendor-skills/devops/alexandr-it-project-operations/SKILL.md#verification-checklist)
 
+## `vendor-skills/devops/alexandr-it-project-operations/references/albery-drive-folder-operations.md` · [?]
+- [Durable lesson](vendor-skills/devops/alexandr-it-project-operations/references/albery-drive-folder-operations.md#durable-lesson)
+- [Implementation checklist](vendor-skills/devops/alexandr-it-project-operations/references/albery-drive-folder-operations.md#implementation-checklist)
+- [Verification checklist](vendor-skills/devops/alexandr-it-project-operations/references/albery-drive-folder-operations.md#verification-checklist)
+- [Pitfalls](vendor-skills/devops/alexandr-it-project-operations/references/albery-drive-folder-operations.md#pitfalls)
+
+## `vendor-skills/devops/alexandr-it-project-operations/references/albery-google-sheets-agent-quality.md` · [?]
+- [Typical investigation path](vendor-skills/devops/alexandr-it-project-operations/references/albery-google-sheets-agent-quality.md#typical-investigation-path)
+- [Formatting guardrails for generated Google Sheets](vendor-skills/devops/alexandr-it-project-operations/references/albery-google-sheets-agent-quality.md#formatting-guardrails-for-generated-google-sheets)
+- [Formula guardrails](vendor-skills/devops/alexandr-it-project-operations/references/albery-google-sheets-agent-quality.md#formula-guardrails)
+- [What to report back](vendor-skills/devops/alexandr-it-project-operations/references/albery-google-sheets-agent-quality.md#what-to-report-back)
+
 ## `vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-report-recovery.md` · [?]
 - [Durable lesson](vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-report-recovery.md#durable-lesson)
 - [Fast diagnostic sequence](vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-report-recovery.md#fast-diagnostic-sequence)
@@ -1104,6 +1136,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [External messaging bridge MVPs](vendor-skills/devops/secure-project-server-ops/SKILL.md#external-messaging-bridge-mvps)
 - [Remote project env secret retrieval pattern](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-project-env-secret-retrieval-pattern)
 - [MCP/API side-effect timeout triage](vendor-skills/devops/secure-project-server-ops/SKILL.md#mcpapi-side-effect-timeout-triage)
+- [Albery Google Sheets quality guard](vendor-skills/devops/secure-project-server-ops/SKILL.md#albery-google-sheets-quality-guard)
 - [Remote Hermes cron inspection](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-hermes-cron-inspection)
 - [Remote Hermes `openai-codex` auth repair](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-hermes-openai-codex-auth-repair)
 - [Remote Hermes Telegram routing / notification-chat migration](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-hermes-telegram-routing-notification-chat-migration)
@@ -1117,6 +1150,13 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Safe triage pattern](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#safe-triage-pattern)
 - [Known durable error class](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#known-durable-error-class)
 - [User-facing explanation](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#user-facing-explanation)
+
+## `vendor-skills/devops/secure-project-server-ops/references/albery-google-sheets-formula-locale.md` · [?]
+- [Durable lesson](vendor-skills/devops/secure-project-server-ops/references/albery-google-sheets-formula-locale.md#durable-lesson)
+- [Investigation pattern](vendor-skills/devops/secure-project-server-ops/references/albery-google-sheets-formula-locale.md#investigation-pattern)
+- [Fix pattern](vendor-skills/devops/secure-project-server-ops/references/albery-google-sheets-formula-locale.md#fix-pattern)
+- [Verification checklist](vendor-skills/devops/secure-project-server-ops/references/albery-google-sheets-formula-locale.md#verification-checklist)
+- [Reporting to the owner](vendor-skills/devops/secure-project-server-ops/references/albery-google-sheets-formula-locale.md#reporting-to-the-owner)
 
 ## `vendor-skills/devops/secure-project-server-ops/references/albery-hermes-gateway-routing.md` · [?]
 - [Live server identity pitfall](vendor-skills/devops/secure-project-server-ops/references/albery-hermes-gateway-routing.md#live-server-identity-pitfall)
