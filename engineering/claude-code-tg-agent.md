@@ -69,7 +69,14 @@ Native command menu via `setMyCommands` + an inline-button menu on `/start` and 
   usage. Cache-read tokens accumulate across turns and are not the same as the live context window;
   treating them as context overflow makes the bot "forget" by silently switching to a fresh session.
   Let Claude report real context overflow, and tell the owner to use `/new` only when they explicitly
-  want a clean thread. As of 2026-06-21 the bridge uses Opus high, a larger per-answer safety budget,
-  and distinguishes the safety budget from the real Claude Pro account limit.
+  want a clean thread. As of 2026-06-21 the auto-new token heuristic was removed from `bridge.js`.
+- Session switching: `/switch N` switches immediately; bare `/switch` must set `pendingSwitchChat`
+  and accept the next numeric message as the session number. Without this, a standalone `3` after
+  `/switch` is forwarded to Claude as a normal task.
+- Limit handling: Claude Code stream-json may emit `rate_limit_event` during a **successful** response.
+  Do not classify raw stdout containing `rate_limit_event` as a real Pro limit. The bridge must return
+  a successful `result` before checking diagnostic text for actual limit errors; otherwise every normal
+  answer can be falsely reported as "упёрлись в реальный лимит". `/account` remains the source of truth
+  for account-level status.
 - Connect from PC: paramiko, server creds in the Hermes-Brain repo `.env` (lines 1–4). PowerShell
   expands `$(...)` locally — send token-substitution commands via a Python (paramiko) script, not inline.
