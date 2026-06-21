@@ -119,6 +119,9 @@ every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
 - **Tiny live prod change (one support-text string, a config flag, one line)** → skill
   `skills/small-prod-edit/` (backup → exact replace → verify → restart only that service; no
   subsystem fishing).
+- **Owner says the agent «тупит / молчит / отупел / тормозит», «отправил файл — а он не пришёл»,
+  «стало глупее после обновления» — user-facing symptom triage** → `engineering/hermes-troubleshooting.md`
+  (symptom → one journal grep → cause → where the fix lives; most are silent log-only degradations).
 - **Hermes gateway itself is broken/suspect (bloated or duplicated `run.py`, duplicated config
   blocks, restart hangs/kills the bot, looping self-patcher, missing code-task classifier)** → skill
   `skills/hermes-self-repair/` (diagnose first, restart last, rollback ready).
