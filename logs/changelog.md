@@ -2,7 +2,7 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-06-20
+updated: 2026-06-21
 secret_refs: []
 ---
 
@@ -10,6 +10,9 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
+
+## 2026-06-21
+- **Claude Telegram bridge на 217 — команды теперь тоже получают 👍, локальный лимит-гейт убран.** Жалоба владельца: после `/new` бот ставил 👀, отвечал «Новая сессия», но не ставил 👍; плюс лишний текст «Принял. Проверяю лимит…» и локальные блокировки мешали запускать Claude Code. Диагноз: `bridge.js` ставил 👍 только после обычного `runClaude()`, а `/new`, `/sessions`, `/switch`, `/reset`, `/help` возвращали ответ раньше. Исправлено на сервере в `/root/claude-agent/bridge.js`: добавлен `sendDone(...)`, все успешные командные ответы завершаются 👍, ранних `return send(...)` в command path не осталось; убран предварительный текст про проверку лимита и локальные `accountTooHot/accountWarnHot` блокировки/предупреждения, оставлен только ответ при жёстком отказе провайдера. Проверено: `node --check`, PM2 `claude-tg` online, `sendDone_defined=True`, `return_send_without_thumbs=[]`, `accepted_limit_text_present=False`.
 
 ## 2026-06-20
 - **Hermes Brain 217 — `claude-tg` бот больше не молчит и не жжёт Claude Code лимит через Opus по умолчанию.** Жалоба владельца: Telegram-бот на 217 принимает запрос, расходует весь Claude лимит и ничего не отвечает/не показывает ход работы. Диагноз: PM2 app `claude-tg` (`/root/claude-agent/bridge.js`) запускал Claude Code как `opus` + единый JSON-результат, а в Telegram слал только typing до полного завершения; при rate-limit/длинной сессии владелец видел тишину. Исправлено: Sonnet + medium effort + `stream-json` + per-request budget cap, мгновенное подтверждение, периодические статусы, статусы по tool-use, понятное сообщение о лимите. Проверено: `node --check`, PM2 online; прямой минимальный Claude Code тест подтвердил текущий 5h rate-limit и сброс 2026-06-21 02:40 МСК. Док: `projects/hermes-brain/runbook.md`, `projects/hermes-brain/incidents.md`.
