@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-20
+updated: 2026-06-21
 secret_refs: []
 ---
 
@@ -573,6 +573,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Phase 3 — Code-task time-budget classifier (the 2026-05-31 lesson)](skills/hermes-self-repair/SKILL.md#phase-3-code-task-time-budget-classifier-the-2026-05-31-lesson)
 - [Phase 4 — Config hygiene](skills/hermes-self-repair/SKILL.md#phase-4-config-hygiene)
 - [Phase 4.5 — Auxiliary/provider health alerts](skills/hermes-self-repair/SKILL.md#phase-45-auxiliaryprovider-health-alerts)
+- [Phase 4.6 — systemd unit hygiene (do not "improve" blindly)](skills/hermes-self-repair/SKILL.md#phase-46-systemd-unit-hygiene-do-not-improve-blindly)
 - [Phase 5 — One controlled restart + health check](skills/hermes-self-repair/SKILL.md#phase-5-one-controlled-restart-health-check)
 - [Rollback (always ready before Phase 5)](skills/hermes-self-repair/SKILL.md#rollback-always-ready-before-phase-5)
 - [Hard rules](skills/hermes-self-repair/SKILL.md#hard-rules)
@@ -810,6 +811,41 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Extending the system prompt's execution-environment block](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#extending-the-system-prompts-execution-environment-block)
 - [Commit Conventions](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#commit-conventions)
 - [Key Rules](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#key-rules)
+
+## `vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md` · [?]
+- [Triggers](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#triggers)
+- [Required workflow](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#required-workflow)
+- [Provider selection heuristics](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#provider-selection-heuristics)
+- [Strong cheap default](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#strong-cheap-default)
+- [Long-context / agentic work](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#long-context-agentic-work)
+- [Free and experimental route](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#free-and-experimental-route)
+- [Z.ai / GLM route](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#zai-glm-route)
+- [Groq speed route](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#groq-speed-route)
+- [Reasoning/progress visibility for Telegram bots](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#reasoningprogress-visibility-for-telegram-bots)
+- [Config patterns](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#config-patterns)
+- [OpenRouter with price routing](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#openrouter-with-price-routing)
+- [Named custom provider](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#named-custom-provider)
+- [Fallbacks](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#fallbacks)
+- [Cheap auxiliary models](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#cheap-auxiliary-models)
+- [Pitfalls](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#pitfalls)
+- [References](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#references)
+
+## `vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md` · [?]
+- [Short recommendation from the session](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#short-recommendation-from-the-session)
+- [Price examples converted to RUB](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#price-examples-converted-to-rub)
+- [Provider notes](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#provider-notes)
+- [DeepSeek official](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#deepseek-official)
+- [MiniMax-M3](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#minimax-m3)
+- [OpenRouter](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#openrouter)
+- [Z.ai / GLM](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#zai-glm)
+- [Groq](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#groq)
+- [Kimi/K2](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#kimik2)
+- [Hermes configuration patterns](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#hermes-configuration-patterns)
+- [OpenRouter](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#openrouter)
+- [Custom OpenAI-compatible provider](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#custom-openai-compatible-provider)
+- [Fallback routing](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#fallback-routing)
+- [Visible reasoning/progress](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#visible-reasoningprogress)
+- [Future-use checklist](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#future-use-checklist)
 
 ## `vendor-skills/creative/baoyu-visual-content/SKILL.md` · [?]
 - [Overview](vendor-skills/creative/baoyu-visual-content/SKILL.md#overview)
@@ -1134,6 +1170,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Per-destination VPN bypass without touching the VPN](vendor-skills/devops/secure-project-server-ops/SKILL.md#per-destination-vpn-bypass-without-touching-the-vpn)
 - [Simple remote PC access / MeshCentral pattern](vendor-skills/devops/secure-project-server-ops/SKILL.md#simple-remote-pc-access-meshcentral-pattern)
 - [External messaging bridge MVPs](vendor-skills/devops/secure-project-server-ops/SKILL.md#external-messaging-bridge-mvps)
+- [Remote LLM Telegram bridge silence / limit-burn triage](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-llm-telegram-bridge-silence-limit-burn-triage)
 - [Remote project env secret retrieval pattern](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-project-env-secret-retrieval-pattern)
 - [MCP/API side-effect timeout triage](vendor-skills/devops/secure-project-server-ops/SKILL.md#mcpapi-side-effect-timeout-triage)
 - [Albery Google Sheets quality guard](vendor-skills/devops/secure-project-server-ops/SKILL.md#albery-google-sheets-quality-guard)
@@ -1212,6 +1249,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Trigger](vendor-skills/devops/secure-project-server-ops/references/remote-env-mcp-secret-retrieval.md#trigger)
 - [Safe flow](vendor-skills/devops/secure-project-server-ops/references/remote-env-mcp-secret-retrieval.md#safe-flow)
 - [Pitfalls](vendor-skills/devops/secure-project-server-ops/references/remote-env-mcp-secret-retrieval.md#pitfalls)
+
+## `vendor-skills/devops/secure-project-server-ops/references/remote-llm-telegram-bridge-triage.md` · [?]
+- [Durable diagnosis pattern](vendor-skills/devops/secure-project-server-ops/references/remote-llm-telegram-bridge-triage.md#durable-diagnosis-pattern)
+- [Provider limit preflight and visible progress guardrails](vendor-skills/devops/secure-project-server-ops/references/remote-llm-telegram-bridge-triage.md#provider-limit-preflight-and-visible-progress-guardrails)
+- [PM2 quick checks](vendor-skills/devops/secure-project-server-ops/references/remote-llm-telegram-bridge-triage.md#pm2-quick-checks)
 
 ## `vendor-skills/devops/secure-project-server-ops/references/vk-hermes-bridge-mvp.md` · [?]
 - [Architecture](vendor-skills/devops/secure-project-server-ops/references/vk-hermes-bridge-mvp.md#architecture)
