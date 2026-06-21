@@ -30,8 +30,8 @@ can diagnose and fix Hermes. Business MCP tools were intentionally **not** added
   `/root/.hermes/secure/claude_code/oauth_token` (mode 600). Bot token at `.../bot_token` (600).
   Re-auth if it ever expires: `claude setup-token` in a tmux session → owner opens the URL, logs in
   → token printed → store it at the path above → `pm2 restart claude-tg`.
-- **Model:** `opus` + `effortLevel: high` (set in `/root/claude-agent/settings.json` and `--model opus`
-  in the bridge) — matches the IDE brain.
+- **Model:** `opus` + `--effort high` in the bridge — matches the IDE-style quality target. `settings.json`
+  may also contain model defaults, but the bridge command-line args are authoritative.
 - **Knowledge:** runs with `cwd = /root/.hermes/agent-knowledge` (the brain clone) so it reads the
   **same `CLAUDE.md` / `INDEX.md`** as Hermes. Operating charter: `/root/claude-agent/charter.md`.
 
@@ -54,7 +54,22 @@ Native command menu via `setMyCommands` + an inline-button menu on `/start` and 
 
 ## Maintenance quick-ref
 - Restart: `pm2 restart claude-tg`. Status/logs: `pm2 list`, `pm2 logs claude-tg`.
+- If PM2 says `online` but the bot is silent, check Telegram pending updates via `getWebhookInfo` and
+  compare with `/root/claude-agent/state.json` `offset`. Incident 2026-06-21: the bridge process was
+  alive but its Telegram long-poll request hung without a request timeout; Telegram showed 3 pending
+  updates and state offset did not advance. Fix applied in `/root/claude-agent/bridge.js`: `tg()` now
+  has a 65s HTTPS timeout and logs Telegram parse/network errors. A `pm2 restart claude-tg` drained
+  the queue and advanced the offset.
+- Test Claude auth exactly as the bridge runs it: pass `CLAUDE_CODE_OAUTH_TOKEN` from
+  `/root/.hermes/secure/claude_code/oauth_token`. Running `claude` manually without that env can falsely
+  report "login required" even though the bridge auth is valid.
 - Memory guard: bridge runs one Claude session at a time; `NODE_OPTIONS=--max-old-space-size=512`;
   PM2 `--max-memory-restart 650M`. (217 is a ~1 GB box — keep it to one session; never build on it.)
+- Conversation memory: do **not** auto-start a new Claude session based on cumulative cached token
+  usage. Cache-read tokens accumulate across turns and are not the same as the live context window;
+  treating them as context overflow makes the bot "forget" by silently switching to a fresh session.
+  Let Claude report real context overflow, and tell the owner to use `/new` only when they explicitly
+  want a clean thread. As of 2026-06-21 the bridge uses Opus high, a larger per-answer safety budget,
+  and distinguishes the safety budget from the real Claude Pro account limit.
 - Connect from PC: paramiko, server creds in the Hermes-Brain repo `.env` (lines 1–4). PowerShell
   expands `$(...)` locally — send token-substitution commands via a Python (paramiko) script, not inline.
