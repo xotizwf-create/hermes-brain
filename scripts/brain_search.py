@@ -38,6 +38,27 @@ SKIP_DIRS = {".git", "node_modules", "__pycache__", "archive", ".obsidian",
              "vendor-skills"}  # vendor-skills/ = backup mirror of the bundled library → skip (dedup)
 DOC_EXT = (".md", ".yaml", ".yml")
 
+# Common RU/EN stop-words: dropped from LEXICAL query terms so BM25 focuses on content
+# words (the full query is still used verbatim for the semantic embedding).
+STOPWORDS = set("""
+и в во не что он на я с со как а то все всё она так его но да ты к у же вы за бы по только
+ее её мне было вот от меня еще нет о из ему теперь когда даже ну вдруг ли если уже или ни быть
+был него до вас нибудь опять уж вам ведь там потом себя ничего ей может они тут где есть надо
+ней для мы тебя их чем была сам чтоб без будто чего раз тоже себе под будет тогда кто этот того
+потому этого какой совсем ним здесь этом один почти мой тем чтобы нее сейчас были куда зачем
+всех никогда можно при наконец два об другой хоть после над больше тот через эти нас про всего
+них какая много разве эту моя впрочем хорошо свою этой перед иногда лучше чуть том нельзя такой
+им более всегда конечно всю между делать сделать нужно надо чтобы если когда где это эти этот
+the a an of to in is it for on with as at by be this that or and from your you our we how do does
+not what when where which can should will would make need use using
+""".split())
+
+
+def query_terms(query):
+    return [t for t in re.split(r"[\s,/]+", query.strip())
+            if len(t) >= 2 and t.lower() not in STOPWORDS]
+
+
 # Embedding provider — "gemini" (free, generous, multilingual) or "voyage".
 EMBED_PROVIDER = os.environ.get("EMBED_PROVIDER", "gemini")
 VOYAGE_KEY_FILE = os.environ.get("VOYAGE_KEY_FILE", "/root/.hermes/secure/voyage_api_key")
@@ -381,7 +402,7 @@ KIND_W = {"skill": 3.0, "reference": 2.5, "skill-file": 2.0, "doc": 1.0, "index"
 def search(db_path, query, top=8, cand=40):
     con = sqlite3.connect(db_path)
     cur = con.cursor()
-    terms = [t for t in re.split(r"[\s,/]+", query.strip()) if len(t) >= 2]
+    terms = query_terms(query)
 
     # lexical candidates
     lex = []
@@ -488,7 +509,7 @@ def main():
     if not args.query:
         ap.error("provide a query (or --build)")
     res, used_sem = search(args.db, args.query, args.top)
-    terms = [t for t in re.split(r"[\s,/]+", args.query.strip()) if len(t) >= 2]
+    terms = query_terms(args.query)
     if not res:
         print("No matches. Try other keywords or `--build` to refresh the index.")
         return
