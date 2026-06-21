@@ -18,8 +18,11 @@ current task — never load the whole brain unless asked for a full audit.
 `python3 /root/.hermes/agent-knowledge/scripts/brain_search.py "<keywords>"`. This is the one
 unified search across **both** trees the agent has — the versioned brain (docs + our custom
 skills in `agent-knowledge/`) AND Hermes' bundled skill library (`/root/.hermes/skills/`, e.g.
-`research`, `devops`). It returns ranked `path · title · snippet` (lexical FTS + fuzzy fallback);
-open the top hit and load that. The index self-rebuilds when stale; force with `--build`.
+`research`, `devops`). It is **hybrid RAG**: BM25 lexical **+** semantic embeddings (Gemini, our
+brain) fused by RRF, returning the most relevant **section-level passages** (`path › section` +
+snippet) — read the top hit's section, not the whole file (token-frugal). The index self-rebuilds
+lexically when stale; embeddings refresh via `--build` (daily cron at 05:00 MSK). **Always search
+before deciding you don't know or picking a skill** — don't load the whole brain or slurp big files.
 *Why this exists:* knowledge and skills live in separate trees, and the agent used to miss the
 right skill entirely (e.g. the 2026-06-14 Росреестр task) — always search first.
 
@@ -129,6 +132,9 @@ every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
 - **Build a team of agents / split into multiple agents / multi-agent design / when to add an agent**
   → `engineering/agent-team.md` (grounded in 12-factor-agents + Anthropic "Building Effective Agents":
   one workflow = one agent, orchestrator+workers, own your context; checklist before adding an agent).
+- **Claude Code agent on 217 (the Telegram coder/maintenance bot @GoogleDeck_Bot — fix it, re-auth,
+  change its model/menu/limits/sessions, or make it match the IDE Claude)** →
+  `engineering/claude-code-tg-agent.md` (PM2 `claude-tg`, PreToolUse guard hook, Pro OAuth token in the secure zone).
 - **Change the brain itself / how Hermes scales itself** → skill `skills/update-knowledge/`.
 - **How Hermes was built & how it's taught (orientation)** → `logs/session-2026-05-30.md`.
 
