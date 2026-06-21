@@ -1,20 +1,26 @@
 ---
 id: andigital-remote-pc-access
 type: project
-tags: [andigital, meshcentral, remote-access, security, windows, consent]
-updated: 2026-06-03
+tags: [andigital, meshcentral, remote-access, security, windows, consent, retired]
+updated: 2026-06-21
 secret_refs: []
 ---
 
-# Andigital remote PC access — secure MeshCentral baseline
+# Andigital remote PC access — retired MeshCentral baseline
 
-## Purpose
+## Current status — retired / not operational
 
-Andigital remote-PC access is the owner's simple support channel: send a link, the PC owner installs the MeshCentral agent, and the PC appears in the self-hosted panel. It is for explicitly consented access only.
+As of 2026-06-21, this MeshCentral-based remote-PC access flow is **retired and must not be offered as a working owner-facing link**. The server still has leftover pieces (`meshcentral.service`, `/opt/meshcentral`, and the `andigital-pc-gate.service` entry point), but MeshCentral itself has been stopped since 2026-06-03 and the old download/agent flow can produce 502 errors. Treat that 502 as a sign of a retired stale path, not as an automatic emergency repair target.
 
-## Live public entry points
+Do **not** send the stored secret MeshCentral URL to the owner or a PC owner unless Александр explicitly asks to revive this exact MeshCentral setup. For a new PC connection request, choose and document a fresh consent-based remote-access approach first (for example rebuilt MeshCentral, Headscale/Tailscale+SSH for technical machines, RustDesk/AnyDesk, or a one-off support agent), then verify it end-to-end before sharing instructions.
 
-- Human panel entry: `https://www.andigital.ru/andigital/pc/<secret>/`.
+## Historical purpose
+
+Andigital remote-PC access was the owner's simple support channel: send a link, the PC owner installs the MeshCentral agent, and the PC appears in the self-hosted panel. It was for explicitly consented access only.
+
+## Historical public entry points — do not use as live
+
+- Historical human panel entry: `https://www.andigital.ru/andigital/pc/<secret>/`.
 - The concrete secret URL is stored only in the secure per-project env store:
   - all project envs: `ANDIGITAL_REMOTE_PC_ACCESS_URL`;
   - Andigital env: `ANDIGITAL_PC_ACCESS_URL` and `ANDIGITAL_PC_ACCESS_KEY_SHA256`.

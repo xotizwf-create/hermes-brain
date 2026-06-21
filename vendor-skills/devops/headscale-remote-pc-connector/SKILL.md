@@ -14,12 +14,18 @@ metadata:
 
 Use this skill when Александр asks to set up, inspect, troubleshoot, or reason about the scheme where the agent/operator connects to remote user PCs from `andigital.ru`.
 
-## Current preferred simple scheme
+## Current status — old MeshCentral flow is retired
 
-For “максимально просто подключаться к любому ПК”, prefer MeshCentral on `www.andigital.ru`, not custom PowerShell/Headscale/OpenSSH connector scripts.
+As of 2026-06-21, the previous “simple MeshCentral invite link” flow on `www.andigital.ru` is **not operational and must not be offered to the owner as a ready connection method**. MeshCentral files and gateway leftovers may still exist, but `meshcentral.service` was found stopped since 2026-06-03, and the old agent-download path can return 502. Treat this as a retired/stale feature unless Александр explicitly asks to revive it.
 
-Live setup:
-- MeshCentral is installed in `/opt/meshcentral` and runs as `meshcentral.service`.
+When Александр asks “can you connect to my PC?”, answer: yes, a future connection is possible, but a remote-access method must be selected/rebuilt and verified first. Depending on the task, choose rebuilt MeshCentral, Headscale/Tailscale+SSH for technical machines, RustDesk/AnyDesk, or a one-off consent-based support agent. Do not send the old secret MeshCentral URL as if it works.
+
+## Historical simple scheme
+
+Previously, for “максимально просто подключаться к любому ПК”, MeshCentral on `www.andigital.ru` was preferred over custom PowerShell/Headscale/OpenSSH connector scripts. This is now historical context only.
+
+Historical setup:
+- MeshCentral is installed in `/opt/meshcentral` and previously ran as `meshcentral.service`.
 - Public human UI is **not** exposed at `https://www.andigital.ru/`. Use only the secret-path entry `https://www.andigital.ru/andigital/pc/<secret>/`; the concrete URL lives in the secure per-project env store as `ANDIGITAL_REMOTE_PC_ACCESS_URL` / `ANDIGITAL_PC_ACCESS_URL`, never in chat or docs.
 - Nginx keeps `/andigital/secret/` routed to Hermes Vault and routes `/andigital/pc/<secret>/` through `andigital-pc-gate.service` before proxying to MeshCentral on `127.0.0.1:3001`.
 - `andigital-pc-gate.service` stores only the SHA-256 hash of the high-entropy URL key for auth checks; do not put the raw key in nginx config or committed docs. Nginx access logging is disabled for secret-token paths.
@@ -31,7 +37,7 @@ Live setup:
 - Current consent model: remote screen/terminal/files require local approval on the PC; if the user does not approve the local prompt, the operator must stop and ask for approval rather than bypass it.
 - For owner requests like “подключись к моему ПК и скажи, что открыто”, use the read-only MeshCtrl window-title workflow first: list visible window titles without clicks, typing, screenshots, file reads, uploads/downloads, or setting changes. See `references/meshcentral-read-only-window-inspection.md`.
 
-Operational flow for a new PC:
+Historical operational flow for a new PC — do not use without rebuilding/verifying:
 1. Send Александр/the PC owner the MeshCentral invite link generated from the `My PCs` group.
 2. They open the link, download/install the agent, and approve the Windows prompt.
 3. The PC appears in MeshCentral; use the web UI for desktop, terminal, files, and support.
