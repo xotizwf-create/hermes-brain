@@ -127,6 +127,10 @@ Detailed runbook: `references/meshcentral-remote-pc-access.md`.
 
 Use this when adding a lightweight non-native messaging platform bridge (for example VK) without modifying the existing Hermes gateway. Prefer a separate localhost-bound service behind nginx, strict user allowlists for personal MVPs, root-only secret config, immediate Callback acknowledgements with asynchronous Hermes processing, and explicit cleanup of old platform-bot leftovers. For VK specifically, see `references/vk-hermes-bridge-mvp.md` for the Callback API, Long Poll, old-keyboard, and `hermes chat --continue <name>` first-run pitfalls.
 
+### Remote LLM Telegram bridge silence / limit-burn triage
+
+When a Telegram bot bridge accepts prompts, spends Claude/OpenAI/provider quota, but appears to “do nothing”, do not stop at process health. Inspect whether the bridge uses the wrong model/effort for its job, only sends `typing` until final completion, hides provider errors/rate limits in local logs, or lacks per-request spend/time guardrails. Fix for visible behavior: role-appropriate model defaults (do **not** downgrade a coding-agent from Opus just to save quota; reduce effort and add guardrails/preflight instead), streaming/progress messages, clear rate-limit messages, per-request limits, early session/context persistence, restart only the affected bridge, verify process/logs, and persist PM2 state if applicable. Detailed checklist: `references/remote-llm-telegram-bridge-triage.md`.
+
 ## Remote project env secret retrieval pattern
 
 Use this when the local secure project file contains only connection credentials, while the operational secret (MCP path token, webhook secret, app token) lives in the remote app's `.env`.
