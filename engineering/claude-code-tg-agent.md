@@ -86,5 +86,9 @@ Native command menu via `setMyCommands` + an inline-button menu on `/start` and 
 - Telegram duplicate-answer fix (2026-06-21): do **not** pass `--include-partial-messages` and do **not**
   relay partial assistant chunks to Telegram. Send only the final Claude result. This prevents the bot
   from posting an interim answer and then repeating/contradicting it in the final message.
+- Telegram reactions (2026-06-21): the bridge has helper `react(chat, messageId, emoji)` using Telegram
+  `setMessageReaction`. On every valid owner message it sets `👀` after access/media validation; after
+  the final Claude answer is sent it sets `👍` on the original user message. Reaction failures are
+  intentionally ignored so Telegram limitations never break the agent response.
 - Connect from PC: paramiko, server creds in the Hermes-Brain repo `.env` (lines 1–4). PowerShell
   expands `$(...)` locally — send token-substitution commands via a Python (paramiko) script, not inline.
