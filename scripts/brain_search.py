@@ -65,6 +65,7 @@ VOYAGE_KEY_FILE = os.environ.get("VOYAGE_KEY_FILE", "/root/.hermes/secure/voyage
 VOYAGE_MODEL = os.environ.get("VOYAGE_MODEL", "voyage-3.5")
 VOYAGE_URL = "https://api.voyageai.com/v1/embeddings"
 GEMINI_KEY_FILE = os.environ.get("GEMINI_KEY_FILE", "/root/.hermes/secure/gemini_api_key")
+GEMINI_KEYS_FILE = os.environ.get("GEMINI_KEYS_FILE", "/root/.hermes/secure/gemini_api_keys")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-embedding-001")
 GEMINI_DIM = int(os.environ.get("GEMINI_DIM", "1536"))
 CHUNK_MAX = 1800          # max chars per chunk before windowing
@@ -197,6 +198,21 @@ def _read_key():
         return os.environ.get("GEMINI_API_KEY" if EMBED_PROVIDER == "gemini" else "VOYAGE_API_KEY", "").strip()
 
 
+def _read_keys():
+    """Key POOL — multiple Gemini keys (one per line) multiply the free daily quota;
+    the embedder rotates to the next key when one is quota-exhausted."""
+    if EMBED_PROVIDER == "gemini":
+        try:
+            with open(GEMINI_KEYS_FILE) as f:
+                ks = [ln.strip() for ln in f if ln.strip() and not ln.strip().startswith("#")]
+            if ks:
+                return ks
+        except Exception:
+            pass
+    k = _read_key()
+    return [k] if k else []
+
+
 def _voyage_call(batch, key, input_type, max_retries=8):
     """One batch with backoff on 429/5xx. Returns list of embeddings or None."""
     payload = json.dumps({"input": batch, "model": VOYAGE_MODEL,
@@ -241,46 +257,58 @@ def _gemini_call(batch, key, input_type, max_retries=6):
         try:
             with urllib.request.urlopen(req, timeout=120) as r:
                 d = json.loads(r.read().decode("utf-8"))
-            return [e["values"] for e in d.get("embeddings", [])]
+            return [e["values"] for e in d.get("embeddings", [])], False
         except urllib.error.HTTPError as e:
             body = ""
             try:
-                body = e.read().decode("utf-8", "replace")[:160]
+                body = e.read().decode("utf-8", "replace")[:200]
             except Exception:
                 pass
+            if e.code == 429 and "quota" in body.lower():
+                return None, True   # daily quota exhausted → caller rotates to next key
             if e.code in (429, 500, 503) and attempt < max_retries - 1:
                 print(f"(gemini {e.code}; retry in {delay:.0f}s)", file=sys.stderr)
                 time.sleep(delay); delay = min(delay * 2, 45); continue
             print(f"(gemini embed failed: HTTP {e.code} {body})", file=sys.stderr)
-            return None
+            return None, False
         except Exception as e:
             if attempt < max_retries - 1:
                 time.sleep(delay); delay = min(delay * 2, 45); continue
             print(f"(gemini embed failed: {e})", file=sys.stderr)
-            return None
-    return None
+            return None, False
+    return None, False
 
 
 def _provider_call(batch, key, input_type):
-    return _gemini_call(batch, key, input_type) if EMBED_PROVIDER == "gemini" \
-        else _voyage_call(batch, key, input_type)
+    if EMBED_PROVIDER == "gemini":
+        return _gemini_call(batch, key, input_type)
+    return _voyage_call(batch, key, input_type), False
 
 
 def embed_texts(texts, key, input_type, throttle=EMBED_THROTTLE):
-    """Unit-normalized vectors. Returns AS MANY AS SUCCEEDED (partial on failure → resume next build)."""
-    if not key or not texts:
+    """Unit-normalized vectors. Rotates across the key pool when a key is quota-exhausted.
+    Returns AS MANY AS SUCCEEDED (partial → resume next build)."""
+    keys = _read_keys() or ([key] if key else [])
+    if not keys or not texts:
         return []
-    out = []
+    out, ki = [], 0
     total = (len(texts) + EMBED_BATCH - 1) // EMBED_BATCH
     for bi, i in enumerate(range(0, len(texts), EMBED_BATCH)):
-        embs = _provider_call(texts[i:i + EMBED_BATCH], key, input_type)
+        batch = texts[i:i + EMBED_BATCH]
+        embs = None
+        while ki < len(keys):
+            embs, quota = _provider_call(batch, keys[ki], input_type)
+            if embs or not quota:
+                break
+            print(f"(key #{ki + 1} quota exhausted → switching to key #{ki + 2})", file=sys.stderr)
+            ki += 1
         if not embs:
             break  # stop and keep what we have
         for v in embs:
             n = math.sqrt(sum(x * x for x in v)) or 1.0
             out.append([x / n for x in v])
         if total > 1:
-            print(f"(embedded batch {bi + 1}/{total})", file=sys.stderr)
+            print(f"(embedded batch {bi + 1}/{total} [key #{ki + 1}])", file=sys.stderr)
             if bi + 1 < total:
                 time.sleep(throttle)
     return out
