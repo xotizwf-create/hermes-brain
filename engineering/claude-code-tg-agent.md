@@ -2,7 +2,7 @@
 id: claude-code-tg-agent
 type: engineering
 tags: [agent, claude-code, telegram, server, 217, runbook]
-updated: 2026-06-20
+updated: 2026-06-21
 secret_refs: []
 ---
 
@@ -78,5 +78,13 @@ Native command menu via `setMyCommands` + an inline-button menu on `/start` and 
   a successful `result` before checking diagnostic text for actual limit errors; otherwise every normal
   answer can be falsely reported as "упёрлись в реальный лимит". `/account` remains the source of truth
   for account-level status.
+- Owner preference as of 2026-06-21: the Telegram Claude agent should behave like an unrestricted
+  coding agent, not stop itself at local quota-safety thresholds. The bridge keeps `/account` for
+  visibility, but local warn/block thresholds are set above 100% so only Anthropic's real upstream
+  limit can stop a run. The per-run Claude CLI budget is intentionally high, and permissions are
+  skipped via Claude's own flag; keep `guard.py` as the destructive-action safety layer.
+- Telegram duplicate-answer fix (2026-06-21): do **not** pass `--include-partial-messages` and do **not**
+  relay partial assistant chunks to Telegram. Send only the final Claude result. This prevents the bot
+  from posting an interim answer and then repeating/contradicting it in the final message.
 - Connect from PC: paramiko, server creds in the Hermes-Brain repo `.env` (lines 1–4). PowerShell
   expands `$(...)` locally — send token-substitution commands via a Python (paramiko) script, not inline.
