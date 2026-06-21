@@ -26,6 +26,7 @@ start. If it's broken on disk, **the next restart loads the broken file** — so
 6. **Auxiliary failures are runtime failures too.** If self-check reports `unhealthy`, Groq/TPM,
    compression, compaction, or summary timeouts, treat it as a gateway repair path: inspect config,
    provider health, disk headroom, and only then restart. See `references/auxiliary-provider-health.md`.
+7. **Unit-file warnings count as unfinished repair.** If `daemon-reload` or journals show unsupported systemd keys, clean them up before saying the gateway is healthy. See `references/systemd-unit-hygiene.md`.
 
 ## Phase 1 — Diagnose (read-only, no writes, no restart)
 Run these and read the actual numbers. Nothing here changes state.
@@ -127,13 +128,26 @@ provider or to the already-working `auto` route; then run `hermes config check` 
 script. If the self-check scans a rolling journal window, make it ignore pre-fix journal lines by
 starting no earlier than the config/script mtime, so the next hourly alert is not stale noise.
 
+## Phase 4.6 — systemd unit hygiene (do not "improve" blindly)
+When touching `/etc/systemd/system/hermes-gateway.service` or drop-ins, only use directives supported by the host's systemd version. A unit can still start while `systemctl daemon-reload` prints `Unknown key ...` warnings; those warnings are real operational noise and must be cleaned up before declaring the gateway healthy.
+
+Safe pattern:
+```bash
+systemctl --version | head -1
+cp -p /etc/systemd/system/hermes-gateway.service /etc/systemd/system/hermes-gateway.service.bak.$(date +%Y%m%d_%H%M%S)
+systemd-analyze verify /etc/systemd/system/hermes-gateway.service 2>&1 | tee /tmp/hermes-unit-verify.log
+systemctl daemon-reload 2>&1 | tee /tmp/hermes-daemon-reload.log
+journalctl -b -u hermes-gateway --no-pager | grep -iE 'Unknown key|Failed to parse|bad unit|error' || true
+```
+If you introduced unsupported keys (for example newer restart-backoff directives such as `RestartSteps` / `RestartMaxDelaySec` on an older systemd), remove them or replace with older supported equivalents. Re-run `daemon-reload` and the grep until the warnings are gone. Prefer `daemon-reload` first; do **not** restart just to test unit parsing unless a restart is actually needed.
+
 ## Phase 5 — One controlled restart + health check
 ```bash
 systemctl restart hermes-gateway
 sleep 3
 systemctl is-active hermes-gateway          # want: active
 systemctl show hermes-gateway -p MainPID    # want: a fresh PID
-journalctl -u hermes-gateway -n 40 --no-pager | grep -iE 'error|traceback|reapply' 
+journalctl -u hermes-gateway -n 40 --no-pager | grep -iE 'error|traceback|reapply|Unknown key|Failed to parse' 
 ```
 Confirm the bot answers Telegram (a `/accounts` or a tiny test push) **without printing tokens**.
 If `is-active` is not `active`, or the log shows a traceback: **roll back immediately** — restore the

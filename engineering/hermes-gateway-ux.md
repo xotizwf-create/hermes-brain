@@ -269,3 +269,9 @@ Edit `config.yaml` (back it up first), then restart the gateway **from outside i
 never from a chat turn: `systemctl restart hermes-gateway`. Most `display.*` settings are re-read per
 turn; `system_prompt` and a few init-time ones need the restart. Verify: `systemctl is-active
 hermes-gateway` + check the new process PID is fresh in `systemctl status`.
+
+2026-06-21 cleanup note: after editing `/etc/systemd/system/hermes-gateway.service` or drop-ins, run
+`systemctl daemon-reload` and inspect `journalctl -u hermes-gateway` for `Unknown key` warnings.
+This host's systemd does **not** support newer service keys such as `RestartMaxDelaySec` / `RestartSteps`;
+leaving them is harmless for startup but noisy and hides real gateway errors. Remove unsupported keys
+with a timestamped backup instead of treating the warnings as a Hermes bug.
