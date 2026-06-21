@@ -24,7 +24,8 @@ secret_refs: [proj/gov-exams-app/server/env, proj/gov-exams-app/ssh/root, proj/g
 - Never run tests, trial/dev instances, or migrations against the live production database.
 
 ## MCP / admin operations
-- Current connected MCP: `gov_exams_tokens` for token status and token rotation.
+- Archived project: do not read or start `gov_exams_tokens` during routine project digests or background checks.
+- Use `gov_exams_tokens` only when the owner explicitly asks to check or change LiteExams/Gov Exams tokens.
 - If a user asks to reset/rotate a token and does not specify mobile/PC/both, clarify first.
 - When rotating mobile, rotate only mobile; do not touch desktop unless explicitly requested.
 - New token values must be shown only once.

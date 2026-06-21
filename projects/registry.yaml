@@ -26,9 +26,9 @@ projects:
   path: projects/albery/
 - id: gov-exams-app
   name: Лёгкие экзамены / LiteExams
-  status: active
-  summary: Платный сервис подготовки к госэкзаменам КФУ с базой вопросов, пользователей
-    и токенов; критически важный проект.
+  status: archived
+  summary: Архивный проект. Не включать в регулярные проектные дайджесты и не читать
+    MCP/проектный контекст без прямой просьбы владельца.
   tags:
   - web
   - education
@@ -37,7 +37,7 @@ projects:
   - node
   - react
   - postgres
-  - mcp
+  - archived
   repo: https://github.com/xotizwf-create/gov-exams-app
   production_host: liteexams.ru
   connectors: []

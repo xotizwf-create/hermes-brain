@@ -1,8 +1,8 @@
 id: gov-exams-app
 name: Лёгкие экзамены / LiteExams
-status: active
-summary: Платный сервис подготовки к госэкзаменам КФУ с базой вопросов, пользователей и токенов; критически важный проект.
-tags: [web, education, subscriptions, tokens, node, react, postgres, mcp]
+status: archived
+summary: Архивный проект. Не включать в регулярные проектные дайджесты и не читать MCP/проектный контекст без прямой просьбы владельца.
+tags: [web, education, subscriptions, tokens, node, react, postgres, archived]
 
 github:
   repo: https://github.com/xotizwf-create/gov-exams-app
@@ -17,6 +17,8 @@ production:
 mcp:
   name: gov_exams_tokens
   endpoint: stdio:gov_exams_tokens        # HTTP endpoint, if any, is not confirmed yet
+  enabled_by_default: false
+  owner_rule: читать только по прямой просьбе владельца
 
 connectors: []
 
@@ -33,3 +35,7 @@ links:
   - runbook.md
   - decisions.md
   - incidents.md
+
+automation_policy:
+  include_in_regular_digests: false
+  read_mcp_only_on_owner_request: true
