@@ -1,1 +1,37 @@
-{"version": 1, "installed": {}}
+{
+  "version": 1,
+  "installed": {
+    "minecraft-modpack-server": {
+      "source": "official",
+      "identifier": "official/gaming/minecraft-modpack-server",
+      "trust_level": "builtin",
+      "scan_verdict": "backfilled",
+      "content_hash": "sha256:b10f2b1258e9012b",
+      "install_path": "gaming/minecraft-modpack-server",
+      "files": [
+        "SKILL.md"
+      ],
+      "metadata": {
+        "backfilled_from": "optional-skills"
+      },
+      "installed_at": "2026-06-21T21:00:21.461976+00:00",
+      "updated_at": "2026-06-21T21:00:21.461976+00:00"
+    },
+    "pokemon-player": {
+      "source": "official",
+      "identifier": "official/gaming/pokemon-player",
+      "trust_level": "builtin",
+      "scan_verdict": "backfilled",
+      "content_hash": "sha256:c1bc96fc9bb270c0",
+      "install_path": "gaming/pokemon-player",
+      "files": [
+        "SKILL.md"
+      ],
+      "metadata": {
+        "backfilled_from": "optional-skills"
+      },
+      "installed_at": "2026-06-21T21:00:21.484672+00:00",
+      "updated_at": "2026-06-21T21:00:21.484672+00:00"
+    }
+  }
+}

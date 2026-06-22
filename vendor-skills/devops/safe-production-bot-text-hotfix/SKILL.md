@@ -18,9 +18,11 @@ Use this when applying a small text-only change to a production Telegram bot and
 
 - Never print secrets, tokens, passwords, connection strings, or environment file contents.
 - Do not restart the whole server unless the service is unreachable and no softer control path exists.
-- Restart only the bot service, not the web app, database, nginx, or the host.
+- Restart only the bot service, not the web app, database, nginx, or the host. The service may be `systemd`, `pm2`, Docker, or another supervisor — identify the actual supervisor before restart.
 - Prefer exact-match replacement and exact count verification over broad regex edits.
 - Always keep a reversible file backup before editing.
+- For Telegram command UX changes, verify the exact command path separately from the normal text-message path: slash commands often return early and can bypass reactions/likes, typing indicators, or final acknowledgements.
+- Do not send two user-visible acknowledgements for one action. Prefer one lightweight reaction/typing signal while work runs, then one final result message; remove redundant "accepted/checking" text unless the owner explicitly wants it.
 
 ## Workflow
 
@@ -45,14 +47,15 @@ Use this when applying a small text-only change to a production Telegram bot and
    - backup exists;
    - git status shows only the intended change if the tree is a git repo.
 9. Check whether the live bot process started before the edit. If yes, a restart is required for code loaded in memory.
-10. Restart only the Telegram bot service with a bounded timeout.
+10. Restart only the Telegram bot service with a bounded timeout. Use the actual supervisor (`systemctl restart`, `pm2 restart`, `docker compose restart`, etc.), not a generic host restart.
 11. Verify after restart:
    - bot service active/running;
-   - main PID changed if restart was expected;
+   - main PID/restart count changed if restart was expected;
    - recent logs have no new warnings/errors;
    - Telegram API `getMe` succeeds using token loaded inside the server, never printed;
-   - web app, nginx, and database remain active.
-12. Report the result in human terms: what changed, backup exists, bot/site/db status, and any remaining caveats.
+   - command handlers and normal message handlers both show the intended UX (e.g. reaction/👍 appears where expected, no duplicate "accepted" message);
+   - web app, nginx, and database remain active only if they are part of the affected deployment and checking them is in scope.
+12. Report the result in human terms: what changed, backup exists, bot status, and any remaining caveats.
 
 ## Pitfalls
 
@@ -60,3 +63,4 @@ Use this when applying a small text-only change to a production Telegram bot and
 - SSH port open with no banner often means temporary SSH/host load; wait and retry with short timeouts before escalating.
 - Grep in shell can produce misleading results with quoting/Unicode; use a small Python exact string count when the result is contradictory.
 - Telegram callback timeout errors right before a restart may be stale user callbacks, not necessarily a broken bot. Check for new errors after restart.
+- For slash-command reaction/like fixes, see `references/telegram-command-reaction-verification.md`.

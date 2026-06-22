@@ -37,7 +37,8 @@ For Claude/Anthropic coding-agent bridges, a durable safety pattern is:
 - Use machine-readable/streaming output when the CLI supports it (for Claude Code, prefer `stream-json` style output over waiting for one final blob) and convert tool-use/status events into short Telegram progress updates.
 - Do **not** claim to show hidden chain-of-thought. If the owner asks to see “what it is thinking,” expose operational reasoning/status instead: accepted task, current check, command/tool being run, blocker found, next action, and final result.
 - Truncate or summarize oversized Telegram prompts before sending them to the provider. Preserve the beginning/end and tell the user if the middle was omitted; ask for a file/document workflow for large specs.
-- Start a new provider session automatically when the saved conversation/context has grown beyond the configured safe size, so one old heavy session does not keep burning cached/context tokens.
+- Be careful with “context size” guards: cumulative cache-read/cached-token counters are not the same as the active prompt/context footprint. Do **not** auto-start a new provider session solely because cached-token totals accumulated across turns; that makes the bot look like it lost memory while the real provider quota may still be healthy. If the bridge needs a safety guard, base it on the active session's actual prompt/context footprint or an explicit provider error, and offer manual `/sessions`/`/switch` recovery for old conversations.
+- Distinguish real account/provider limits from a local per-response budget. If the CLI/API exits due to `max budget`/`budget exceeded`/local cost cap, tell the user it is a single-answer guardrail and that continuing in the same session is possible. Reserve “Claude Pro/account limit” wording for real rate-limit/account headers or provider rate-limit errors, ideally with reset time.
 
 ## PM2 quick checks
 

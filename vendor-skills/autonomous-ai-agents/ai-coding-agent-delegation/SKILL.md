@@ -42,6 +42,8 @@ Requires a git repo; standalone CLI commonly runs as `codex exec ...` and should
 
 Good for broad codebase reasoning and implementation. Keep prompts bounded and require tests/commits when appropriate.
 
+When Claude Code is wrapped by a Telegram bridge and the owner asks to change limits, streaming, duplicate replies, or progress spam, treat it as a tiny production bridge edit rather than a normal delegated coding task. Read the project runbook/secure host first, patch only the bridge-local thresholds/flags/message-send path, restart only the bridge service, and verify syntax + process status + clean logs. See `references/claude-code-telegram-bridge.md`.
+
 ### OpenCode
 
 Useful for implementation and PR review where OpenCode is installed/configured. Treat it like any other external agent: verify diffs and tests.

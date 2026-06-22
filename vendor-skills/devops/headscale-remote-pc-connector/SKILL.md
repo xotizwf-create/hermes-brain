@@ -14,18 +14,12 @@ metadata:
 
 Use this skill when Александр asks to set up, inspect, troubleshoot, or reason about the scheme where the agent/operator connects to remote user PCs from `andigital.ru`.
 
-## Current status — old MeshCentral flow is retired
+## Current preferred simple scheme
 
-As of 2026-06-21, the previous “simple MeshCentral invite link” flow on `www.andigital.ru` is **not operational and must not be offered to the owner as a ready connection method**. MeshCentral files and gateway leftovers may still exist, but `meshcentral.service` was found stopped since 2026-06-03, and the old agent-download path can return 502. Treat this as a retired/stale feature unless Александр explicitly asks to revive it.
+For “максимально просто подключаться к любому ПК”, prefer MeshCentral on `www.andigital.ru`, not custom PowerShell/Headscale/OpenSSH connector scripts.
 
-When Александр asks “can you connect to my PC?”, answer: yes, a future connection is possible, but a remote-access method must be selected/rebuilt and verified first. Depending on the task, choose rebuilt MeshCentral, Headscale/Tailscale+SSH for technical machines, RustDesk/AnyDesk, or a one-off consent-based support agent. Do not send the old secret MeshCentral URL as if it works.
-
-## Historical simple scheme
-
-Previously, for “максимально просто подключаться к любому ПК”, MeshCentral on `www.andigital.ru` was preferred over custom PowerShell/Headscale/OpenSSH connector scripts. This is now historical context only.
-
-Historical setup:
-- MeshCentral is installed in `/opt/meshcentral` and previously ran as `meshcentral.service`.
+Live setup:
+- MeshCentral is installed in `/opt/meshcentral` and runs as `meshcentral.service`.
 - Public human UI is **not** exposed at `https://www.andigital.ru/`. Use only the secret-path entry `https://www.andigital.ru/andigital/pc/<secret>/`; the concrete URL lives in the secure per-project env store as `ANDIGITAL_REMOTE_PC_ACCESS_URL` / `ANDIGITAL_PC_ACCESS_URL`, never in chat or docs.
 - Nginx keeps `/andigital/secret/` routed to Hermes Vault and routes `/andigital/pc/<secret>/` through `andigital-pc-gate.service` before proxying to MeshCentral on `127.0.0.1:3001`.
 - `andigital-pc-gate.service` stores only the SHA-256 hash of the high-entropy URL key for auth checks; do not put the raw key in nginx config or committed docs. Nginx access logging is disabled for secret-token paths.
@@ -37,11 +31,18 @@ Historical setup:
 - Current consent model: remote screen/terminal/files require local approval on the PC; if the user does not approve the local prompt, the operator must stop and ask for approval rather than bypass it.
 - For owner requests like “подключись к моему ПК и скажи, что открыто”, use the read-only MeshCtrl window-title workflow first: list visible window titles without clicks, typing, screenshots, file reads, uploads/downloads, or setting changes. See `references/meshcentral-read-only-window-inspection.md`.
 
-Historical operational flow for a new PC — do not use without rebuilding/verifying:
-1. Send Александр/the PC owner the MeshCentral invite link generated from the `My PCs` group.
-2. They open the link, download/install the agent, and approve the Windows prompt.
-3. The PC appears in MeshCentral; use the web UI for desktop, terminal, files, and support.
-4. Avoid custom `.cmd`/PowerShell installers unless MeshCentral is unsuitable for that конкретный кейс.
+Operational flow for a new PC:
+1. **Before sending any MeshCentral/PC-access URL, verify that the feature is still live.** Do not trust this skill or an old secure URL alone: check the current Andigital project brain entry and read-only service state (`meshcentral.service`, `andigital-pc-gate.service`, nginx route/port) first.
+2. If the public/secret PC page shows **502** while `andigital-pc-gate.service` is active but `meshcentral.service` is inactive/dead, treat it as a stale/partially-retired feature until proven otherwise. Tell Александр that docs and server state disagree; do not present the link as working or ask him to install an agent.
+3. Search the brain/session history for retirement/removal notes before deciding whether to repair. If no explicit retirement note exists, ask for confirmation whether to restore MeshCentral or mark the feature retired.
+4. If Александр explicitly asks to revive/use this MeshCentral flow, restore it conservatively: start/restart only the needed service, verify local service/port, then verify the secret external HTTPS landing page and confirm it exposes the `meshagents` install/download entry. A plain `systemctl active` or HTTP 200 is not enough.
+5. Only after the live-state check passes, send Александр/the PC owner the human landing page or invite link for the `My PCs` group.
+6. They open the link, download/install the agent, and approve the Windows/admin/local consent prompts.
+7. The PC appears in MeshCentral; use the web UI for desktop, terminal, files, and support.
+8. After a stale/retired flow is successfully restored, update the Andigital project brain status without storing raw secrets in docs, so future sessions do not incorrectly refuse a working flow.
+9. Avoid custom `.cmd`/PowerShell installers unless MeshCentral is unsuitable for that конкретный кейс.
+
+See `references/meshcentral-stale-502-runbook.md` for the 2026-06 stale-docs/502 incident pattern and safe response. See `references/meshcentral-restored-mvp-verification.md` for the restored-MVP verification and owner-facing install-link wording.
 
 This replaced the earlier Headscale/OpenSSH connector attempt because it was too fragile for Windows and not simple enough for non-technical users.
 
