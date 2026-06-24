@@ -68,6 +68,8 @@ every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
 
 - **Project work / "connect to X" / deploy X** → read `projects/registry.yaml`, find the project,
   load only `projects/<slug>/`. For credentials use the `secure-access` skill.
+- **Простые поставки: MCP-инструкции, prompt-навигация, добавление новых MCP prompts/tools** →
+  `projects/prostye-postavki/mcp.md` (карта `list_mcp_prompt_topics`, поиск `search_mcp_prompts`, полный текст через `get_mcp_prompt`).
 - **Add a new project** → use skill `skills/add-project/`.
 - **Audit / document / "разбери" an existing project — full dossier по полочкам (plain-language human
   summary + structure, architecture, database, API & integrations, runbook) with Mermaid diagrams** →
