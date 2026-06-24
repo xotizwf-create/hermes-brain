@@ -31,5 +31,6 @@ links:
   - servers.md
   - deploy.md
   - runbook.md
+  - mcp.md
   - decisions.md
   - incidents.md
