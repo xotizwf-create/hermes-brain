@@ -30,15 +30,23 @@ own; if none exists, create a new instruction. Do not ask separately whether to 
    (`id`, `type`, `updated`, optional `tags`/`secret_refs`/`aliases`) per `schema/frontmatter.schema.yaml`.
 2. Make the edit. Bump `updated`. Never write secret values — references only.
 3. If a project manifest changed: `python scripts/build_registry.py`.
-4. `python scripts/validate.py` — must pass.
-5. Approval gate: if the owner has not already explicitly authorized the documentation update, show the
+4. If docs or frontmatter changed, rebuild and verify the section index before validation:
+   `python3 scripts/build_section_index.py && python3 scripts/build_section_index.py --check`.
+   Index generation reads frontmatter strictly: `tags` must be strings (quote numeric-looking tags such
+   as `"217"`), and every indexed doc needs valid frontmatter. If you edit `logs/changelog.md` after
+   rebuilding, rebuild the section index again because the changelog itself is indexed.
+5. `python scripts/validate.py` — must pass.
+6. Approval gate: if the owner has not already explicitly authorized the documentation update, show the
    diff and wait for confirmation. If the owner explicitly says to add/update without showing the diff
    (for example, "ничего не надо показывать, просто добавляй"), treat that as approval and proceed.
-6. Append a line to `logs/changelog.md`. For architectural choices, add to `logs/decisions.md`;
-   for lessons, `logs/learning-log.md`; for errors, `logs/mistakes.md`.
-7. Commit only the intended files, push, then verify `git status --short` is clean. If any local-only
-   operational file remains, explain it to the owner and either add it to the proper repo/skill or move
-   it outside the brain.
+7. Append a line to `logs/changelog.md`. For architectural choices, add to `logs/decisions.md`;
+   for lessons, `logs/learning-log.md`; for errors, `logs/mistakes.md`. Then rerun step 4 so
+   `section-index.md` includes the changelog entry.
+8. Commit only the intended files, push, then verify `git status --short` is clean. If push is rejected
+   because remote advanced, use `git pull --rebase`, resolve only real conflicts, rerun index+validate,
+   then continue with `GIT_EDITOR=true git rebase --continue` when Git asks for an editor in a dumb
+   terminal. If any local-only operational file remains, explain it to the owner and either add it to
+   the proper repo/skill or move it outside the brain.
 
 ## Self-improvement loop (how the agent gets smarter over time)
 The brain is the agent's long-term memory; improvement = reliable retrieval + reusable tools +
@@ -97,6 +105,9 @@ When Hermes (on the server) needs to add/update an instruction or skill:
 
 If unsure whether a change is warranted, drop a note in `inbox/unsorted.md` and ask the owner instead
 of editing core docs.
+
+## References
+- `references/brain-index-autocommit-blockers.md` — recovery recipe for `build_section_index.py` failures, stale `section-index.md`, and brain push/rebase conflicts.
 
 ## Rule
 No silent unapproved edits. Validate + owner approval + changelog every time — locally or on the server.

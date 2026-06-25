@@ -736,6 +736,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Self-improvement loop (how the agent gets smarter over time)](skills/update-knowledge/SKILL.md#self-improvement-loop-how-the-agent-gets-smarter-over-time)
 - [Sync model: two-way git (single source of truth)](skills/update-knowledge/SKILL.md#sync-model-two-way-git-single-source-of-truth)
 - [Self-scaling: Hermes edits its own brain (autonomous, still approval-gated)](skills/update-knowledge/SKILL.md#self-scaling-hermes-edits-its-own-brain-autonomous-still-approval-gated)
+- [References](skills/update-knowledge/SKILL.md#references)
 - [Rule](skills/update-knowledge/SKILL.md#rule)
 
 ## `skills/vk-hermes-bridge-mvp/SKILL.md` · [skill] vk-hermes-bridge-mvp
