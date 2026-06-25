@@ -49,6 +49,7 @@ DEFAULT_CONFIG = {
     "max_proposals_per_run": 10,
     "max_applies_per_run": 8,
     "max_pages_per_query": 2,
+    "attach_cover_letters": True,
     "delay_between_applies_sec": [25, 50],
     "area": 113,             # 113 = вся Россия
     "salary_from": 100000,   # фильтр hh: ЗП >= 100к ИЛИ не указана
@@ -714,19 +715,24 @@ def main():
                     tg_send(msg)          # сразу владельцу, не ждём конца прогона
                 continue
 
+            attach_letter = bool(cfg.get("attach_cover_letters", True))
+            letter_to_send = letter if attach_letter else ""
             log("APPLY:", vac["title"][:60], "|", vac["employer"][:40])
-            log("  letter:", letter[:200].replace("\n", " "))
+            if attach_letter:
+                log("  letter:", letter[:200].replace("\n", " "))
+            else:
+                log("  letter: disabled by config")
             if args.dry_run:
                 log("  [dry-run] отклик не отправлен")
                 applied.append(vac["title"])     # учитываем к лимиту --max
                 continue
             asks_letter = bool(re.search(r"сопроводительн", vac.get("desc", ""), re.I))
-            res = apply_to(tab, c["url"], letter)
+            res = apply_to(tab, c["url"], letter_to_send)
             if res.get("ok"):
                 consec_fail = 0
                 ledger["applied"][c["id"]] = {
                     "title": vac["title"], "employer": vac["employer"],
-                    "url": c["url"], "letter": letter,
+                    "url": c["url"], "letter": letter_to_send,
                     "letter_attached": bool(res.get("letter")),
                     "asks_letter": asks_letter,
                     "applied_at": time.strftime("%Y-%m-%d %H:%M")}

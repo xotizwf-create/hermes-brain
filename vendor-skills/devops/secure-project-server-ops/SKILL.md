@@ -39,7 +39,7 @@ for line in Path('/opt/hermes/secure/projects/<slug>/.env').read_text(errors='ig
     vals[key.strip()] = value.strip().strip('"\'')
 ```
 
-Then pass credentials through the environment, not through visible command arguments. If `sshpass` is used, set `SSHPASS` in the subprocess environment. If a Python SSH library is available and appropriate, keep the password in memory only.
+Then pass credentials through the environment, not through visible command arguments. If `sshpass` is used, set `SSHPASS` in the subprocess environment and call `sshpass -e`; never build `['sshpass', '-p', password, ...]`, because Python exceptions such as `TimeoutExpired` can print the full argv and leak the password into tool output. Wrap remote subprocesses so timeout/error reports show only a redacted command label, return code, stdout/stderr, and never the secret-bearing argv. If a Python SSH library is available and appropriate, keep the password in memory only.
 
 ## Discovery checklist on the server
 
@@ -185,6 +185,8 @@ See `references/remote-env-mcp-secret-retrieval.md` for a concrete redacted MCP 
    - new text should be present in the expected count
 5. Restart only the affected service, for example a bot service rather than the whole app stack.
 6. Verify status/process after restart.
+7. Verify through the live interface/API that consumes the text, not only by grepping the file. For MCP prompt changes, call the relevant prompt-read/list tool after restart and confirm the old wording is gone and the new wording is returned.
+8. Before committing/pushing a production hotfix, inspect the current live branch and upstream. Do **not** blindly push `main`: if the live checkout is on a project branch, commit on that branch and push `HEAD:<current-branch>` unless you have an explicit deploy plan to switch branches or merge to main. Never force-push or rewrite remote history to satisfy the “sync with GitHub” rule.
 
 ## Low-downtime Node/Vite release workflow
 

@@ -1,8 +1,8 @@
 ---
 id: claude-code-tg-agent
 type: engineering
-tags: [agent, claude-code, telegram, server, 217, runbook]
-updated: 2026-06-21
+tags: [agent, claude-code, telegram, server, "217", runbook]
+updated: 2026-06-25
 secret_refs: []
 ---
 

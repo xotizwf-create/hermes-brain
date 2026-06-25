@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-21
+updated: 2026-06-25
 secret_refs: []
 ---
 
@@ -95,6 +95,13 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Server config for coding quality](engineering/agentic-coding.md#server-config-for-coding-quality)
 - [Hard rules](engineering/agentic-coding.md#hard-rules)
 
+## `engineering/claude-code-tg-agent.md` · [engineering] agent, claude-code, telegram, server, 217, runbook
+- [What/where](engineering/claude-code-tg-agent.md#whatwhere)
+- [Identity — "1-to-1 with the owner's IDE Claude"](engineering/claude-code-tg-agent.md#identity-1-to-1-with-the-owners-ide-claude)
+- [Safety model (why it is allowed to run as root)](engineering/claude-code-tg-agent.md#safety-model-why-it-is-allowed-to-run-as-root)
+- [Telegram commands / menu](engineering/claude-code-tg-agent.md#telegram-commands-menu)
+- [Maintenance quick-ref](engineering/claude-code-tg-agent.md#maintenance-quick-ref)
+
 ## `engineering/code-review.md` · [engineering] review, quality
 - [What to check (in order)](engineering/code-review.md#what-to-check-in-order)
 - [Self-review before commit](engineering/code-review.md#self-review-before-commit)
@@ -129,6 +136,14 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Голосовые ответы (2026-06-10)](engineering/hermes-gateway-ux.md#голосовые-ответы-2026-06-10)
 - [Rich Messages — полноценный Markdown в Telegram (2026-06-11)](engineering/hermes-gateway-ux.md#rich-messages-полноценный-markdown-в-telegram-2026-06-11)
 - [Applying changes](engineering/hermes-gateway-ux.md#applying-changes)
+
+## `engineering/hermes-troubleshooting.md` · [engineering] hermes, troubleshooting, triage, symptoms, gateway, runbook
+- [«Тупит / медленно / отупел / тормозит / долго думает / стал глупым»](engineering/hermes-troubleshooting.md#тупит-медленно-отупел-тормозит-долго-думает-стал-глупым)
+- [«Молчит / совсем не отвечает / ничего не приходит»](engineering/hermes-troubleshooting.md#молчит-совсем-не-отвечает-ничего-не-приходит)
+- [«Отправил файл, а файл не пришёл» / «говорит, что сделал, а результата нет»](engineering/hermes-troubleshooting.md#отправил-файл-а-файл-не-пришёл-говорит-что-сделал-а-результата-нет)
+- [«Стало глупее / сломалось после обновления»](engineering/hermes-troubleshooting.md#стало-глупее-сломалось-после-обновления)
+- [«База знаний не в чистом состоянии»](engineering/hermes-troubleshooting.md#база-знаний-не-в-чистом-состоянии)
+- [Gateway itself looks corrupted (giant/duplicated `run.py`, restart hangs, looping self-patcher)](engineering/hermes-troubleshooting.md#gateway-itself-looks-corrupted-giantduplicated-runpy-restart-hangs-looping-self-patcher)
 
 ## `engineering/optimization.md` · [engineering] performance, caching, tuning
 - [Workflow](engineering/optimization.md#workflow)
@@ -168,6 +183,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-06-25](logs/changelog.md#2026-06-25)
+- [2026-06-24](logs/changelog.md#2026-06-24)
+- [2026-06-21](logs/changelog.md#2026-06-21)
 - [2026-06-20](logs/changelog.md#2026-06-20)
 - [2026-06-19](logs/changelog.md#2026-06-19)
 - [2026-06-18](logs/changelog.md#2026-06-18)
@@ -256,9 +274,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Аналитика](projects/albery/bitrix-bot.md#аналитика)
 - [Само-описание возможностей агента (tier-aware, 2026-06-16, миграция 031)](projects/albery/bitrix-bot.md#само-описание-возможностей-агента-tier-aware-2026-06-16-миграция-031)
 - [Env (на 186, `/var/www/albery/.env`)](projects/albery/bitrix-bot.md#env-на-186-varwwwalberyenv)
+- [Канал уведомлений в Битрикс24 «Albery Уведомления» (2026-06-22)](projects/albery/bitrix-bot.md#канал-уведомлений-в-битрикс24-albery-уведомления-2026-06-22)
 - [Ключевые коммиты (репо Albery, ветка main)](projects/albery/bitrix-bot.md#ключевые-коммиты-репо-albery-ветка-main)
 - [Деплой (бэкенд-only, правило #7)](projects/albery/bitrix-bot.md#деплой-бэкенд-only-правило-7)
 - [Реализовано 2026-06-15 (коммиты Albery)](projects/albery/bitrix-bot.md#реализовано-2026-06-15-коммиты-albery)
+- [Постановка задач: результат обязателен + постановщик (2026-06-25)](projects/albery/bitrix-bot.md#постановка-задач-результат-обязателен-постановщик-2026-06-25)
 - [Open tasks](projects/albery/bitrix-bot.md#open-tasks)
 
 ## `projects/albery/decisions.md` · [project] decisions, adr
@@ -411,8 +431,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Если внешний ресурс не открывается](projects/albery/vpn-gateway.md#если-внешний-ресурс-не-открывается)
 
 ## `projects/andigital/remote-pc-access.md` · [project] andigital, meshcentral, remote-access, security, windows, consent
+- [Current status — restored MVP / operational](projects/andigital/remote-pc-access.md#current-status-restored-mvp-operational)
 - [Purpose](projects/andigital/remote-pc-access.md#purpose)
-- [Live public entry points](projects/andigital/remote-pc-access.md#live-public-entry-points)
+- [Public entry points](projects/andigital/remote-pc-access.md#public-entry-points)
 - [Server shape](projects/andigital/remote-pc-access.md#server-shape)
 - [Mandatory safety baseline](projects/andigital/remote-pc-access.md#mandatory-safety-baseline)
 - [Operator rules](projects/andigital/remote-pc-access.md#operator-rules)
@@ -480,6 +501,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 
 ## `projects/prostye-postavki/incidents.md` · [project] incidents
 - [2026-06-15 — импортированные входящие контракты показывали нулевую цену](projects/prostye-postavki/incidents.md#2026-06-15-импортированные-входящие-контракты-показывали-нулевую-цену)
+
+## `projects/prostye-postavki/mcp.md` · [project] prostye-postavki, mcp, prompts, navigation
+- [Где живёт канон](projects/prostye-postavki/mcp.md#где-живёт-канон)
+- [Инструменты навигации](projects/prostye-postavki/mcp.md#инструменты-навигации)
+- [Как добавлять новую инструкцию](projects/prostye-postavki/mcp.md#как-добавлять-новую-инструкцию)
+- [Текущая реализация](projects/prostye-postavki/mcp.md#текущая-реализация)
 
 ## `projects/prostye-postavki/overview.md` · [project] overview
 - [What it is](projects/prostye-postavki/overview.md#what-it-is)
@@ -574,13 +601,14 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Phase 4 — Config hygiene](skills/hermes-self-repair/SKILL.md#phase-4-config-hygiene)
 - [Phase 4.5 — Auxiliary/provider health alerts](skills/hermes-self-repair/SKILL.md#phase-45-auxiliaryprovider-health-alerts)
 - [Phase 4.6 — systemd unit hygiene (do not "improve" blindly)](skills/hermes-self-repair/SKILL.md#phase-46-systemd-unit-hygiene-do-not-improve-blindly)
+- [Phase 4.7 — Telegram rich messages after Hermes updates](skills/hermes-self-repair/SKILL.md#phase-47-telegram-rich-messages-after-hermes-updates)
 - [Phase 5 — One controlled restart + health check](skills/hermes-self-repair/SKILL.md#phase-5-one-controlled-restart-health-check)
 - [Rollback (always ready before Phase 5)](skills/hermes-self-repair/SKILL.md#rollback-always-ready-before-phase-5)
 - [Hard rules](skills/hermes-self-repair/SKILL.md#hard-rules)
 - [Done when](skills/hermes-self-repair/SKILL.md#done-when)
 
 ## `skills/hh-auto-apply/SKILL.md` · [skill] hh-auto-apply
-- [ТЕКУЩИЙ РЕЖИМ (watch-only) — владелец откликается сам](skills/hh-auto-apply/SKILL.md#текущий-режим-watch-only-владелец-откликается-сам)
+- [ТЕКУЩИЙ РЕЖИМ (apply) — автоотклики без сопроводительного](skills/hh-auto-apply/SKILL.md#текущий-режим-apply-автоотклики-без-сопроводительного)
 - [РЕЖИМ ОБУЧЕНИЯ (mode=review) — старый полуавтоматический сценарий](skills/hh-auto-apply/SKILL.md#режим-обучения-modereview-старый-полуавтоматический-сценарий)
 - [Профиль поиска (что нужно владельцу)](skills/hh-auto-apply/SKILL.md#профиль-поиска-что-нужно-владельцу)
 - [Инфраструктура (уже на сервере)](skills/hh-auto-apply/SKILL.md#инфраструктура-уже-на-сервере)
@@ -607,6 +635,14 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [2. Simplicity First](skills/karpathy-guidelines/SKILL.md#2-simplicity-first)
 - [3. Surgical Changes](skills/karpathy-guidelines/SKILL.md#3-surgical-changes)
 - [4. Goal-Driven Execution](skills/karpathy-guidelines/SKILL.md#4-goal-driven-execution)
+
+## `skills/legal-documents-ru/SKILL.md` · [skill] legal-documents-ru
+- [Toolchain on server 217 (what is and isn't available)](skills/legal-documents-ru/SKILL.md#toolchain-on-server-217-what-is-and-isnt-available)
+- [Method (do this)](skills/legal-documents-ru/SKILL.md#method-do-this)
+- [GOST-style formatting defaults (unless owner overrides)](skills/legal-documents-ru/SKILL.md#gost-style-formatting-defaults-unless-owner-overrides)
+- [Contract skeleton (договор возмездного оказания услуг, ГК РФ гл. 39)](skills/legal-documents-ru/SKILL.md#contract-skeleton-договор-возмездного-оказания-услуг-гк-рф-гл-39)
+- [Delivery — send files straight into the owner's Telegram](skills/legal-documents-ru/SKILL.md#delivery-send-files-straight-into-the-owners-telegram)
+- [Pitfalls](skills/legal-documents-ru/SKILL.md#pitfalls)
 
 ## `skills/markitdown-docs/SKILL.md` · [skill] markitdown-docs
 - [Overview](skills/markitdown-docs/SKILL.md#overview)
@@ -728,6 +764,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Pitfalls](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/SKILL.md#pitfalls)
 - [Verification Checklist](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/SKILL.md#verification-checklist)
 
+## `vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/references/claude-code-telegram-bridge.md` · [?]
+- [Safe workflow](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/references/claude-code-telegram-bridge.md#safe-workflow)
+- [Limit-removal / duplicate-message pattern](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/references/claude-code-telegram-bridge.md#limit-removal-duplicate-message-pattern)
+- [Verification probes](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/references/claude-code-telegram-bridge.md#verification-probes)
+
 ## `vendor-skills/autonomous-ai-agents/codex-account-management/SKILL.md` · [?]
 - [Главное правило](vendor-skills/autonomous-ai-agents/codex-account-management/SKILL.md#главное-правило)
 - [Где лежат данные](vendor-skills/autonomous-ai-agents/codex-account-management/SKILL.md#где-лежат-данные)
@@ -739,6 +780,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Формат ответа пользователю](vendor-skills/autonomous-ai-agents/codex-account-management/SKILL.md#формат-ответа-пользователю)
 
 ## `vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md` · [?]
+- [Scope & Verification](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#scope-verification)
 - [Quick Start](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#quick-start)
 - [CLI Reference](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#cli-reference)
 - [Global Flags](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#global-flags)
@@ -765,6 +807,14 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Config Sections](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#config-sections)
 - [Providers](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#providers)
 - [Toolsets](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#toolsets)
+- [Project Context Files](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#project-context-files)
+- [Pick the right one](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#pick-the-right-one)
+- [Size and truncation](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#size-and-truncation)
+- [Security](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#security)
+- [Disable for one session](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#disable-for-one-session)
+- [Example: a small `.hermes.md`](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#example-a-small-hermesmd)
+- [Build](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#build)
+- [Style](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#style)
 - [Security & Privacy Toggles](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#security-privacy-toggles)
 - [Secret redaction in tool output](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#secret-redaction-in-tool-output)
 - [PII redaction in gateway messages](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#pii-redaction-in-gateway-messages)
@@ -811,6 +861,64 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Extending the system prompt's execution-environment block](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#extending-the-system-prompts-execution-environment-block)
 - [Commit Conventions](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#commit-conventions)
 - [Key Rules](vendor-skills/autonomous-ai-agents/hermes-agent/SKILL.md#key-rules)
+
+## `vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md` · [?]
+- [When to Use](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#when-to-use)
+- [Prerequisites](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#prerequisites)
+- [Quick Start](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#quick-start)
+- [Configuration Reference](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#configuration-reference)
+- [Stdio Transport (command + args)](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#stdio-transport-command-args)
+- [HTTP Transport (url)](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#http-transport-url)
+- [All Config Options](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#all-config-options)
+- [How It Works](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#how-it-works)
+- [Startup Discovery](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#startup-discovery)
+- [Tool Naming Convention](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#tool-naming-convention)
+- [Auto-Injection](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#auto-injection)
+- [Connection Lifecycle](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#connection-lifecycle)
+- [Idempotency](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#idempotency)
+- [Transport Types](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#transport-types)
+- [Stdio Transport](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#stdio-transport)
+- [HTTP / StreamableHTTP Transport](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#http-streamablehttp-transport)
+- [Security](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#security)
+- [Environment Variable Filtering](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#environment-variable-filtering)
+- [Credential Stripping in Error Messages](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#credential-stripping-in-error-messages)
+- [Troubleshooting](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#troubleshooting)
+- ["MCP SDK not available -- skipping MCP tool discovery"](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#mcp-sdk-not-available----skipping-mcp-tool-discovery)
+- ["No MCP servers configured"](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#no-mcp-servers-configured)
+- ["Failed to connect to MCP server 'X'"](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#failed-to-connect-to-mcp-server-x)
+- ["MCP server 'X' requires HTTP transport but mcp.client.streamable_http is not available"](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#mcp-server-x-requires-http-transport-but-mcpclientstreamable_http-is-not-available)
+- [Tools not appearing](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#tools-not-appearing)
+- [Connection keeps dropping](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#connection-keeps-dropping)
+- [Examples](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#examples)
+- [Time Server (uvx)](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#time-server-uvx)
+- [Filesystem Server (npx)](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#filesystem-server-npx)
+- [GitHub Server with Authentication](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#github-server-with-authentication)
+- [Remote HTTP Server](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#remote-http-server)
+- [Multiple Servers](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#multiple-servers)
+- [Sampling (Server-Initiated LLM Requests)](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#sampling-server-initiated-llm-requests)
+- [Notes](vendor-skills/autonomous-ai-agents/hermes-agent/references/native-mcp.md#notes)
+
+## `vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md` · [?]
+- [Setup (Required First)](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#setup-required-first)
+- [Option 1: Setup wizard](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#option-1-setup-wizard)
+- [Option 2: Manual config](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#option-2-manual-config)
+- [Option 3: Environment variables](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#option-3-environment-variables)
+- [Commands](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#commands)
+- [Create a subscription](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#create-a-subscription)
+- [List subscriptions](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#list-subscriptions)
+- [Remove a subscription](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#remove-a-subscription)
+- [Test a subscription](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#test-a-subscription)
+- [Prompt Templates](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#prompt-templates)
+- [Common Patterns](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#common-patterns)
+- [GitHub: new issues](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#github-new-issues)
+- [GitHub: PR reviews](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#github-pr-reviews)
+- [Stripe: payment events](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#stripe-payment-events)
+- [CI/CD: build notifications](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#cicd-build-notifications)
+- [Generic monitoring alert](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#generic-monitoring-alert)
+- [Direct delivery (no agent, zero LLM cost)](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#direct-delivery-no-agent-zero-llm-cost)
+- [Security](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#security)
+- [How It Works](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#how-it-works)
+- [Troubleshooting](vendor-skills/autonomous-ai-agents/hermes-agent/references/webhooks.md#troubleshooting)
 
 ## `vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md` · [?]
 - [Triggers](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#triggers)
@@ -997,6 +1105,10 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Fast diagnostic sequence](vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-report-recovery.md#fast-diagnostic-sequence)
 - [Important pitfalls](vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-report-recovery.md#important-pitfalls)
 
+## `vendor-skills/devops/alexandr-it-project-operations/references/archive-project-and-disable-digest.md` · [?]
+- [Pattern](vendor-skills/devops/alexandr-it-project-operations/references/archive-project-and-disable-digest.md#pattern)
+- [Pitfalls](vendor-skills/devops/alexandr-it-project-operations/references/archive-project-and-disable-digest.md#pitfalls)
+
 ## `vendor-skills/devops/alexandr-it-project-operations/references/hermes-codex-credential-pool.md` · [?]
 - [Safe inspection](vendor-skills/devops/alexandr-it-project-operations/references/hermes-codex-credential-pool.md#safe-inspection)
 - [How to explain it to Александр](vendor-skills/devops/alexandr-it-project-operations/references/hermes-codex-credential-pool.md#how-to-explain-it-to-александр)
@@ -1054,6 +1166,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Calling the MCP export tool from Hermes](vendor-skills/devops/alexandr-it-project-operations/references/prostye-postavki-mcp-document-exports.md#calling-the-mcp-export-tool-from-hermes)
 - [Pitfalls](vendor-skills/devops/alexandr-it-project-operations/references/prostye-postavki-mcp-document-exports.md#pitfalls)
 
+## `vendor-skills/devops/alexandr-it-project-operations/references/prostye-postavki-mcp-prompt-navigation.md` · [?]
+- [Durable pattern](vendor-skills/devops/alexandr-it-project-operations/references/prostye-postavki-mcp-prompt-navigation.md#durable-pattern)
+- [Safe implementation workflow](vendor-skills/devops/alexandr-it-project-operations/references/prostye-postavki-mcp-prompt-navigation.md#safe-implementation-workflow)
+- [Pitfalls](vendor-skills/devops/alexandr-it-project-operations/references/prostye-postavki-mcp-prompt-navigation.md#pitfalls)
+
 ## `vendor-skills/devops/alexandr-it-project-operations/references/prostye-postavki-product-and-business-pack.md` · [?]
 - [Product description workflow](vendor-skills/devops/alexandr-it-project-operations/references/prostye-postavki-product-and-business-pack.md#product-description-workflow)
 - [Core product flow to preserve](vendor-skills/devops/alexandr-it-project-operations/references/prostye-postavki-product-and-business-pack.md#core-product-flow-to-preserve)
@@ -1095,6 +1212,16 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Window-title inspection technique](vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-read-only-window-inspection.md#window-title-inspection-technique)
 - [Active window caveat](vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-read-only-window-inspection.md#active-window-caveat)
 - [Final response style](vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-read-only-window-inspection.md#final-response-style)
+
+## `vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-restored-mvp-verification.md` · [?]
+- [Durable lesson](vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-restored-mvp-verification.md#durable-lesson)
+- [Safe restoration pattern](vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-restored-mvp-verification.md#safe-restoration-pattern)
+- [Owner-facing wording](vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-restored-mvp-verification.md#owner-facing-wording)
+
+## `vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-stale-502-runbook.md` · [?]
+- [Incident pattern observed 2026-06](vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-stale-502-runbook.md#incident-pattern-observed-2026-06)
+- [Safe workflow](vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-stale-502-runbook.md#safe-workflow)
+- [Response style lesson](vendor-skills/devops/headscale-remote-pc-connector/references/meshcentral-stale-502-runbook.md#response-style-lesson)
 
 ## `vendor-skills/devops/kanban-operations/SKILL.md` · [?]
 - [Overview](vendor-skills/devops/kanban-operations/SKILL.md#overview)
@@ -1162,6 +1289,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Workflow](vendor-skills/devops/safe-production-bot-text-hotfix/SKILL.md#workflow)
 - [Pitfalls](vendor-skills/devops/safe-production-bot-text-hotfix/SKILL.md#pitfalls)
 
+## `vendor-skills/devops/safe-production-bot-text-hotfix/references/telegram-command-reaction-verification.md` · [?]
+- [Why](vendor-skills/devops/safe-production-bot-text-hotfix/references/telegram-command-reaction-verification.md#why)
+- [Verification pattern](vendor-skills/devops/safe-production-bot-text-hotfix/references/telegram-command-reaction-verification.md#verification-pattern)
+- [UX rule learned](vendor-skills/devops/safe-production-bot-text-hotfix/references/telegram-command-reaction-verification.md#ux-rule-learned)
+
 ## `vendor-skills/devops/secure-project-server-ops/SKILL.md` · [?]
 - [Core rules](vendor-skills/devops/secure-project-server-ops/SKILL.md#core-rules)
 - [Safe connection pattern](vendor-skills/devops/secure-project-server-ops/SKILL.md#safe-connection-pattern)
@@ -1199,6 +1331,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Live server identity pitfall](vendor-skills/devops/secure-project-server-ops/references/albery-hermes-gateway-routing.md#live-server-identity-pitfall)
 - [Group dialog access checklist](vendor-skills/devops/secure-project-server-ops/references/albery-hermes-gateway-routing.md#group-dialog-access-checklist)
 - [Reporting](vendor-skills/devops/secure-project-server-ops/references/albery-hermes-gateway-routing.md#reporting)
+
+## `vendor-skills/devops/secure-project-server-ops/references/claude-code-telegram-bridge.md` · [?]
+- [Durable pitfalls from 2026-06 bridge fix](vendor-skills/devops/secure-project-server-ops/references/claude-code-telegram-bridge.md#durable-pitfalls-from-2026-06-bridge-fix)
+- [Minimal verification shape](vendor-skills/devops/secure-project-server-ops/references/claude-code-telegram-bridge.md#minimal-verification-shape)
+- [What to tell the owner](vendor-skills/devops/secure-project-server-ops/references/claude-code-telegram-bridge.md#what-to-tell-the-owner)
 
 ## `vendor-skills/devops/secure-project-server-ops/references/gov-exams-app-liteexams.md` · [?]
 - [Project identity](vendor-skills/devops/secure-project-server-ops/references/gov-exams-app-liteexams.md#project-identity)
@@ -1255,6 +1392,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Provider limit preflight and visible progress guardrails](vendor-skills/devops/secure-project-server-ops/references/remote-llm-telegram-bridge-triage.md#provider-limit-preflight-and-visible-progress-guardrails)
 - [PM2 quick checks](vendor-skills/devops/secure-project-server-ops/references/remote-llm-telegram-bridge-triage.md#pm2-quick-checks)
 
+## `vendor-skills/devops/secure-project-server-ops/references/telegram-long-poll-bridge-hang.md` · [?]
+- [Durable symptom pattern](vendor-skills/devops/secure-project-server-ops/references/telegram-long-poll-bridge-hang.md#durable-symptom-pattern)
+- [Read-only checks](vendor-skills/devops/secure-project-server-ops/references/telegram-long-poll-bridge-hang.md#read-only-checks)
+- [Fix pattern](vendor-skills/devops/secure-project-server-ops/references/telegram-long-poll-bridge-hang.md#fix-pattern)
+- [Pitfalls](vendor-skills/devops/secure-project-server-ops/references/telegram-long-poll-bridge-hang.md#pitfalls)
+
 ## `vendor-skills/devops/secure-project-server-ops/references/vk-hermes-bridge-mvp.md` · [?]
 - [Architecture](vendor-skills/devops/secure-project-server-ops/references/vk-hermes-bridge-mvp.md#architecture)
 - [Safe setup checklist](vendor-skills/devops/secure-project-server-ops/references/vk-hermes-bridge-mvp.md#safe-setup-checklist)
@@ -1272,6 +1415,16 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Daily operational digests](vendor-skills/devops/service-watchdog-cron/SKILL.md#daily-operational-digests)
 - [Owner-facing response](vendor-skills/devops/service-watchdog-cron/SKILL.md#owner-facing-response)
 - [Pitfalls](vendor-skills/devops/service-watchdog-cron/SKILL.md#pitfalls)
+
+## `vendor-skills/devops/small-vps-disk-cleanup/SKILL.md` · [?]
+- [Rules](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#rules)
+- [Safe inspection commands](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#safe-inspection-commands)
+- [Safe cleanup waves](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#safe-cleanup-waves)
+- [Wave 1 — very safe caches/log pressure](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#wave-1-very-safe-cacheslog-pressure)
+- [Wave 2 — only after confirming current kernel](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#wave-2-only-after-confirming-current-kernel)
+- [Wave 3 — known temporary agent/tool leftovers](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#wave-3-known-temporary-agenttool-leftovers)
+- [Prevent journal regrowth](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#prevent-journal-regrowth)
+- [Verification](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#verification)
 
 ## `vendor-skills/devops/webhook-subscriptions/SKILL.md` · [?]
 - [Setup (Required First)](vendor-skills/devops/webhook-subscriptions/SKILL.md#setup-required-first)
@@ -2342,6 +2495,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [When to Use](vendor-skills/software-development/hermes-agent-skill-authoring/SKILL.md#when-to-use)
 - [Required Frontmatter](vendor-skills/software-development/hermes-agent-skill-authoring/SKILL.md#required-frontmatter)
 - [Size Limits](vendor-skills/software-development/hermes-agent-skill-authoring/SKILL.md#size-limits)
+- [Writing Quality Principles](vendor-skills/software-development/hermes-agent-skill-authoring/SKILL.md#writing-quality-principles)
 - [Peer-Matched Structure](vendor-skills/software-development/hermes-agent-skill-authoring/SKILL.md#peer-matched-structure)
 - [Overview](vendor-skills/software-development/hermes-agent-skill-authoring/SKILL.md#overview)
 - [When to Use](vendor-skills/software-development/hermes-agent-skill-authoring/SKILL.md#when-to-use)
@@ -2395,6 +2549,15 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Output files → `projects/<slug>/`](vendor-skills/software-development/project-audit/SKILL.md#output-files-projectsslug)
 - [Finish](vendor-skills/software-development/project-audit/SKILL.md#finish)
 - [Send-me-a-zip audit packaging pattern](vendor-skills/software-development/project-audit/SKILL.md#send-me-a-zip-audit-packaging-pattern)
+
+## `vendor-skills/software-development/simplify-code/SKILL.md` · [?]
+- [When to Use](vendor-skills/software-development/simplify-code/SKILL.md#when-to-use)
+- [The Process](vendor-skills/software-development/simplify-code/SKILL.md#the-process)
+- [Phase 1 — Identify the changes](vendor-skills/software-development/simplify-code/SKILL.md#phase-1-identify-the-changes)
+- [Phase 2 — Launch three reviewers in parallel](vendor-skills/software-development/simplify-code/SKILL.md#phase-2-launch-three-reviewers-in-parallel)
+- [Phase 3 — Aggregate and apply](vendor-skills/software-development/simplify-code/SKILL.md#phase-3-aggregate-and-apply)
+- [Pitfalls](vendor-skills/software-development/simplify-code/SKILL.md#pitfalls)
+- [Related](vendor-skills/software-development/simplify-code/SKILL.md#related)
 
 ## `vendor-skills/software-development/software-development-workflows/SKILL.md` · [?]
 - [Overview](vendor-skills/software-development/software-development-workflows/SKILL.md#overview)

@@ -1,3 +1,12 @@
+---
+id: prostye-postavki-mcp
+type: project
+project: prostye-postavki
+tags: [prostye-postavki, mcp, prompts, navigation]
+updated: 2026-06-25
+secret_refs: []
+---
+
 # MCP-инструкции и навигация
 
 ## Где живёт канон

@@ -23,9 +23,12 @@ Source of truth in git: hermes-brain scripts/hermes_rich_messages_patch.py
 import pathlib
 import py_compile
 
-TG = pathlib.Path("/usr/local/lib/hermes-agent/gateway/platforms/telegram.py")
+LEGACY_TG = pathlib.Path("/usr/local/lib/hermes-agent/gateway/platforms/telegram.py")
+NATIVE_TG = pathlib.Path("/usr/local/lib/hermes-agent/plugins/platforms/telegram/adapter.py")
+TG = LEGACY_TG
 
 MARKER = "_try_send_rich"
+NATIVE_MARKER = "_rich_messages_enabled"
 
 HELPERS_ANCHOR = '''    async def send(
         self,
@@ -185,10 +188,20 @@ def _safe_write(path: pathlib.Path, text: str) -> bool:
 
 
 def main() -> None:
+    # Hermes 2026+ moved Telegram into plugins/platforms/telegram/adapter.py
+    # and ships native rich_messages support behind telegram.extra.rich_messages.
+    # In that layout there is nothing to monkey-patch; config enables it.
+    try:
+        native_text = NATIVE_TG.read_text(encoding="utf-8")
+        if NATIVE_MARKER in native_text:
+            print("rich_messages_patch: native adapter supports rich_messages; no patch needed")
+            return
+    except Exception:
+        pass
     try:
         text = TG.read_text(encoding="utf-8")
     except Exception as exc:
-        print("rich_messages_patch: cannot read telegram.py:", exc)
+        print("rich_messages_patch: cannot read legacy telegram.py:", exc)
         return
     if MARKER in text:
         print("rich_messages_patch: already applied")

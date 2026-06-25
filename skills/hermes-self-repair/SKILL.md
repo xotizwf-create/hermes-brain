@@ -141,7 +141,30 @@ journalctl -b -u hermes-gateway --no-pager | grep -iE 'Unknown key|Failed to par
 ```
 If you introduced unsupported keys (for example newer restart-backoff directives such as `RestartSteps` / `RestartMaxDelaySec` on an older systemd), remove them or replace with older supported equivalents. Re-run `daemon-reload` and the grep until the warnings are gone. Prefer `daemon-reload` first; do **not** restart just to test unit parsing unless a restart is actually needed.
 
+## Phase 4.7 — Telegram rich messages after Hermes updates
+
+If the symptom is “answers look worse / formatting degraded after update” and logs show
+`rich_messages_patch: cannot read telegram.py`, do **not** recreate the old monkey-patch blindly.
+Newer Hermes builds moved Telegram from `gateway/platforms/telegram.py` to
+`plugins/platforms/telegram/adapter.py` and include native rich-message support guarded by config.
+Use this safe order:
+
+1. Inspect `telegram.extra.rich_messages` in `/root/.hermes/config.yaml` without printing tokens.
+2. If the native adapter contains `_rich_messages_enabled`, enable the config flag instead of patching code:
+   `hermes config set telegram.extra.rich_messages true`.
+3. Make the ExecStartPre rich patcher idempotently detect the native adapter and exit with a clear
+   “native adapter supports rich_messages; no patch needed” message, so future restarts/updates do not
+   emit stale missing-file errors.
+4. Validate config YAML and the patcher with `py_compile`. Restart only after the normal restart-last checks.
+
 ## Phase 5 — One controlled restart + health check
+
+**Do not restart `hermes-gateway` from inside a gateway-handled chat/tool process.** Hermes blocks this
+because the restart would terminate the process that is running the command and can leave the user
+without a clean completion. If you are in Telegram/gateway, ask the owner to send `/restart`, or run the
+restart from a separate shell outside the running gateway.
+
+From an external shell:
 ```bash
 systemctl restart hermes-gateway
 sleep 3

@@ -1,24 +1,24 @@
 ---
 id: andigital-remote-pc-access
 type: project
-tags: [andigital, meshcentral, remote-access, security, windows, consent, retired]
+tags: [andigital, meshcentral, remote-access, security, windows, consent]
 updated: 2026-06-21
 secret_refs: []
 ---
 
-# Andigital remote PC access — retired MeshCentral baseline
+# Andigital remote PC access — MeshCentral baseline
 
-## Current status — retired / not operational
+## Current status — restored MVP / operational
 
-As of 2026-06-21, this MeshCentral-based remote-PC access flow is **retired and must not be offered as a working owner-facing link**. The server still has leftover pieces (`meshcentral.service`, `/opt/meshcentral`, and the `andigital-pc-gate.service` entry point), but MeshCentral itself has been stopped since 2026-06-03 and the old download/agent flow can produce 502 errors. Treat that 502 as a sign of a retired stale path, not as an automatic emergency repair target.
+As of 2026-06-21, Александр explicitly asked to restore the old MeshCentral-based remote-PC flow and receive an install link. Read-only preflight showed the Andigital host is constrained but stable; `andigital-pc-gate.service` and nginx were already active, while `meshcentral.service` was stopped. MeshCentral was restarted successfully and verified externally: the secret `ANDIGITAL_REMOTE_PC_ACCESS_URL` returns the Andigital PC Access landing page over HTTPS, and the landing page exposes the MeshCentral login and `meshagents` install entry.
 
-Do **not** send the stored secret MeshCentral URL to the owner or a PC owner unless Александр explicitly asks to revive this exact MeshCentral setup. For a new PC connection request, choose and document a fresh consent-based remote-access approach first (for example rebuilt MeshCentral, Headscale/Tailscale+SSH for technical machines, RustDesk/AnyDesk, or a one-off support agent), then verify it end-to-end before sharing instructions.
+This is a restored MVP, not a polished new remote-support product. Keep the consent-based safety baseline below: local prompts/notifications/privacy bar must remain enabled, public self-registration disabled, and the human UI hidden behind the secret `/andigital/pc/<secret>/` gate. If the public page returns 502 again, first check service state and ports; do not hand out the link until the secret URL has been verified end-to-end.
 
-## Historical purpose
+## Purpose
 
-Andigital remote-PC access was the owner's simple support channel: send a link, the PC owner installs the MeshCentral agent, and the PC appears in the self-hosted panel. It was for explicitly consented access only.
+Andigital remote-PC access is the owner's simple support channel: send a link, the PC owner installs the MeshCentral agent, and the PC appears in the self-hosted panel. It is for explicitly consented access only.
 
-## Historical public entry points — do not use as live
+## Public entry points
 
 - Historical human panel entry: `https://www.andigital.ru/andigital/pc/<secret>/`.
 - The concrete secret URL is stored only in the secure per-project env store:
