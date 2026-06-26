@@ -51,7 +51,17 @@ Use this when Александр asks to search hh.ru vacancies, prepare respons
    - `no-code автоматизация ИИ`
    - `Prompt engineer автоматизация`
    - `RAG LLM`
-4. For banking/project-finance candidates (e.g. project manager in a bank evaluating projects and approving financing), do not search only `проектный менеджер`: it produces generic PM/sales noise. Search and rank by transferable finance clusters:
+4. For entry-level business analytics / operations / process-management candidates (e.g. recent management/business-analytics graduate with BPMN, ERP, management reporting, process modeling), do not search only `бизнес аналитик`: it misses many suitable adjacent roles. Build a broad Kazan/city-specific cluster and then filter manually:
+   - `бизнес аналитик`, `младший бизнес аналитик`, `бизнес аналитик BPMN`
+   - `аналитик бизнес процессов`, `описание бизнес процессов`, `оптимизация бизнес процессов`
+   - `методолог бизнес процессов`, `специалист по регламентации`, `специалист по процессам`
+   - `операционный менеджер`, `операционный аналитик`, `операционная координация`
+   - `координатор проектов`, `проектный координатор`, `администратор проектов`, `менеджер проектов junior`, `PMO координатор`
+   - `помощник руководителя аналитик`, `ассистент руководителя бизнес процессы`, `бизнес-ассистент руководителя`, `контроль исполнения`
+   - `ERP аналитик`, `CRM аналитик`, `аналитик 1С ERP`, `BPM аналитик`
+   - `аналитик управленческой отчетности`, `экономист аналитик`, `младший аналитик данных`
+   Rank high: no-experience / 1–3 years roles; BPM/BPMN/process/regulation/ERP/CRM/1C/management-reporting wording; project-office/coordination/control-of-execution responsibilities; business-assistant roles only when they include management support, reporting, processes, coordination, or control rather than purely personal errands. Downrank or exclude: pure sales, marketing without process/CRM analytics, SMM/ads, design, developers/DevOps/QA, generic tech support, call centers, senior directors/heads, HR, бухгалтер/юрист/administrator roles unless the title/description explicitly has analytics/process/control value. Return a large shortlist grouped by fit class: exact analytics, ERP/CRM/1C, project coordination, operations/control, business assistant, reporting/economics, and “consider carefully”.
+5. For banking/project-finance candidates (e.g. project manager in a bank evaluating projects and approving financing), do not search only `проектный менеджер`: it produces generic PM/sales noise. Search and rank by transferable finance clusters:
    - `проектное финансирование финансовая модель инвестиции`
    - `финансовый менеджер проектов`
    - `инвестиционный аналитик финансовая модель`
@@ -61,7 +71,7 @@ Use this when Александр asks to search hh.ru vacancies, prepare respons
    - `лизинг B2B банк`
    - `project manager bank finance fintech`
    - `business analyst fintech finance`
-5. Use the user’s hard filters literally. If they say “strictly from 150k”, set salary floor to 150000 and discard/flag any result whose visible lower bound is below 150k. Salary-not-shown vacancies can stay only when the search filter matched and the role is highly relevant; explicitly say salary is not disclosed and recommend stating expectations in the first contact.
+6. Use the user’s hard filters literally. If they say “strictly from 150k”, set salary floor to 150000 and discard/flag any result whose visible lower bound is below 150k. Salary-not-shown vacancies can stay only when the search filter matched and the role is highly relevant; explicitly say salary is not disclosed and recommend stating expectations in the first contact.
 6. Prefer full remote (`schedule=remote`) when requested and rank high:
    - AI agent / AI automation / AI integrator / LLM / RAG / GPT / n8n / Make / Zapier;
    - implementation/consulting/business automation roles;
