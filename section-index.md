@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-25
+updated: 2026-06-26
 secret_refs: []
 ---
 
@@ -471,6 +471,8 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Rollback](projects/hermes-brain/deploy.md#rollback)
 
 ## `projects/hermes-brain/incidents.md` · [project] incidents
+- [2026-06-25 (вечер) — Albery-бот на 186 ставит задачи 2-4 мин = тот же мёртвый IPv6 на eth0](projects/hermes-brain/incidents.md#2026-06-25-вечер-albery-бот-на-186-ставит-задачи-2-4-мин-тот-же-мёртвый-ipv6-на-eth0)
+- [2026-06-25 — агент «очень долго отрабатывает / тупит» = сетевой провал 217 + мёртвый IPv6](projects/hermes-brain/incidents.md#2026-06-25-агент-очень-долго-отрабатывает-тупит-сетевой-провал-217-мёртвый-ipv6)
 - [2026-06-20 — `claude-tg` bot spent Claude Code limit and stayed silent](projects/hermes-brain/incidents.md#2026-06-20-claude-tg-bot-spent-claude-code-limit-and-stayed-silent)
 
 ## `projects/hermes-brain/overview.md` · [project] overview

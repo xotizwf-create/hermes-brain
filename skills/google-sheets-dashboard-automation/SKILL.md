@@ -121,7 +121,9 @@ Example semantic test result to aim for before reporting:
 
 ## Common pitfalls
 
-- Google Sheets locale: Russian spreadsheets use semicolons `;` between function arguments and backslashes `\` between horizontal array columns.
+- When creating spreadsheets through the API, never assume a new sheet's `sheetId` is `0`. Read `spreadsheets.get(..., fields='sheets.properties')` after creation and use the actual `sheetId` for formatting, filters, charts, and frozen rows. A wrong guessed id causes `Invalid requests[].repeatCell: No grid with id: 0`.
+- `IMPORTRANGE` links can be written by API, but the first connection between two spreadsheets may still show `#REF!` until the owner clicks **Allow access / Разрешить доступ** in the destination sheet. Treat that as a normal Google Sheets authorization step: add a clear note in the sheet, verify the formula is present with `valueRenderOption=FORMULA`, and do not claim imported dashboard values are live until readback shows non-zero/non-placeholder imported rows.
+- Google Sheets locale: Russian spreadsheets use semicolons `;` between function arguments and backslashes `\\` between horizontal array columns.
 - `IFERROR(...; "Нет данных")` is acceptable for user-facing fallback, but never let it hide test failures. Read the underlying output and assert expected numeric rows.
 - A chart with a valid title and legend can still be broken if the source range is a placeholder row like `Нет данных | 0 | 0 | 0`.
 - Applying one currency format to a wide KPI block can turn counts into `8 ₽`. Format each KPI value by meaning.
