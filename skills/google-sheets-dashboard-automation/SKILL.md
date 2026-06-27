@@ -37,8 +37,15 @@ Use this when the owner asks to create or fix a Google Sheet, calculator, dashbo
 ## References
 
 - `references/finance-dashboard-debugging.md` — concrete debugging pattern for income/expense dashboards where a chart exists but shows `Нет данных`, including source-table fixes and verification assertions.
+- `references/formula-mastery.md` — mandatory formula discipline: official Google syntax sources, locale rules, QUERY/FILTER/ARRAYFORMULA/XLOOKUP/IMPORTRANGE pitfalls, and readback QA loop.
+- `references/linked-sheets-import-repair.md` — repair pattern for linked spreadsheets when `IMPORTRANGE` is syntactically correct but blocked by Google’s manual access approval; includes snapshot fallback, strict error scanning, and chart-range rebuild checks.
+- `references/screenshot-matched-finance-template.md` — lesson from recreating a finance template from screenshots: visual QA is required in addition to formula/chart API checks, especially for overlay chart sizing and block alignment.
+- `references/one-to-one-sheet-cloning.md` — pattern for cloning an existing polished Sheet 1:1 with Drive `files.copy`, inspecting formulas/style/validations via `includeGridData`, setting access, and verifying the copy before reporting.
 
 ## Formula rules that prevent broken dashboards
+
+Before writing or fixing non-trivial formulas, load `references/formula-mastery.md` and follow its QA loop. Do not rely on memory or visual inspection for formula correctness: write the formula, read formulas back, read displayed values back, scan for formula errors, and independently recompute key totals from source rows before reporting success.
+
 
 ### Avoid this pattern
 
@@ -89,6 +96,16 @@ Before saying a dashboard or task/list table is ready, check that it has:
 - frozen header or enough spacing so the sheet does not look like one merged blob;
 - number formats that match meaning: counts are plain numbers, money is ₽, shares are %, dates are dates.
 
+### Screenshot-matching / “1 в 1” visual QA
+
+When the owner asks for a Sheet to look **1 в 1 like screenshots**, formula/API readback is not enough. Treat visual similarity as a deliverable:
+
+1. Re-open or screenshot the resulting sheet before reporting success, or otherwise inspect a visual render/export, not only API metadata.
+2. Verify chart overlay positions and pixel sizes against the grid. A chart object can be mathematically correct but visually wrong if it overlaps the category list or floats outside its framed card.
+3. Check the exact relative placement of blocks: top KPI row, selector, calendar box, income/expense titles, chart/table containers, and category lists below them.
+4. If the owner sends a screenshot of the broken result, fix the visual layer first: widths, row heights, borders, fills, chart `overlayPosition`, and only then re-run formula checks.
+5. Report “ready” only after both checks pass: visual layout inspection + semantic formula/chart-source verification.
+
 For a simple generated task/list table, the minimum acceptable style is: contrast header band, bold readable header text, frozen header row when the list is longer than one screen, wrapped text, useful column widths, borders, alternating rows, and status/deadline colors when the table contains tasks.
 
 ## Mechanical verification checklist
@@ -119,10 +136,37 @@ Example semantic test result to aim for before reporting:
 }
 ```
 
+## One-to-one clones from an existing polished Sheet
+
+When the owner sends a Google Sheet as a style/formula reference and asks for the same level of polish or a file “1 в 1”, do not start by manually recreating every style. First inspect the source, then use Drive `files.copy` for a true clone unless the owner explicitly wants a redesigned derivative. Load `references/one-to-one-sheet-cloning.md` for the exact inspection, copy, permission, and verification pattern. This preserves formulas, dropdowns, formats, frozen rows, widths, and hidden/helper metadata better than hand-built `batchUpdate` recreation.
+
+If the target spreadsheet must keep its URL but be restored from an original template, do not copy only the first tab and do not hand-redraw from screenshots. Inspect all source tabs, copy all relevant tabs with `sheets.copyTo`, restore the source tab names/order, then re-read formulas from the source with `valueRenderOption=FORMULA` and write them back after final names are set so references bind inside the target workbook. Load `references/google-sheets-original-template-restore.md` for the detailed workflow and verification checklist.
+
+### When the reference is only a screenshot
+
+A screenshot is not enough to reliably reconstruct a polished Google Sheet by hand. Do **not** keep making blind visual edits against the live file after the owner says the result is wrong.
+
+Use this safer sequence:
+
+1. **Stop editing the live sheet** and acknowledge the specific breakage plainly.
+2. Ask for the best available reference, in this order:
+   - original/working Google Sheet or template link;
+   - Drive/XLSX copy of the correct version;
+   - full un-cropped screenshot at 100% zoom with row/column headers visible.
+3. Clarify whether the target is **exactly like the screenshot** or a **new clean redesign**.
+4. Work in a duplicate/candidate copy first; only replace/update the owner’s working file after visual approval or clear instruction.
+5. If recreating from screenshot is unavoidable, treat the screenshot as approximate: match layout zones, but avoid claiming “1 в 1” unless verified visually from an actual rendered file.
+
+Pitfalls from prior failures:
+
+- Do not write visible currency strings like `"35 511,58 ₽"` into chart source cells and expect charts to treat them as numeric. Keep chart source ranges numeric and apply number formats separately.
+- For pie/donut charts, verify the selected series range is the numeric amount column; the Google Sheets error “Столбец 2 должен содержать числовые данные” means the chart is pointing at labels/text or text-formatted money.
+- API readback of values, chart count, and anchor position is not sufficient visual QA. If the user complains about visual fidelity, obtain a real reference/copy or produce a rendered preview/screenshot before reporting success.
+
 ## Common pitfalls
 
 - When creating spreadsheets through the API, never assume a new sheet's `sheetId` is `0`. Read `spreadsheets.get(..., fields='sheets.properties')` after creation and use the actual `sheetId` for formatting, filters, charts, and frozen rows. A wrong guessed id causes `Invalid requests[].repeatCell: No grid with id: 0`.
-- `IMPORTRANGE` links can be written by API, but the first connection between two spreadsheets may still show `#REF!` until the owner clicks **Allow access / Разрешить доступ** in the destination sheet. Treat that as a normal Google Sheets authorization step: add a clear note in the sheet, verify the formula is present with `valueRenderOption=FORMULA`, and do not claim imported dashboard values are live until readback shows non-zero/non-placeholder imported rows.
+- `IMPORTRANGE` links can be written by API, but the first connection between two spreadsheets may still require **Allow access / Разрешить доступ** in the destination sheet. Treat that as a normal Google Sheets authorization step: add a clear note in the sheet, verify the formula is present with `valueRenderOption=FORMULA`, and do not claim imported dashboard values are live until readback shows non-zero/non-placeholder imported rows. If the owner asks to fix the sheet so it opens cleanly now, do not leave a visible error cell: use the linked-sheets import repair pattern and point the report at a verified API-written snapshot while keeping the source link/explanation visible.
 - Google Sheets locale: Russian spreadsheets use semicolons `;` between function arguments and backslashes `\\` between horizontal array columns.
 - `IFERROR(...; "Нет данных")` is acceptable for user-facing fallback, but never let it hide test failures. Read the underlying output and assert expected numeric rows.
 - A chart with a valid title and legend can still be broken if the source range is a placeholder row like `Нет данных | 0 | 0 | 0`.

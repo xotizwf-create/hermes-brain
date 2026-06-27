@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-26
+updated: 2026-06-27
 secret_refs: []
 ---
 
@@ -591,7 +591,10 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Avoid this pattern](skills/google-sheets-dashboard-automation/SKILL.md#avoid-this-pattern)
 - [Prefer this pattern for monthly finance charts](skills/google-sheets-dashboard-automation/SKILL.md#prefer-this-pattern-for-monthly-finance-charts)
 - [Visual design checklist](skills/google-sheets-dashboard-automation/SKILL.md#visual-design-checklist)
+- [Screenshot-matching / “1 в 1” visual QA](skills/google-sheets-dashboard-automation/SKILL.md#screenshot-matching-1-в-1-visual-qa)
 - [Mechanical verification checklist](skills/google-sheets-dashboard-automation/SKILL.md#mechanical-verification-checklist)
+- [One-to-one clones from an existing polished Sheet](skills/google-sheets-dashboard-automation/SKILL.md#one-to-one-clones-from-an-existing-polished-sheet)
+- [When the reference is only a screenshot](skills/google-sheets-dashboard-automation/SKILL.md#when-the-reference-is-only-a-screenshot)
 - [Common pitfalls](skills/google-sheets-dashboard-automation/SKILL.md#common-pitfalls)
 - [Reporting to the owner](skills/google-sheets-dashboard-automation/SKILL.md#reporting-to-the-owner)
 
@@ -2332,6 +2335,21 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Pitfall this prevents](vendor-skills/productivity/telegram-reminders-msk/SKILL.md#pitfall-this-prevents)
 - [Example](vendor-skills/productivity/telegram-reminders-msk/SKILL.md#example)
 
+## `vendor-skills/productivity/travel-logistics-planning/SKILL.md` · [?]
+- [Core workflow](vendor-skills/productivity/travel-logistics-planning/SKILL.md#core-workflow)
+- [Airline carry-on and toiletries checklist](vendor-skills/productivity/travel-logistics-planning/SKILL.md#airline-carry-on-and-toiletries-checklist)
+- [BlaBlaCar / rideshare guidance](vendor-skills/productivity/travel-logistics-planning/SKILL.md#blablacar-rideshare-guidance)
+- [Pitfalls](vendor-skills/productivity/travel-logistics-planning/SKILL.md#pitfalls)
+- [References](vendor-skills/productivity/travel-logistics-planning/SKILL.md#references)
+
+## `vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md` · [?]
+- [Yandex Rasp extraction pattern](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md#yandex-rasp-extraction-pattern)
+- [Example train findings: Брянск-1-Орловский → Москва Киевская, Tue 2026-06-30](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md#example-train-findings-брянск-1-орловский-москва-киевская-tue-2026-06-30)
+- [Example flight findings: Москва → Казань, Tue 2026-06-30](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md#example-flight-findings-москва-казань-tue-2026-06-30)
+- [Aeroflot hand-luggage/toiletry answer pattern](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md#aeroflot-hand-luggagetoiletry-answer-pattern)
+- [BlaBlaCar Москва → Казань answer pattern](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md#blablacar-москва-казань-answer-pattern)
+- [Style lesson](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md#style-lesson)
+
 ## `vendor-skills/red-teaming/godmode/SKILL.md` · [?]
 - [When to Use This Skill](vendor-skills/red-teaming/godmode/SKILL.md#when-to-use-this-skill)
 - [Overview of Attack Modes](vendor-skills/red-teaming/godmode/SKILL.md#overview-of-attack-modes)
@@ -2401,6 +2419,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Regulatory Standards / Legal-Normative Evidence](vendor-skills/research/research-intelligence-workflows/SKILL.md#regulatory-standards-legal-normative-evidence)
 - [Russian Corporate Ownership / Beneficiary Schemes](vendor-skills/research/research-intelligence-workflows/SKILL.md#russian-corporate-ownership-beneficiary-schemes)
 - [Public Image / Media Retrieval](vendor-skills/research/research-intelligence-workflows/SKILL.md#public-image-media-retrieval)
+- [Travel Schedule / Ticket Chain Research](vendor-skills/research/research-intelligence-workflows/SKILL.md#travel-schedule-ticket-chain-research)
 - [Academic Search and Paper Writing](vendor-skills/research/research-intelligence-workflows/SKILL.md#academic-search-and-paper-writing)
 - [Blog/RSS Monitoring](vendor-skills/research/research-intelligence-workflows/SKILL.md#blogrss-monitoring)
 - [Prediction Markets](vendor-skills/research/research-intelligence-workflows/SKILL.md#prediction-markets)
@@ -2434,6 +2453,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Practical workflow](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#practical-workflow)
 - [ФНС ЕГРЮЛ recursive extraction pattern](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#фнс-егрюл-recursive-extraction-pattern)
 - [Pitfall](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#pitfall)
+
+## `vendor-skills/research/research-intelligence-workflows/references/travel-chain-ticket-research.md` · [?]
+- [What mattered in the Брянск → Москва → Казань session](vendor-skills/research/research-intelligence-workflows/references/travel-chain-ticket-research.md#what-mattered-in-the-брянск-москва-казань-session)
+- [Practical heuristics](vendor-skills/research/research-intelligence-workflows/references/travel-chain-ticket-research.md#practical-heuristics)
+- [Output shape that worked](vendor-skills/research/research-intelligence-workflows/references/travel-chain-ticket-research.md#output-shape-that-worked)
 
 ## `vendor-skills/smart-home/openhue/SKILL.md` · [?]
 - [Prerequisites](vendor-skills/smart-home/openhue/SKILL.md#prerequisites)
