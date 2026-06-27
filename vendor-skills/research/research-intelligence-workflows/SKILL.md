@@ -31,6 +31,7 @@ Class-level research workflow for finding sources, monitoring feeds, querying do
 - Check local retail availability or delivery eligibility for a product at a specific address.
 - Collect Russian public cadastral-map/НСПД parcel data around a cadastral number and produce source-backed neighbour/distance tables.
 - Build Russian corporate ownership / beneficiary schemes from official evidence such as ЕГРЮЛ extracts, issuer disclosures, and shareholder-register extracts.
+- Plan time-sensitive multimodal travel chains from live schedules/prices while balancing budget, buffer time, and disruption risk.
 
 ## Workflow
 
@@ -89,6 +90,19 @@ When the user asks for internet photos or source-backed media, optimize for deli
 4. Verify the file is a real image (`file`, PIL dimensions) and, when relevance matters, inspect with vision before sending.
 5. On Telegram, send as native media using `MEDIA:/absolute/path` because the user expects actual attachments, not bare local paths or only web links.
 
+### Travel Schedule / Ticket Chain Research
+
+When the user asks for a travel chain (e.g. train to Moscow plus same-day flight), treat it as a live schedule-and-risk research task, not a generic route suggestion:
+
+1. Anchor the dates first; for “воскресенье/понедельник” or “ближайшее время”, determine the actual calendar dates from the current session date before searching.
+2. Check live/near-live schedules and prices from booking/search sources for every leg, including remaining seat categories/counts when the user needs adjacent seats.
+3. Build candidate chains end-to-end: arrival station → airport transfer → check-in/security buffer → flight departure. Do not recommend a flight only because it is cheap if the transfer is tight.
+4. Separate **cheapest** from **recommended**: name the cheapest viable option, then explain if a slightly later/more expensive option has lower disruption risk.
+5. For air-disruption-sensitive routes, prefer daytime/early-afternoon departures when recent operational context suggests night/early-morning restrictions or accumulated delays; avoid overpromising “без задержек”. Say this only reduces risk.
+6. Provide purchase links to the exact route/date search pages and tell the user what train/flight numbers to pick; do not claim to reserve seats unless an authenticated booking flow was completed.
+
+Session example and wording notes live in `references/travel-chain-ticket-research.md`.
+
 ### Academic Search and Paper Writing
 
 Use arXiv/paper metadata, then read abstracts/full text as needed. For paper writing, maintain claims→evidence→experiment mapping.
@@ -121,6 +135,7 @@ Preserve link structure and provenance when building local wikis. Do not invent 
 - Producing a first narrow cadastral table from only the target card/same visible area; a radius request needs a buffer around the target geometry and deduped parcel collection from quarter searches plus targeted GetFeatureInfo sampling.
 - Mixing buildings/premises into land-parcel lists; filter cadastral-map features to land parcels unless the user explicitly asks for all objects.
 - For Russian ownership charts, filling AO shareholder gaps with plausible beneficiary claims from unofficial sources. If official ЕГРЮЛ/disclosure evidence stops at an AO/registrar, report the gap and required shareholder-register extracts instead.
+- For travel chains, optimizing only for the cheapest ticket and ignoring transfer/check-in buffers or disruption-prone time windows. Always show the trade-off between budget and robustness.
 
 ## Verification Checklist
 
