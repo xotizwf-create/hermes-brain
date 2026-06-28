@@ -27,6 +27,7 @@ start. If it's broken on disk, **the next restart loads the broken file** — so
    compression, compaction, or summary timeouts, treat it as a gateway repair path: inspect config,
    provider health, disk headroom, and only then restart. See `references/auxiliary-provider-health.md`.
 7. **Unit-file warnings count as unfinished repair.** If `daemon-reload` or journals show unsupported systemd keys, clean them up before saying the gateway is healthy. See `references/systemd-unit-hygiene.md`.
+8. **No progress spam during owner-visible incidents.** If the owner reports duplicated messages, spam, slowness, or gateway weirdness, work quietly after acknowledgement. Send only blockers or the final verified result unless the owner explicitly asks for live updates.
 
 ## Phase 1 — Diagnose (read-only, no writes, no restart)
 Run these and read the actual numbers. Nothing here changes state.
@@ -141,7 +142,17 @@ journalctl -b -u hermes-gateway --no-pager | grep -iE 'Unknown key|Failed to par
 ```
 If you introduced unsupported keys (for example newer restart-backoff directives such as `RestartSteps` / `RestartMaxDelaySec` on an older systemd), remove them or replace with older supported equivalents. Re-run `daemon-reload` and the grep until the warnings are gone. Prefer `daemon-reload` first; do **not** restart just to test unit parsing unless a restart is actually needed.
 
-## Phase 4.7 — Telegram rich messages after Hermes updates
+## Phase 4.7 — Telegram long-final duplicate after partial overflow
+
+If the symptom is “the same long Telegram answer arrived twice” or logs mention
+`overflow_continuation_failed` / `partial_overflow`, use `references/telegram-overflow-duplicates.md`.
+Key rule: once any chunk of the final answer is visible to the user, a continuation failure is a
+**partial side-effect**, not a safe whole-response retry. Make the adapter/persistent patch mark it
+non-retryable and let fallback send only the missing tail. Verify with
+`tests/gateway/test_telegram_overflow_partial.py`; do not restart gateway unless the live process lacks
+the patch or an update replaced the adapter.
+
+## Phase 4.8 — Telegram rich messages after Hermes updates
 
 If the symptom is “answers look worse / formatting degraded after update” and logs show
 `rich_messages_patch: cannot read telegram.py`, do **not** recreate the old monkey-patch blindly.
@@ -195,7 +206,8 @@ systemctl restart hermes-gateway && systemctl is-active hermes-gateway
 ## Done when
 Phase 1 numbers are clean (run.py compiles, markers == 1, config parses, no looping appender), the
 classifier gives code/server edits the 3600s budget via an idempotent guarded patch, auxiliary/provider
-routes are validated for the workload that triggered the alert (not just for tiny helper calls), one
+routes are validated for the workload that triggered the alert (not just for tiny helper calls), Telegram
+long-final partial-overflow handling is verified non-retryable when that symptom appeared, one
 observed restart left the gateway `active` with a fresh PID and clean logs when a restart was needed,
 the bot answers Telegram, and the fix is mirrored to the site repo when it changes canonical runtime
 code. Log operational lessons in the relevant brain file (`logs/changelog.md`, `logs/mistakes.md`, or

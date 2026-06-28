@@ -34,6 +34,7 @@ See `projects/albery/hermes.md`.
 1. **Locate & prep the repo** on the work host (clone/branch per `skills/project-onboarding`; branch
    off `main`, never code on `main`). Ensure the repo has `AGENTS.md`/`CLAUDE.md` if it carries one —
    Codex reads it.
+   - For cleanup/refactor PRs, keep the first slice small and reviewable. If Codex cannot be used after a quick precondition check, do not stall a tiny low-risk cleanup: make the bounded change directly, preserve public APIs, and verify with the same rigor as a Codex-produced diff. See `references/pr-cleanup-and-audit.md`.
 2. **Brief Codex precisely.** One task, concrete acceptance criteria, point it at the files/area.
    Run it in the repo dir so it has full context:
 
