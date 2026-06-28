@@ -2,7 +2,7 @@
 id: hermes-troubleshooting
 type: engineering
 tags: [hermes, troubleshooting, triage, symptoms, gateway, runbook]
-updated: 2026-06-21
+updated: 2026-06-28
 secret_refs: []
 ---
 
@@ -34,6 +34,24 @@ Causes (any/all at once):
    slow turns to the brain, blocker #1). Compression belongs on `llama-3.3-70b-versatile`, threshold ~0.04.
 
 Full detail: `skills/hermes-self-repair/references/auxiliary-provider-health.md`, `engineering/hermes-gateway-ux.md`, `logs/mistakes.md`.
+
+## «Одно и то же длинное сообщение пришло дважды / агент повторил финальный ответ»
+Usually a Telegram **long-final partial overflow**. Gateway edits chunk 1 of a long final reply and
+sends continuation chunks. If a continuation send fails after chunk 1 is already visible
+(`RetryAfter`/flood-control/network), `overflow_continuation_failed` used to be reported as
+`retryable=True`, so the runtime could retry the **whole** final reply and duplicate the delivered
+prefix.
+```bash
+journalctl -u hermes-gateway --since '-2 hours' | grep -iE 'overflow_continuation_failed|partial_overflow|RetryAfter|Flood control|flood'
+```
+Fix: persistent startup patch `/root/.hermes/patches/telegram_overflow_dedup_patch.py` changes that
+partial-overflow failure to `retryable=False` in `plugins/platforms/telegram/adapter.py` (idempotent;
+look for marker "Retrying the whole final reply duplicates..."). Regression test:
+```bash
+cd /usr/local/lib/hermes-agent && /usr/local/lib/hermes-agent/venv/bin/python -m pytest tests/gateway/test_telegram_overflow_partial.py -q
+```
+Operational rule: do **not** restart gateway on a guess. First verify the marker/test. Restart only if
+the live process still lacks the patch or after a Hermes update replaced the adapter.
 
 ## «Молчит / совсем не отвечает / ничего не приходит»
 The brain (primary model) lost auth or hit its limit — nothing that needs the model can run.

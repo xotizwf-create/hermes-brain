@@ -2,7 +2,7 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-06-25
+updated: 2026-06-28
 secret_refs: []
 ---
 
@@ -10,6 +10,9 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
+
+## 2026-06-28
+- **Hermes Telegram — защита от дубля длинного финального ответа после частичной доставки.** Причина повтора: при длинном финальном ответе Telegram adapter уже показывал первый chunk, но при сбое continuation возвращал `overflow_continuation_failed` как retryable; runtime мог повторить весь финальный ответ и продублировать видимый префикс. В live-коде и startup-патче `/root/.hermes/patches/telegram_overflow_dedup_patch.py` частичная overflow-ошибка сделана non-retryable; fallback сохраняет отправку только недостающего хвоста. Проверено без слепого рестарта: `py_compile` adapter/patch OK, `tests/gateway/test_telegram_overflow_partial.py` — 4 passed. Док: `engineering/hermes-troubleshooting.md`, `logs/mistakes.md`.
 
 ## 2026-06-25
 - **Albery — НАСТОЯЩАЯ причина «задача не ставится»: парсер срока отвергал «дата пробел время».** После IPv6-фикса (ниже) владелец: в новой сессии задача ВСЁ РАВНО не ставится. Разбор: ход 157 «Да» → «Инструмент создания задачи дважды не ответил по таймауту, задача не появилась». Изоляция показала: прямой `tasks.task.add` к Bitrix = 0.4с (портал быстр), а прямой MCP-вызов `create_bitrix_task` мгновенно ОТКАЗЫВАЛ на `deadline="2026-06-28 15:00"` и `"28.06.2026 15:00"` (формат «дата ПРОБЕЛ время») — `_normalize_bitrix_deadline` принимал только дату-без-времени или ISO-с-`T`. Модель из «до 27.06 15:00» формирует именно «дата пробел время» → отказ → перебор форматов по медленным round-trip'ам → в итоге «таймаут» и задача не создаётся (а IPv6 делал каждую попытку медленной — отсюда 148-269с). **Фикс (`mcp/context_server.py`, `_normalize_bitrix_deadline`):** принимать `YYYY-MM-DD[ HH:MM[:SS]]` и `DD.MM.YYYY[ HH:MM[:SS]]` с пробелом ИЛИ `T`, плюс ISO с tz (по умолчанию +03:00 МСК, дата-без-времени → 19:00). Проверено: все 4 формата создают задачу (0.5с), сквозной прогон через мозг бота — задача поставлена С ПЕРВОГО РАЗА за 40с (было 148-269с и провалы), срок `2026-06-28T15:00:00+03:00`; тест-задачи удалены. Коммит Albery `f589db6`, бэкап `context_server.py.bak.deadlinefmt.*`. **Деплой:** фикс ЖИВОЙ на 186 (restart albery) + закоммичен локально; **пуш в GitHub отложен** — 186 не может пушить (нет кредов), 217 с ПК недоступен этой сессией (`HERMES_BRAIN_*` в `.env` пусты). TODO владельцу/след. сессии: запушить `f589db6` через 217 (`gh`), затем guarded reset 186.

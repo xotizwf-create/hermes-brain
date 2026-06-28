@@ -2,7 +2,7 @@
 id: mistakes
 type: log
 tags: [mistakes, postmortem]
-updated: 2026-06-18
+updated: 2026-06-28
 secret_refs: []
 ---
 
@@ -10,6 +10,26 @@ secret_refs: []
 
 Append-only, newest on top. Concrete mistakes + how to avoid repeating them. Pulled from
 incidents and review feedback so the same error doesn't happen twice.
+
+## 2026-06-28 — Длинный Telegram-ответ продублировался из-за retry после частичной доставки
+**Symptom (owner):** одно и то же длинное финальное сообщение пришло повторно; владелец справедливо
+попросил не спамить промежуточными статусами во время диагностики.
+**Root cause (verified in code/tests):** Telegram adapter splits a final reply above the Telegram
+message limit: edits chunk 1, then sends continuation chunks. If a continuation fails after chunk 1 is
+already visible (`overflow_continuation_failed` / flood-control / transient send failure), the adapter
+returned `retryable=True`. Runtime could then retry the **entire** final response, duplicating the
+already delivered prefix and potentially amplifying flood-control.
+**Fix (applied):** persistent idempotent startup patch
+`/root/.hermes/patches/telegram_overflow_dedup_patch.py` changes that partial-overflow result to
+`retryable=False` in `plugins/platforms/telegram/adapter.py` (marker: "Retrying the whole final reply
+duplicates..."). Regression test updated so partial continuation failure is non-retryable while the
+stream consumer still sends only the missing tail in fallback.
+**Verified:** `py_compile` for the adapter/patch passes; `pytest tests/gateway/test_telegram_overflow_partial.py -q`
+passes (`4 passed`). Gateway was **not** restarted blindly; restart only if a live process lacks the
+marker after an update.
+**Avoid next time:** any delivery path that has already made user-visible side effects must not be
+reported as a generic retryable failure. Prefer partial-failure metadata + missing-tail fallback; never
+retry the whole final answer after a visible prefix lands.
 
 ## 2026-06-18 (afternoon) — `compression.threshold: 0.05` was the real codex-burner (corrects the entry below)
 **Symptom (owner):** «кодекс на 217 расходуется слишком быстро, ненормально». The morning fix (entry

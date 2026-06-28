@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-27
+updated: 2026-06-28
 secret_refs: []
 ---
 
@@ -139,6 +139,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 
 ## `engineering/hermes-troubleshooting.md` · [engineering] hermes, troubleshooting, triage, symptoms, gateway, runbook
 - [«Тупит / медленно / отупел / тормозит / долго думает / стал глупым»](engineering/hermes-troubleshooting.md#тупит-медленно-отупел-тормозит-долго-думает-стал-глупым)
+- [«Одно и то же длинное сообщение пришло дважды / агент повторил финальный ответ»](engineering/hermes-troubleshooting.md#одно-и-то-же-длинное-сообщение-пришло-дважды-агент-повторил-финальный-ответ)
 - [«Молчит / совсем не отвечает / ничего не приходит»](engineering/hermes-troubleshooting.md#молчит-совсем-не-отвечает-ничего-не-приходит)
 - [«Отправил файл, а файл не пришёл» / «говорит, что сделал, а результата нет»](engineering/hermes-troubleshooting.md#отправил-файл-а-файл-не-пришёл-говорит-что-сделал-а-результата-нет)
 - [«Стало глупее / сломалось после обновления»](engineering/hermes-troubleshooting.md#стало-глупее-сломалось-после-обновления)
@@ -183,6 +184,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-06-28](logs/changelog.md#2026-06-28)
 - [2026-06-25](logs/changelog.md#2026-06-25)
 - [2026-06-24](logs/changelog.md#2026-06-24)
 - [2026-06-21](logs/changelog.md#2026-06-21)
@@ -208,6 +210,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [2026-05-30 — two-way git brain sync is live (verified from the server)](logs/learning-log.md#2026-05-30-two-way-git-brain-sync-is-live-verified-from-the-server)
 
 ## `logs/mistakes.md` · [log] mistakes, postmortem
+- [2026-06-28 — Длинный Telegram-ответ продублировался из-за retry после частичной доставки](logs/mistakes.md#2026-06-28-длинный-telegram-ответ-продублировался-из-за-retry-после-частичной-доставки)
 - [2026-06-18 (afternoon) — `compression.threshold: 0.05` was the real codex-burner (corrects the entry below)](logs/mistakes.md#2026-06-18-afternoon-compressionthreshold-005-was-the-real-codex-burner-corrects-the-entry-below)
 - [2026-06-18 — `auxiliary.compression` silently demoted to the 6k-TPM model](logs/mistakes.md#2026-06-18-auxiliarycompression-silently-demoted-to-the-6k-tpm-model)
 - [2026-06-16 — Groq снова ломал auxiliary/compression: free-tier 12k TPM несовместим с тяжёлым сжатием](logs/mistakes.md#2026-06-16-groq-снова-ломал-auxiliarycompression-free-tier-12k-tpm-несовместим-с-тяжёлым-сжатием)
@@ -2256,6 +2259,19 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Common Pitfalls](vendor-skills/productivity/markitdown-docs/SKILL.md#common-pitfalls)
 - [Verification Checklist](vendor-skills/productivity/markitdown-docs/SKILL.md#verification-checklist)
 
+## `vendor-skills/productivity/owner-communication-style/SKILL.md` · [?]
+- [Core voice](vendor-skills/productivity/owner-communication-style/SKILL.md#core-voice)
+- [Formatting rules](vendor-skills/productivity/owner-communication-style/SKILL.md#formatting-rules)
+- [Status while working](vendor-skills/productivity/owner-communication-style/SKILL.md#status-while-working)
+- [Final answer shape](vendor-skills/productivity/owner-communication-style/SKILL.md#final-answer-shape)
+- [When technical detail is appropriate](vendor-skills/productivity/owner-communication-style/SKILL.md#when-technical-detail-is-appropriate)
+- [Calibration reference](vendor-skills/productivity/owner-communication-style/SKILL.md#calibration-reference)
+
+## `vendor-skills/productivity/owner-communication-style/references/albery-bitrix-style-calibration.md` · [?]
+- [Observed target style](vendor-skills/productivity/owner-communication-style/references/albery-bitrix-style-calibration.md#observed-target-style)
+- [Durable lesson](vendor-skills/productivity/owner-communication-style/references/albery-bitrix-style-calibration.md#durable-lesson)
+- [Bad habit this prevents](vendor-skills/productivity/owner-communication-style/references/albery-bitrix-style-calibration.md#bad-habit-this-prevents)
+
 ## `vendor-skills/productivity/productivity-platform-operations/SKILL.md` · [?]
 - [Overview](vendor-skills/productivity/productivity-platform-operations/SKILL.md#overview)
 - [When to Use](vendor-skills/productivity/productivity-platform-operations/SKILL.md#when-to-use)
@@ -2339,6 +2355,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Core workflow](vendor-skills/productivity/travel-logistics-planning/SKILL.md#core-workflow)
 - [Airline carry-on and toiletries checklist](vendor-skills/productivity/travel-logistics-planning/SKILL.md#airline-carry-on-and-toiletries-checklist)
 - [BlaBlaCar / rideshare guidance](vendor-skills/productivity/travel-logistics-planning/SKILL.md#blablacar-rideshare-guidance)
+- [Flight sale/load-check workflow](vendor-skills/productivity/travel-logistics-planning/SKILL.md#flight-saleload-check-workflow)
 - [Pitfalls](vendor-skills/productivity/travel-logistics-planning/SKILL.md#pitfalls)
 - [References](vendor-skills/productivity/travel-logistics-planning/SKILL.md#references)
 
@@ -2349,6 +2366,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Aeroflot hand-luggage/toiletry answer pattern](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md#aeroflot-hand-luggagetoiletry-answer-pattern)
 - [BlaBlaCar Москва → Казань answer pattern](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md#blablacar-москва-казань-answer-pattern)
 - [Style lesson](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md#style-lesson)
+
+## `vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-pobeda-june-2026.md` · [?]
+- [What happened](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-pobeda-june-2026.md#what-happened)
+- [Reusable workflow](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-pobeda-june-2026.md#reusable-workflow)
+- [User-facing phrasing](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-pobeda-june-2026.md#user-facing-phrasing)
 
 ## `vendor-skills/red-teaming/godmode/SKILL.md` · [?]
 - [When to Use This Skill](vendor-skills/red-teaming/godmode/SKILL.md#when-to-use-this-skill)
