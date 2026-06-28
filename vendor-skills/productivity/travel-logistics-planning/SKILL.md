@@ -66,13 +66,26 @@ When the user wants “cheap but in a good car”:
   - avoid 3 passengers in back, no reviews, no car photo, suspiciously cheap, or requests for off-platform prepayment;
   - morning departure is usually best for long intercity rides.
 
+## Flight sale/load-check workflow
+
+When the user asks whether a flight is likely to be cancelled because few seats are sold:
+
+1. **Verify identity by time + date + route, not just flight number.** Multi-frequency routes can have adjacent Pobeda numbers; if the user's stated time and flight number conflict, say so clearly and orient the answer around the departure time they care about.
+2. **Separate public facts from inference.** Public pages can show that a flight is in schedule/sale and sometimes price/tariffs; they usually do **not** reveal exact purchased seats.
+3. **Try the seat map only when reachable without sensitive passenger data.** If the airline booking engine blocks automation or requires passenger/contact details, stop before entering personal data and say the limitation.
+4. **Use aggregators as a fallback sale check.** If the official airline booking engine is blocked, open a reputable route search/airline page, set the date, search, and extract visible rows. In browser, `document.body.innerText` often captures full result cards when snapshots truncate them.
+5. **Answer cancellation risk conservatively.** “Tickets still in sale at normal-looking prices” supports “low visible risk of cancellation due solely to low load,” but does not rule out weather, airport restrictions, aircraft rotation, or operational changes.
+
 ## Pitfalls
 
 - Do not claim exact BlaBlaCar driver/car availability unless the live listing was actually opened.
 - Do not infer date-specific schedules from an “all days” page; select the date and verify rows.
+- Do not trust the user's flight number over their stated departure time when they conflict; verify both and explicitly correct the identity.
 - Do not quote airline baggage rules purely from memory; verify or state the source limitation.
+- Do not overclaim “how many seats are bought” unless a live seat map was actually opened and counted; sale availability is only a proxy.
 - Do not over-explain when the user asks a quick voice-style travel question: answer with concrete norms/options and a clear recommendation.
 
 ## References
 
 - `references/moscow-kazan-june-2026.md` — session notes from a Moscow/Kazan planning example: Yandex Rasp extraction pattern, Aeroflot carry-on/toiletries summary, and BlaBlaCar selection heuristics.
+- `references/moscow-kazan-pobeda-june-2026.md` — session notes for Pobeda Moscow → Kazan flight identity/load check: DP6841 vs DP6843 mismatch, terminal D corroboration, Tutu fallback extraction, and cautious cancellation-risk phrasing.
