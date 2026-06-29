@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-28
+updated: 2026-06-29
 secret_refs: []
 ---
 
@@ -1146,6 +1146,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Trigger](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-first-safety-patch.md#trigger)
 - [Example Shape](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-first-safety-patch.md#example-shape)
 - [Pitfalls](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-first-safety-patch.md#pitfalls)
+
+## `vendor-skills/devops/alexandr-it-project-operations/references/project-audit-github-server-baseline.md` · [?]
+- [Principle](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-github-server-baseline.md#principle)
+- [Checklist](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-github-server-baseline.md#checklist)
+- [Reporting template](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-github-server-baseline.md#reporting-template)
+- [Albery example distilled](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-github-server-baseline.md#albery-example-distilled)
 
 ## `vendor-skills/devops/alexandr-it-project-operations/references/project-audit-mcp-boundary.md` · [?]
 - [Trigger](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-mcp-boundary.md#trigger)
@@ -2357,8 +2363,26 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Airline carry-on and toiletries checklist](vendor-skills/productivity/travel-logistics-planning/SKILL.md#airline-carry-on-and-toiletries-checklist)
 - [BlaBlaCar / rideshare guidance](vendor-skills/productivity/travel-logistics-planning/SKILL.md#blablacar-rideshare-guidance)
 - [Flight sale/load-check workflow](vendor-skills/productivity/travel-logistics-planning/SKILL.md#flight-saleload-check-workflow)
+- [International budget flight routing workflow](vendor-skills/productivity/travel-logistics-planning/SKILL.md#international-budget-flight-routing-workflow)
+- [Tour-package comparison workflow](vendor-skills/productivity/travel-logistics-planning/SKILL.md#tour-package-comparison-workflow)
 - [Pitfalls](vendor-skills/productivity/travel-logistics-planning/SKILL.md#pitfalls)
 - [References](vendor-skills/productivity/travel-logistics-planning/SKILL.md#references)
+
+## `vendor-skills/productivity/travel-logistics-planning/references/kazan-morocco-routing-2026.md` · [?]
+- [User goal](vendor-skills/productivity/travel-logistics-planning/references/kazan-morocco-routing-2026.md#user-goal)
+- [Useful source pattern](vendor-skills/productivity/travel-logistics-planning/references/kazan-morocco-routing-2026.md#useful-source-pattern)
+- [Recommendation logic from the session](vendor-skills/productivity/travel-logistics-planning/references/kazan-morocco-routing-2026.md#recommendation-logic-from-the-session)
+- [Communication pattern](vendor-skills/productivity/travel-logistics-planning/references/kazan-morocco-routing-2026.md#communication-pattern)
+
+## `vendor-skills/productivity/travel-logistics-planning/references/kazan-thailand-bali-tour-packages-2026.md` · [?]
+- [Useful extraction pattern](vendor-skills/productivity/travel-logistics-planning/references/kazan-thailand-bali-tour-packages-2026.md#useful-extraction-pattern)
+- [URLs that exposed useful package filters](vendor-skills/productivity/travel-logistics-planning/references/kazan-thailand-bali-tour-packages-2026.md#urls-that-exposed-useful-package-filters)
+- [Findings from 28.06.2026 run](vendor-skills/productivity/travel-logistics-planning/references/kazan-thailand-bali-tour-packages-2026.md#findings-from-28062026-run)
+- [Thailand 4★ all inclusive](vendor-skills/productivity/travel-logistics-planning/references/kazan-thailand-bali-tour-packages-2026.md#thailand-4-all-inclusive)
+- [Bali 4★ all inclusive](vendor-skills/productivity/travel-logistics-planning/references/kazan-thailand-bali-tour-packages-2026.md#bali-4-all-inclusive)
+- [Bali 5★ all inclusive](vendor-skills/productivity/travel-logistics-planning/references/kazan-thailand-bali-tour-packages-2026.md#bali-5-all-inclusive)
+- [Bali 4★ relaxed board](vendor-skills/productivity/travel-logistics-planning/references/kazan-thailand-bali-tour-packages-2026.md#bali-4-relaxed-board)
+- [Answering style that worked](vendor-skills/productivity/travel-logistics-planning/references/kazan-thailand-bali-tour-packages-2026.md#answering-style-that-worked)
 
 ## `vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md` · [?]
 - [Yandex Rasp extraction pattern](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-june-2026.md#yandex-rasp-extraction-pattern)
@@ -2372,6 +2396,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [What happened](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-pobeda-june-2026.md#what-happened)
 - [Reusable workflow](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-pobeda-june-2026.md#reusable-workflow)
 - [User-facing phrasing](vendor-skills/productivity/travel-logistics-planning/references/moscow-kazan-pobeda-june-2026.md#user-facing-phrasing)
+
+## `vendor-skills/productivity/travel-logistics-planning/references/moscow-kievsky-sheremetyevo-taxi-2026.md` · [?]
+- [Useful live-check workflow](vendor-skills/productivity/travel-logistics-planning/references/moscow-kievsky-sheremetyevo-taxi-2026.md#useful-live-check-workflow)
+- [Example findings from this session](vendor-skills/productivity/travel-logistics-planning/references/moscow-kievsky-sheremetyevo-taxi-2026.md#example-findings-from-this-session)
+- [Response style](vendor-skills/productivity/travel-logistics-planning/references/moscow-kievsky-sheremetyevo-taxi-2026.md#response-style)
 
 ## `vendor-skills/red-teaming/godmode/SKILL.md` · [?]
 - [When to Use This Skill](vendor-skills/red-teaming/godmode/SKILL.md#when-to-use-this-skill)

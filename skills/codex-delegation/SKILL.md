@@ -78,5 +78,4 @@ See `projects/albery/hermes.md`.
 - Secrets: references only; never printed, committed, or passed as CLI args.
 
 ## Done when
-Codex produced the change in a branch, Hermes reviewed the diff and ran tests green, it was deployed
-git-first with only the target service restarted, health verified, and a short human report given.
+Codex produced the change in a branch, Hermes reviewed the diff and ran tests green. For PR-only cleanup/refactor work, open the PR, verify GitHub checks, and report the PR URL/stack base without deploying. For requested live changes, deploy git-first with only the target service restarted, verify health, and give a short human report.
