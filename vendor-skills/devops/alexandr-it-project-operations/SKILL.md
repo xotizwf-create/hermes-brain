@@ -91,6 +91,7 @@ Recommended staged approach:
 7. **Keep the repo clean.** Remove temporary audit environments/files before finalizing and verify `git status` is clean unless the user requested persistent outputs.
 
 For an example distilled from the Albery audit kickoff, see `references/project-audit-albery-pattern.md`.
+For live-project audits that must compare GitHub with the actual deployed checkout before cleanup/refactoring, use `references/project-audit-github-server-baseline.md`.
 For MCP/AI-agent boundary audits, confirmation-gate matrices, and interrupted-context recovery, see `references/project-audit-mcp-boundary.md`.
 For quality/risk Stage C audits after component and boundary mapping, see `references/project-audit-quality-risk-standard.md`.
 For turning audit outputs into layered project documentation and architecture standards, see `references/project-audit-documentation-convergence.md`.

@@ -59,6 +59,8 @@ Search for existing issues before creating duplicates. Use templates for bug rep
 
 Branch from updated base, commit focused changes, push, create PR, then monitor checks. For failing CI, fetch failed logs, fix, push, and re-check until green or blocked.
 
+When doing a sequence of small cleanup PRs and the next change depends on an earlier not-yet-merged PR (or `main` is currently red for a problem already fixed in that earlier PR), create the next PR as a stacked PR with `--base <previous-branch>` instead of piling unrelated fixes onto `main`. Verify locally against the stacked base, explain the stack in the PR body, and expect a small rebase/conflict if both cleanup steps touched nearby imports or module headers.
+
 ### Code Review
 
 Review diffs against the correct base. Prioritize correctness/security/data-loss issues over style. Quote file paths/lines and provide actionable fixes.
