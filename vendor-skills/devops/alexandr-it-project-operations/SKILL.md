@@ -96,6 +96,7 @@ For MCP/AI-agent boundary audits, confirmation-gate matrices, and interrupted-co
 For quality/risk Stage C audits after component and boundary mapping, see `references/project-audit-quality-risk-standard.md`.
 For turning audit outputs into layered project documentation and architecture standards, see `references/project-audit-documentation-convergence.md`.
 For Albery Zoom transcript/report recovery and Bitrix dispatch readiness checks, see `references/albery-zoom-report-recovery.md`.
+For Albery Zoom reports saved through MCP with incomplete structured JSON, enforce the save-contract boundary rather than masking it with parser changes; see `references/albery-zoom-save-contract.md`.
 For Albery Bitrix AI-agent Google Sheets quality regressions (bad formulas, unreadable formatting, poor column widths, bad palette), see `references/albery-google-sheets-agent-quality.md`.
 For checking Hermes/Codex credential-pool state, active ChatGPT account labels, and usage-limit rotation, see `references/hermes-codex-credential-pool.md`.
 
@@ -106,10 +107,11 @@ When Александр says an Albery Zoom transcription exists but there is no
 1. **Start with Albery instructions and readiness.** Read live AI instructions, then use `get_report_readiness(date_from=date_to=<day>)`; `missing_zoom_reports` is the source of truth for calls blocking owner daily reports.
 2. **Confirm transcript vs report state.** Use `list_zoom_calls` / `get_zoom_call_transcript` to verify transcript segment count and whether `analytical_note` is empty.
 3. **Do not assume automation is event-driven.** A Hermes watchdog or fallback cron may be only a scheduled poller; explain delay separately from actual missing reports.
-4. **Recover manually when needed.** Fetch the current `zoom_processing` contract and org structure, then save a full `save_zoom_call_report` with `operational_tasks` and `leader_evaluations` when applicable.
-5. **Verify dispatch readiness separately.** After saving, re-check readiness, then use `list_pending_zoom_operational_dispatches` and `preview_zoom_operational_tasks` to show what can be sent to Bitrix.
-6. **Diagnose “tasks not sent” with read-only checks first.** When Александр asks whether Zoom tasks are still failing in Bitrix, distinguish three states before saying anything definitive: (a) report saved but dispatch still pending, (b) cards preview correctly but were never approved/sent, (c) dispatch was attempted and errored. Use `list_pending_zoom_operational_dispatches` as the queue source of truth, `preview_zoom_operational_tasks` to verify grouping/recipient matching, and `search_tasks` for `Итоги созвона` on that date to check whether tasks actually exist in Bitrix. If needed, use `session_search` for the originating report session to recover the exact call summary and prior approval status. Do not treat missing local systemd/journal logs as proof of no error when Albery/MCP may run on a different service/host.
-7. **Keep approval gates.** Never call Zoom operational dispatch without an explicit owner approval like `ставь` / `создавай`.
+5. **Recover manually when needed.** Fetch the current `zoom_processing` contract and org structure, then save a full `save_zoom_call_report` with `operational_tasks` and `leader_evaluations` when applicable.
+6. **Verify dispatch readiness separately.** After saving, re-check readiness, then use `list_pending_zoom_operational_dispatches` and `preview_zoom_operational_tasks` to show what can be sent to Bitrix. In combined Zoom dispatch, verify the host/leader appears only once: as the operational lead card, not also as a personal participant report.
+7. **Diagnose “tasks not sent” with read-only checks first.** When Александр asks whether Zoom tasks are still failing in Bitrix, distinguish three states before saying anything definitive: (a) report saved but dispatch still pending, (b) cards preview correctly but were never approved/sent, (c) dispatch was attempted and errored. Use `list_pending_zoom_operational_dispatches` as the queue source of truth, `preview_zoom_operational_tasks` to verify grouping/recipient matching, and `search_tasks` for `Итоги созвона` on that date to check whether tasks actually exist in Bitrix. If needed, use `session_search` for the originating report session to recover the exact call summary and prior approval status. Do not treat missing local systemd/journal logs as proof of no error when Albery/MCP may run on a different service/host.
+
+8. **Keep approval gates.** Never call Zoom operational dispatch without an explicit owner approval like `ставь` / `создавай`.
 
 ## MCP / AI-Agent Boundary Audit Add-on
 
@@ -147,6 +149,7 @@ When an audit finds a small, high-confidence safety gap in an AI/MCP/API project
 7. **Report changed files and non-actions.** Say what was changed, what passed, and explicitly state that no commit/deploy/prod/DB action was performed unless it actually was.
 
 For a concrete example distilled from Albery's first MCP safety patch, see `references/project-audit-first-safety-patch.md`.
+For continuing an already-started audit branch through stale-`main` conflicts, MCP safety metadata drift, stacked/open PR topology, GitHub PR checks, and dependency-audit recovery, see `references/project-audit-pr-continuation-and-ci-recovery.md`.
 
 ## Project Documentation Standard
 

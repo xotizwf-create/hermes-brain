@@ -137,7 +137,7 @@ Use this when the local secure project file contains only connection credentials
 
 ### MCP/API side-effect timeout triage
 
-When an MCP tool that creates external side effects times out (for example a project tool that creates Bitrix tasks), do not retry blindly. First verify whether the side effect happened using the project’s read-only search/list tools or DB-backed status: check the pending queue, search for created external objects by title/date/id, and only then decide whether retry is safe. If the side effect did not happen and the queue remains open, inspect the production service logs around the timestamp; MCP client timeouts often hide the real internal exception. Keep output redacted. For Albery Zoom → Bitrix dispatch, see `references/albery-bitrix-rest-dispatch.md`.
+When an MCP tool that creates external side effects times out (for example a project tool that creates Bitrix tasks), do not retry blindly. First verify whether the side effect happened using the project’s read-only search/list tools or DB-backed status: check the pending queue, search for created external objects by title/date/id, and only then decide whether retry is safe. If the side effect did not happen and the queue remains open, inspect the production service logs around the timestamp; MCP client timeouts often hide the real internal exception. Keep output redacted. For Albery Zoom → Bitrix dispatch, also distinguish “Bitrix rejected the request” from “Albery never built a valid dispatch card because the saved Zoom report JSON/section parsing is incomplete”; verify `preview_zoom_operational_tasks` before sending. See `references/albery-bitrix-rest-dispatch.md`.
 
 ### Albery Google Sheets quality guard
 
@@ -179,14 +179,15 @@ See `references/remote-env-mcp-secret-retrieval.md` for a concrete redacted MCP 
    grep -RIn --exclude-dir=node_modules --exclude-dir=.git "old text or unique username" /path/to/app
    ```
 2. If matches include generated bundles and source files, patch the source/runtime file that the running service uses.
-3. Replace all intentional occurrences of the user-facing message, not just the first occurrence.
-4. Re-run search:
+5. Replace all intentional occurrences of the user-facing message, not just the first occurrence.
+6. Re-run search:
    - old text should be absent from the relevant runtime source
    - new text should be present in the expected count
-5. Restart only the affected service, for example a bot service rather than the whole app stack.
-6. Verify status/process after restart.
-7. Verify through the live interface/API that consumes the text, not only by grepping the file. For MCP prompt changes, call the relevant prompt-read/list tool after restart and confirm the old wording is gone and the new wording is returned.
-8. Before committing/pushing a production hotfix, inspect the current live branch and upstream. Do **not** blindly push `main`: if the live checkout is on a project branch, commit on that branch and push `HEAD:<current-branch>` unless you have an explicit deploy plan to switch branches or merge to main. Never force-push or rewrite remote history to satisfy the “sync with GitHub” rule.
+7. Restart only the affected service, for example a bot service rather than the whole app stack.
+8. Verify status/process after restart.
+9. If a smoke HTTP check fails immediately after `systemctl restart` but the service reports active, do not declare success or roll back blindly. Inspect `systemctl status`, listening ports, and fresh service logs, then retry the local health check after the app has actually bound its port.
+10. Verify through the live interface/API that consumes the text, not only by grepping the file. For MCP prompt changes, call the relevant prompt-read/list tool after restart and confirm the old wording is gone and the new wording is returned.
+11. Before committing/pushing a production hotfix, inspect the current live branch and upstream. Do **not** blindly push `main`: if the live checkout is on a project branch, commit on that branch and push `HEAD:<current-branch>` unless you have an explicit deploy plan to switch branches or merge to main. Never force-push or rewrite remote history to satisfy the “sync with GitHub” rule.
 
 ## Low-downtime Node/Vite release workflow
 
@@ -196,10 +197,13 @@ Use this for production-sensitive Node/Vite apps where the user explicitly requi
 2. **Run local gates before upload:** typecheck/lint, the full relevant test suite, and `npm run build`. If unrelated pre-existing failures appear, fix narrow obvious regressions only when they block a clean deployment gate.
 3. **Upload to a timestamped release directory** such as `/var/www/<app>/releases/<timestamp>` and copy the existing `.env.local`/runtime secrets into that release without printing values.
 4. **Avoid building on small production hosts if memory is tight.** If server-side `vite build`/bundle work is killed (for example exit 137/OOM), keep the live app untouched, build `dist/` locally from the already-tested commit, archive it with the release, and on the server only run `npm ci`, typecheck/targeted tests, and `test -f dist/index.html`.
-5. **Do not switch while management access is unstable.** If SSH/systemctl checks start timing out, stop at the safe point; do not rename/symlink the live app or restart services until the server responds reliably.
-6. **Make switching atomic and reversible:** keep a timestamped backup of the previous live app path or symlink target, switch to the prepared release, restart only the affected systemd services, and have a rollback command ready before restarting.
-7. **Bound release retention:** keep the active release, the immediately previous rollback release, and only a small bounded history (normally the last 3–5 timestamped releases). After a successful deploy and verification, prune older releases so `/releases` does not grow forever. Before pruning, resolve the active symlink/current app path and explicitly exclude it plus the rollback target; delete only older timestamped release directories, never the live path.
-8. **Verify after switch:** `systemctl is-active` for API and bot services, local HTTP health check through nginx, a process/log smoke check, and an MCP/CLI smoke test that does not reveal secrets or token values.
+5. **Do not stop at “code is ready” when the owner asked for a deploy.** A failed build in the agent's temporary/local environment (disk full, low RAM, swap pressure, path/tooling quirks) is not automatically a deploy blocker. First try a safe alternate path: clean only obvious local caches/work clones, re-run lightweight checks, then inspect the production host with preflight. If production has enough free disk/RAM/swap and the live service can be protected, apply the exact verified patch there, run project-local checks/build, restart only the affected service, and smoke-test. If server-side build is also unsafe, report that concrete blocker and keep live files unchanged.
+6. **For Vite/React apps served from `dist/`, code deploy is not enough.** After `git pull`/fast-forward on an in-place checkout, rebuild or upload the generated `dist/` bundle and verify the built asset contains a user-visible marker from the change. Restarting the backend alone can leave the old UI running.
+6. **Do not over-interpret protected health endpoints.** If `/api/health` or another smoke route returns `401 Authentication required`, treat that as proof the Flask/API process answered but still verify `systemctl is-active`, fresh logs, and at least one authenticated or static-page smoke check as appropriate.
+7. **Do not switch while management access is unstable.** If SSH/systemctl checks start timing out, stop at the safe point; do not rename/symlink the live app or restart services until the server responds reliably.
+8. **Make switching atomic and reversible:** keep a timestamped backup of the previous live app path or symlink target, switch to the prepared release, restart only the affected systemd services, and have a rollback command ready before restarting.
+9. **Bound release retention:** keep the active release, the immediately previous rollback release, and only a small bounded history (normally the last 3–5 timestamped releases). After a successful deploy and verification, prune older releases so `/releases` does not grow forever. Before pruning, resolve the active symlink/current app path and explicitly exclude it plus the rollback target; delete only older timestamped release directories, never the live path.
+10. **Verify after switch:** `systemctl is-active` for API and bot services, local HTTP/static page check through nginx, confirmation that the built frontend asset contains the intended UI marker, a process/log smoke check, and an MCP/CLI smoke test that does not reveal secrets or token values.
 
 ## Communication style
 
@@ -214,6 +218,7 @@ Avoid dumping commands, IPs, usernames, `.env` content, or unrelated grep noise 
 
 ## References
 
+- `references/albery-zoom-webhook-validation.md` — Albery Zoom Marketplace `URL validation failed` runbook: distinguish route secret vs Zoom HMAC Secret Token, prove whether Zoom reached the server, self-test `endpoint.url_validation`, and request a freshly regenerated Zoom Secret Token when self-test passes but UI still fails.
 - `references/vk-hermes-bridge-voice-attachments.md` — VK Hermes bridge pitfall/fix for outbound TTS MP3 failing as `file is undefined`; convert to OGG/Opus and upload as `audio_message`, then verify through `send_vk_attachment()`.
 
 - `references/gov-exams-app-liteexams.md` — concrete non-secret notes from the Gov Exams / LiteExams bot inspection

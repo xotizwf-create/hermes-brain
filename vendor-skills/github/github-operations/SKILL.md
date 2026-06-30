@@ -61,6 +61,8 @@ Branch from updated base, commit focused changes, push, create PR, then monitor 
 
 When doing a sequence of small cleanup PRs and the next change depends on an earlier not-yet-merged PR (or `main` is currently red for a problem already fixed in that earlier PR), create the next PR as a stacked PR with `--base <previous-branch>` instead of piling unrelated fixes onto `main`. Verify locally against the stacked base, explain the stack in the PR body, and expect a small rebase/conflict if both cleanup steps touched nearby imports or module headers.
 
+After pushing multiple quick commits, `gh pr checks --watch` can briefly show checks from the previous head. Before reporting final CI, re-read `gh pr view <PR> --json headRefOid,statusCheckRollup,mergeStateStatus,url` and verify the `headRefOid` matches the just-pushed commit; if checks are still queued/in progress for that head, wait again.
+
 ### Code Review
 
 Review diffs against the correct base. Prioritize correctness/security/data-loss issues over style. Quote file paths/lines and provide actionable fixes.
@@ -71,6 +73,7 @@ Review diffs against the correct base. Prioritize correctness/security/data-loss
 - Claiming CI is green without `gh pr checks`, `gh run`, or API output.
 - Posting review comments before verifying the diff base.
 - Leaking tokens from env files or git credential helpers.
+- Passing a PR/issue body with Markdown backticks, `$()`, or shell-sensitive text directly inside a quoted `gh pr create --body "..."` command. The shell can still expand command substitutions inside double quotes and corrupt the body. Write the body to a temporary Markdown file and use `--body-file`, then verify it with `gh pr view --json body`.
 
 ## Verification Checklist
 
