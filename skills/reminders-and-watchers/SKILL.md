@@ -46,7 +46,33 @@ Watchers: header optional; on nothing-to-report return `[SILENT]`.
    Russian. If empty, say `Активных напоминаний нет`.
 7. **Missed-reminder check**: script-only cron job `reminder-audit` runs every 15 minutes. It stays
    silent when all is OK and sends a short Russian alert only if an active reminder is overdue,
-   failed, or not delivered.
+   failed, or not delivered. If the owner complains about alerts like “не удалось отправить” or
+   “ошибка выполнения”, first inspect which reminder has `last_status != ok` / `last_delivery_error`.
+   If the reminder itself now runs successfully, run that exact cron job once to clear the stale
+   failure state, then rerun `reminder_audit.py` and verify it prints nothing.
+
+## Watchdog/self-check alert style
+
+Operational watchdogs are for the owner, not for engineers reading logs. If a watcher detects
+“молчаливые сбои”, delivery failures, provider degradation, or reminder audit problems, the Telegram
+message must be human-readable:
+- say **what happened** in plain Russian;
+- say **how many times** it repeated, if useful;
+- say **what it means for the owner** (missed reminder, delayed answer, degraded memory, etc.);
+- say **what I will check/do next**;
+- do **not** paste raw stack traces, log lines, job ids, paths, or provider-internal text into the
+  group unless the owner explicitly asks for technical detail.
+
+A good alert shape:
+```text
+🟠 Самопроверка Hermes: есть сбои за последний час
+
+• Не получилось сжать длинный диалог для продолжения работы.
+   Повторов: 8
+   Что сделать: я проверю модель для сжатия; если мешает работе — начнём новый диалог.
+
+Технический лог не прикладываю, чтобы не засорять чат. Если нужно — я сам открою его при разборе.
+```
 
 ## One-shot reminder — "напомни завтра в 18:00 написать Даше"
 Compute tomorrow's date in Europe/Moscow; fire once with an explicit Moscow offset:
