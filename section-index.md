@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-06-29
+updated: 2026-07-01
 secret_refs: []
 ---
 
@@ -184,6 +184,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-07-01](logs/changelog.md#2026-07-01)
 - [2026-06-28](logs/changelog.md#2026-06-28)
 - [2026-06-25](logs/changelog.md#2026-06-25)
 - [2026-06-24](logs/changelog.md#2026-06-24)
@@ -332,7 +333,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Ключевые пути и факты](projects/albery/hermes.md#ключевые-пути-и-факты)
 - [Важные понятия (чтобы не путать)](projects/albery/hermes.md#важные-понятия-чтобы-не-путать)
 - [Подробности (разбито по темам, 2026-06-13)](projects/albery/hermes.md#подробности-разбито-по-темам-2026-06-13)
-- [Google Sheets через битрикс-агента](projects/albery/hermes.md#google-sheets-через-битрикс-агента)
+- [Google Sheets / Docs через битрикс-агента](projects/albery/hermes.md#google-sheets-docs-через-битрикс-агента)
 
 ## `projects/albery/knowledge-rag.md` · [project] albery, mcp, rag, search, knowledge, postgres, optimization, reference
 - [Зачем чанкинг (Ступень A)](projects/albery/knowledge-rag.md#зачем-чанкинг-ступень-a)
@@ -1115,6 +1116,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Fast diagnostic sequence](vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-report-recovery.md#fast-diagnostic-sequence)
 - [Important pitfalls](vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-report-recovery.md#important-pitfalls)
 
+## `vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-save-contract.md` · [?]
+- [Durable lesson](vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-save-contract.md#durable-lesson)
+- [Required successful payload shape](vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-save-contract.md#required-successful-payload-shape)
+- [Debugging sequence](vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-save-contract.md#debugging-sequence)
+- [Deployment notes](vendor-skills/devops/alexandr-it-project-operations/references/albery-zoom-save-contract.md#deployment-notes)
+
 ## `vendor-skills/devops/alexandr-it-project-operations/references/archive-project-and-disable-digest.md` · [?]
 - [Pattern](vendor-skills/devops/alexandr-it-project-operations/references/archive-project-and-disable-digest.md#pattern)
 - [Pitfalls](vendor-skills/devops/alexandr-it-project-operations/references/archive-project-and-disable-digest.md#pitfalls)
@@ -1161,6 +1168,10 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Confirmation standard](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-mcp-boundary.md#confirmation-standard)
 - [Common findings to look for](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-mcp-boundary.md#common-findings-to-look-for)
 - [Output artifact](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-mcp-boundary.md#output-artifact)
+
+## `vendor-skills/devops/alexandr-it-project-operations/references/project-audit-pr-continuation-and-ci-recovery.md` · [?]
+- [Durable pattern](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-pr-continuation-and-ci-recovery.md#durable-pattern)
+- [Example distilled from Albery](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-pr-continuation-and-ci-recovery.md#example-distilled-from-albery)
 
 ## `vendor-skills/devops/alexandr-it-project-operations/references/project-audit-quality-risk-standard.md` · [?]
 - [Goal](vendor-skills/devops/alexandr-it-project-operations/references/project-audit-quality-risk-standard.md#goal)
@@ -1331,9 +1342,13 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [References](vendor-skills/devops/secure-project-server-ops/SKILL.md#references)
 
 ## `vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md` · [?]
-- [Symptom](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#symptom)
+- [Symptom A — MCP timeout / possible duplicate risk](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#symptom-a-mcp-timeout-possible-duplicate-risk)
 - [Safe triage pattern](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#safe-triage-pattern)
-- [Known durable error class](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#known-durable-error-class)
+- [Known durable error class — Bitrix REST denied](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#known-durable-error-class-bitrix-rest-denied)
+- [Symptom B — report exists but dispatch cannot build cards](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#symptom-b-report-exists-but-dispatch-cannot-build-cards)
+- [Text-parser pitfall — section boundaries](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#text-parser-pitfall-section-boundaries)
+- [Participant report dispatch is a separate lane](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#participant-report-dispatch-is-a-separate-lane)
+- [Git/prod sync note](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#gitprod-sync-note)
 - [User-facing explanation](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#user-facing-explanation)
 
 ## `vendor-skills/devops/secure-project-server-ops/references/albery-google-sheets-formula-locale.md` · [?]
@@ -1347,6 +1362,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Live server identity pitfall](vendor-skills/devops/secure-project-server-ops/references/albery-hermes-gateway-routing.md#live-server-identity-pitfall)
 - [Group dialog access checklist](vendor-skills/devops/secure-project-server-ops/references/albery-hermes-gateway-routing.md#group-dialog-access-checklist)
 - [Reporting](vendor-skills/devops/secure-project-server-ops/references/albery-hermes-gateway-routing.md#reporting)
+
+## `vendor-skills/devops/secure-project-server-ops/references/albery-zoom-webhook-validation.md` · [?]
+- [Key lesson from the session](vendor-skills/devops/secure-project-server-ops/references/albery-zoom-webhook-validation.md#key-lesson-from-the-session)
+- [Safe diagnostic sequence](vendor-skills/devops/secure-project-server-ops/references/albery-zoom-webhook-validation.md#safe-diagnostic-sequence)
+- [Pitfalls](vendor-skills/devops/secure-project-server-ops/references/albery-zoom-webhook-validation.md#pitfalls)
 
 ## `vendor-skills/devops/secure-project-server-ops/references/claude-code-telegram-bridge.md` · [?]
 - [Durable pitfalls from 2026-06 bridge fix](vendor-skills/devops/secure-project-server-ops/references/claude-code-telegram-bridge.md#durable-pitfalls-from-2026-06-bridge-fix)
@@ -2643,8 +2663,20 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [When to Use](vendor-skills/software-development/software-development-workflows/SKILL.md#when-to-use)
 - [Router](vendor-skills/software-development/software-development-workflows/SKILL.md#router)
 - [Common Discipline](vendor-skills/software-development/software-development-workflows/SKILL.md#common-discipline)
+- [Diagnostic-Only / Root-Cause Requests](vendor-skills/software-development/software-development-workflows/SKILL.md#diagnostic-only-root-cause-requests)
+- [Large Cleanup / Stacked Refactor PRs](vendor-skills/software-development/software-development-workflows/SKILL.md#large-cleanup-stacked-refactor-prs)
 - [Pitfalls](vendor-skills/software-development/software-development-workflows/SKILL.md#pitfalls)
 - [Verification Checklist](vendor-skills/software-development/software-development-workflows/SKILL.md#verification-checklist)
+
+## `vendor-skills/software-development/software-development-workflows/references/diagnostic-only-production-agent-incident.md` · [?]
+- [Safe investigation sequence](vendor-skills/software-development/software-development-workflows/references/diagnostic-only-production-agent-incident.md#safe-investigation-sequence)
+- [Pitfall from a real session](vendor-skills/software-development/software-development-workflows/references/diagnostic-only-production-agent-incident.md#pitfall-from-a-real-session)
+
+## `vendor-skills/software-development/software-development-workflows/references/stacked-monolith-cleanup.md` · [?]
+- [Proven pattern](vendor-skills/software-development/software-development-workflows/references/stacked-monolith-cleanup.md#proven-pattern)
+- [Good PR scope](vendor-skills/software-development/software-development-workflows/references/stacked-monolith-cleanup.md#good-pr-scope)
+- [Report format](vendor-skills/software-development/software-development-workflows/references/stacked-monolith-cleanup.md#report-format)
+- [Pitfalls](vendor-skills/software-development/software-development-workflows/references/stacked-monolith-cleanup.md#pitfalls)
 
 ## `vendor-skills/yuanbao/SKILL.md` · [?]
 - [CRITICAL: How Messaging Works](vendor-skills/yuanbao/SKILL.md#critical-how-messaging-works)

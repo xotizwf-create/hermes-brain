@@ -3,7 +3,7 @@ id: albery-hermes
 type: project
 project: albery
 tags: [albery, hermes, agent, codex, cron, telegram, mcp, reference]
-updated: 2026-06-18
+updated: 2026-07-01
 secret_refs: [proj/albery/ssh/root]
 ---
 
@@ -69,7 +69,9 @@ secret_refs: [proj/albery/ssh/root]
 | [hermes-automations.md](hermes-automations.md) | cron `zoom-to-tasks` и `owner-daily` (обе фазы), где править поведение отчётов |
 | [hermes-operations.md](hermes-operations.md) | cron/Telegram/сессии, STT (Groq), таймауты, деплой промптов, правило рестарта gateway, approval=off, фикс `NameError` + `/accounts`/`/limits` + авто-переприменение, веб-UI знаний |
 
-### Google Sheets через битрикс-агента
+### Google Sheets / Docs через битрикс-агента
+
+Фикс 2026-07-01: MCP-инструмент `fetch_url` в live-коде Альбери (`/var/www/albery/mcp/context_server.py`) больше не читает Google Sheets/Docs через публичный export без авторизации. Для ссылок `docs.google.com/spreadsheets/...` он читает выбранный `gid` через Google Sheets API; для `docs.google.com/document/...` экспортирует текст через Google Drive API. OAuth берётся из того же аккаунта `a9ent.ai@gmail.com`, который уже создаёт/редактирует таблицы, поэтому закрытые файлы достаточно расшарить этому аккаунту, открывать доступ «всем по ссылке» не нужно. Проверка: приватная тестовая таблица и приватный тестовый Google Doc, доступные только агентскому аккаунту, успешно прочитались через исправленный код; live gateway перезапущен.
 
 Фикс 2026-06-18: инструменты `create_google_sheet` и `write_google_sheet_values` в live-коде Альбери (`/var/www/albery/app.py`, плюс MCP-описание в `mcp/context_server.py`) нормализуют формулы под локаль Google Sheets. Для `ru_RU` сервер автоматически заменяет разделители аргументов формул с запятых на точки с запятой вне строковых литералов и после записи проверяет диапазон на ошибки формул. Если ошибки остаются, инструмент падает, чтобы агент не мог сказать «готово» про битую таблицу. Проверка: временная таблица с `=SUM(A2,B2)` в `ru_RU` дала рабочий результат без ошибок; созданная пользователем таблица `Калькулятор доходов и расходов` была исправлена — 20 формул конвертировано, ошибок формул не осталось.
 

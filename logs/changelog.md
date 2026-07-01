@@ -2,7 +2,7 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-06-28
+updated: 2026-07-01
 secret_refs: []
 ---
 
@@ -10,6 +10,9 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
+
+## 2026-07-01
+- **Albery — `fetch_url` теперь читает закрытые Google Sheets/Docs от имени `a9ent.ai@gmail.com`.** Причина: инструмент чтения ссылок переписывал Google Sheets/Docs в публичный export CSV/TXT и скачивал обычным HTTP без OAuth, поэтому закрытые файлы, доступные агентскому аккаунту, всё равно давали «нет доступа». Фикс в live-коде `mcp/context_server.py`: для `docs.google.com/spreadsheets/...` чтение выбранного `gid` идёт через Google Sheets API; для `docs.google.com/document/...` — экспорт в `text/plain` через Google Drive API (Docs API не требуется). Обычные URL остались на прежнем HTTP-пути. Проверено на приватной тестовой таблице и приватном Google Doc, доступных только `a9ent.ai@gmail.com`; live gateway перезапущен. Коммит Albery `0fd733e` запушен в GitHub, на сервере также локальный коммит `4101924`. Док: `projects/albery/hermes.md`.
 
 ## 2026-06-28
 - **Hermes Telegram — защита от дубля длинного финального ответа после частичной доставки.** Причина повтора: при длинном финальном ответе Telegram adapter уже показывал первый chunk, но при сбое continuation возвращал `overflow_continuation_failed` как retryable; runtime мог повторить весь финальный ответ и продублировать видимый префикс. В live-коде и startup-патче `/root/.hermes/patches/telegram_overflow_dedup_patch.py` частичная overflow-ошибка сделана non-retryable; fallback сохраняет отправку только недостающего хвоста. Проверено без слепого рестарта: `py_compile` adapter/patch OK, `tests/gateway/test_telegram_overflow_partial.py` — 4 passed. Док: `engineering/hermes-troubleshooting.md`, `logs/mistakes.md`.
