@@ -370,10 +370,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Жёсткие правила, выстраданные на практике](projects/albery/owner-reports.md#жёсткие-правила-выстраданные-на-практике)
 - [Ключевые регламенты в «О компании» (имена файлов в зеркале Google Drive)](projects/albery/owner-reports.md#ключевые-регламенты-в-о-компании-имена-файлов-в-зеркале-google-drive)
 
-## `projects/albery/refactor-plan.md` · [project] refactoring, architecture, plan
+## `projects/albery/refactor-plan.md` · [project] refactoring, architecture, plan, b24bot
 - [Контекст](projects/albery/refactor-plan.md#контекст)
 - [Шаги (каждый — отдельный PR)](projects/albery/refactor-plan.md#шаги-каждый-отдельный-pr)
 - [Статус](projects/albery/refactor-plan.md#статус)
+- [Журнал](projects/albery/refactor-plan.md#журнал)
 
 ## `projects/albery/runbook.md` · [project] runbook, ops
 - [Service](projects/albery/runbook.md#service)

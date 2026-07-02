@@ -2,7 +2,7 @@
 id: albery-refactor-plan
 type: project
 project: albery
-tags: [refactoring, architecture, plan]
+tags: [refactoring, architecture, plan, b24bot]
 updated: 2026-07-02
 secret_refs: []
 ---
@@ -47,6 +47,26 @@ god-объекты, и это цель данного плана:
 - **Ш5. Правило:** `app.py` заморожен на приём нового кода — новое только в свои модули.
 
 ## Статус
-- [ ] Ш0 · [ ] Ш1 · [ ] Ш2.1–2.6 · [ ] Ш3 · [ ] Ш4 · [ ] Ш5 (объявить после Ш2)
+- [x] Ш0 · [x] Ш1 (сетка уже существовала — smoke+pyflakes+CI c Postgres) · [x] Ш2.1 · [ ] Ш2.2–2.6 · [ ] Ш3 · [ ] Ш4 · [ ] Ш5
 
-Локальный клон для работы: `C:\Users\hotiz\albery-audit` (shallow от 0fd733e, 2026-07-01).
+## Журнал
+- **2026-07-02 Ш0:** прод (186) был ГРЯЗНЫЙ и разъехавшийся: незакоммиченные живые патчи в
+  `app.py`/`context_server.py` (таймаут-сообщения b24-бота + OAuth-описания fetch_url) и локальный
+  коммит-двойник. Всё закоммичено (`6eeda3c`), история выровнена rebase'ом. **Пуш с прода теперь
+  работает**: read-write deploy key `albery-prod-rw` (`/root/.ssh/albery_deploy`, remote переключён
+  на SSH, `core.sshCommand` в конфиге репо). 33 файла `app.py.bak.*`/`*.predeploy.*` убраны из
+  рабочего дерева в `/var/backups/albery/worktree-baks/`; `.gitignore` теперь блокирует `*.bak*`,
+  `*.predeploy.*`, runtime-state JSON. **Правило: прод-дерево держим чистым — живой патч = сразу
+  коммит+пуш** (Albery-Hermes патчит прод по месту, за этим надо следить).
+- **2026-07-02 Ш1:** сетка уже была: `tests/test_smoke.py` (import + pyflakes undefined names),
+  74 теста, CI `tests.yml` (Postgres 16 + миграции + pytest; фронт tsc+vite build). Локально и в CI зелёно.
+- **2026-07-02 Ш2.1 СДЕЛАНО:** Bitrix-чатбот вынесен из `app.py` в `b24bot.py` (коммит `63bffbd`):
+  два блока verbatim — agent-access API (`/api/agent-access`, «Настройки Агента») + весь бот
+  (21655–23777). `app.py` −2 235 строк (25.7k → 23.4k). Модуль регистрирует маршруты на общем
+  Flask `app` при импорте (import в конце app.py); 19 общих хелперов импортируются `from app import`
+  — это временный шов, уйдёт при выносе `services/`/`integrations/`. Карта маршрутов проверена
+  идентичной до/после (130 rules, включая methods+endpoints). Смоук расширен (pyflakes b24bot +
+  наличие бот-маршрутов), 76 тестов зелёные, CI зелёный, выложено на прод: рестарт `albery`,
+  login 200 / imbot 403 (авторизация работает) / journal чист.
+
+Локальный клон для работы: `C:\Users\hotiz\albery-audit` (+ venv `.venv`, `pytest -q` = 76 pass).
