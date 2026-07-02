@@ -3,13 +3,36 @@ id: albery-server-mcp-tools
 type: project
 project: albery
 tags: [albery, mcp, bitrix, zoom, fetch-url, webhooks, reference]
-updated: 2026-06-18
+updated: 2026-07-02
 secret_refs: []
 ---
 
 # Albery — MCP-инструменты и их особенности (Bitrix, Zoom, fetch_url, фиксы)
 
 > Извлечено из `server-context.md` при разбиении по темам (2026-06-13). Соседние документы: [server-context.md](server-context.md) (хаб), [server-infra.md](server-infra.md), [server-mcp-tools.md](server-mcp-tools.md), [server-integrations-sync.md](server-integrations-sync.md).
+
+## Core-коннекторы: двухступенчатая загрузка инструментов (2026-07-02)
+
+Чат-бот Bitrix больше не регистрирует все 68–72 инструмента на каждый ход (~10–15k токенов
+балласта). Добавлены **`/mcp-core`** и **`/mcp-ops-core`** (те же секреты, что `/mcp` и
+`/mcp-ops`): tools/list отдаёт кураторское **ядро из 26 инструментов** (`CORE_TOOL_NAMES` в
+`mcp/context_server.py`; собрано по реальной статистике вызовов из state.db Hermes — ~82%
+исторических вызовов + все инструменты, которые бот-промпт называет по именам) плюс два
+мета-инструмента:
+
+- `find_tool(query)` — поиск по имени+описанию всех инструментов тира (query — английские
+  ключевые слова), возвращает имя/описание/inputSchema;
+- `call_tool(name, arguments)` — вызывает любой инструмент тира по точному имени.
+
+Безопасность тиров сохранена: прокси резолвит по тому же набору тира, ops-core не достаёт
+админские инструменты. `start_here` честно отдаёт скрытые (`more_tools_via_call_tool` +
+`two_stage_note`). **Кроны не тронуты** — они сидят на полных `/mcp` и `/mcp-ops`, их
+скриптованные имена инструментов работают как раньше. Бот переключён через
+`B24_CORE_TOOLSET=1` в `/var/www/albery/.env` (откат: убрать флаг + restart albery);
+hermes-коннекторы `albery-core`/`albery-ops-core` добавлены в `/root/.hermes/config.yaml`
+(бэкап `config.yaml.bak-core-toolset-*`). Новый инструмент в ядро = добавить имя в
+`CORE_TOOL_NAMES`; проверка — `scripts/deploy_smoke.py` (гоняет оба core-эндпоинта и
+find_tool/call_tool). Коммит `543d906`.
 
 ## Недавние прод-изменения (вебхуки Bitrix/Zoom, инкрементальная синхронизация)
 
