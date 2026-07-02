@@ -2,7 +2,7 @@
 id: index
 type: schema
 tags: [root, routing, entrypoint]
-updated: 2026-06-16
+updated: 2026-07-02
 secret_refs: []
 ---
 
@@ -49,6 +49,13 @@ every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
    **Never run a build/test/migration against the live prod DB.** Procedure (mandatory first step):
    `engineering/server-preflight.md`. (Skipping this caused the 2026-05-31 LiteExams OOM → DB drops →
    "another device" lockouts.)
+7. **Repo hygiene: one-off scripts and task outputs go ONLY to `tmp/` (gitignored) — never the repo
+   root.** After answering the owner, leave the working tree clean: commit approved work with its
+   changelog line, or move scratch to `tmp/`. Never commit a file containing merge-conflict markers
+   (`<<<<<<<`) — resolve first; `scripts/validate.py` now fails on both stray-root leftovers (they
+   break frontmatter checks) and conflict markers. If a scratch script proves reusable, promote it to
+   `scripts/` with a real name. (The 2026-07-02 cleanup removed ~30 root leftovers and a changelog
+   committed with conflict markers — don't recreate that mess.)
 
 ## Areas
 

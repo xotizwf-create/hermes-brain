@@ -81,6 +81,16 @@ def check_mojibake(md: Path) -> None:
                       f"(Р/С = {rs / cyr:.0%} of Cyrillic; real Russian is <7%) — re-check encoding")
 
 
+CONFLICT_RE = re.compile(r"^(<{7} |={7}$|>{7} )", re.MULTILINE)
+
+
+def check_conflict_markers(f: Path) -> None:
+    """Merge-conflict markers must never be committed (the 2026-06 changelog incident)."""
+    text = f.read_text(encoding="utf-8", errors="ignore")
+    if CONFLICT_RE.search(text):
+        errors.append(f"{f.relative_to(ROOT)}: contains merge-conflict markers (<<<<<<</=======/>>>>>>>)")
+
+
 def check_secrets(f: Path) -> None:
     if any(part in SECRET_ALLOWLIST for part in f.relative_to(ROOT).parts):
         return
@@ -110,6 +120,8 @@ def main() -> int:
                 and "tmp" not in f.parts
                 and f.suffix in {".md", ".yaml", ".yml", ".py", ".sh"}):
             check_secrets(f)
+            if f.name != "validate.py":  # this file legitimately spells the marker patterns
+                check_conflict_markers(f)
     if errors:
         print("VALIDATION FAILED:")
         for e in errors:
