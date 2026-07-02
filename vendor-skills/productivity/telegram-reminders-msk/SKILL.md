@@ -55,6 +55,8 @@ Keep emoji relevant to the task: 📦 for archive/package, 📞 for calls, 🧾 
 - To show active reminders, run `/root/.hermes/scripts/reminder_audit.py --list` and translate the result into a short Russian message.
 - A script-only watchdog cron job named `reminder-audit` runs every 15 minutes. It stays silent when everything is OK and alerts only if an active reminder is overdue, failed, or not delivered.
 - The audit script is `/root/.hermes/scripts/reminder_audit.py`; it reads the local Hermes cron jobs file and displays reminder times in Moscow time.
+- If the owner reports noisy audit messages like `ошибка выполнения` / `не удалось отправить`, do not just explain them. Identify the exact reminder with bad `last_status` or `last_delivery_error`, run that reminder once if the underlying script/prompt is now healthy, then rerun the audit script. A clean audit prints nothing.
+- Any audit/self-check notification that reaches the «Уведомления» group must be written for a human: plain Russian, what happened, impact, and next action. Do not paste raw logs, traceback fragments, job ids, internal paths, or provider errors into the group unless Александр asks for technical details.
 
 ## Pitfall this prevents
 

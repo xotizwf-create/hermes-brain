@@ -32,6 +32,7 @@ Class-level research workflow for finding sources, monitoring feeds, querying do
 - Collect Russian public cadastral-map/НСПД parcel data around a cadastral number and produce source-backed neighbour/distance tables.
 - Build Russian corporate ownership / beneficiary schemes from official evidence such as ЕГРЮЛ extracts, issuer disclosures, and shareholder-register extracts.
 - Plan time-sensitive multimodal travel chains from live schedules/prices while balancing budget, buffer time, and disruption risk.
+- Research university exchange / academic mobility programs: partner catalogs, eligibility, documents, costs, deadlines, coordinators, and application sequence.
 
 ## Workflow
 
@@ -90,6 +91,10 @@ When the user asks for internet photos or source-backed media, optimize for deli
 4. Verify the file is a real image (`file`, PIL dimensions) and, when relevance matters, inspect with vision before sending.
 5. On Telegram, send as native media using `MEDIA:/absolute/path` because the user expects actual attachments, not bare local paths or only web links.
 
+### University Exchange / Academic Mobility Programs
+
+When the user asks about student exchange, academic mobility, study abroad, or university partner programs, research the whole official mobility page cluster rather than one landing/FAQ page. Capture: what the program is, partner countries/universities, eligible student levels, language/TOEFL requirements, costs and scholarship caveats, application timing, document set, selection process, post-selection nomination/visa/housing steps, and the exact coordinator contact. If deadline pages are stale, label them stale and tell the user to confirm current dates with the official coordinator. Detailed KFU example and output pattern live in `references/university-exchange-program-research.md`.
+
 ### Travel Schedule / Ticket Chain Research
 
 When the user asks for a travel chain (e.g. train to Moscow plus same-day flight), treat it as a live schedule-and-risk research task, not a generic route suggestion:
@@ -136,6 +141,7 @@ Preserve link structure and provenance when building local wikis. Do not invent 
 - Mixing buildings/premises into land-parcel lists; filter cadastral-map features to land parcels unless the user explicitly asks for all objects.
 - For Russian ownership charts, filling AO shareholder gaps with plausible beneficiary claims from unofficial sources. If official ЕГРЮЛ/disclosure evidence stops at an AO/registrar, report the gap and required shareholder-register extracts instead.
 - For travel chains, optimizing only for the cheapest ticket and ignoring transfer/check-in buffers or disruption-prone time windows. Always show the trade-off between budget and robustness.
+- For university exchange research, relying on one FAQ/landing page and missing the separate eligibility, application, after-selection, documents, deadlines, and contacts pages. Follow the full official navigation cluster and label stale deadline pages clearly.
 
 ## Verification Checklist
 
