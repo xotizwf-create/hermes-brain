@@ -94,8 +94,8 @@ def check_secrets(f: Path) -> None:
 
 def main() -> int:
     for md in ROOT.rglob("*.md"):
-        if ".git" in md.parts or "archive" in md.parts or "vendor-skills" in md.parts:
-            continue  # vendor-skills/ = backup mirror of Hermes' bundled library, not our authored docs
+        if ".git" in md.parts or "archive" in md.parts or "vendor-skills" in md.parts or "tmp" in md.parts:
+            continue  # vendor-skills/ = backup mirror; tmp/ = gitignored one-off scratch, never committed
         check_mojibake(md)  # encoding sanity for every doc, incl. skills
         if md.name in {"README.md", "CLAUDE.md"}:
             continue  # landing / agent-instruction files, not knowledge docs
@@ -107,6 +107,7 @@ def main() -> int:
         check_frontmatter(md)
     for f in ROOT.rglob("*"):
         if (f.is_file() and ".git" not in f.parts and "vendor-skills" not in f.parts
+                and "tmp" not in f.parts
                 and f.suffix in {".md", ".yaml", ".yml", ".py", ".sh"}):
             check_secrets(f)
     if errors:

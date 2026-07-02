@@ -52,10 +52,17 @@ NEW = '''    _low = (text or "").lower()  # PATCH clear-provider-errors: limit v
         )
     if _GATEWAY_RATE_LIMIT_RE.search(text):
         return "⏱️ Провайдер временно ограничивает запросы (rate limit). Подождите немного и повторите."
+    if ("no codex credentials" in _low or "no credentials" in _low
+            or "trying fallback" in _low or "provider auth failed" in _low):
+        return (
+            "\U0001f9e0 Мозг (codex) сейчас недоступен: в пуле нет рабочего аккаунта. "
+            "Чаще всего это исчерпанный лимит единственного аккаунта (нет резерва) — реже слетевшая "
+            "авторизация. Точную причину и время сброса покажут /accounts и /limits."
+        )
     if _GATEWAY_AUTH_ERROR_RE.search(text) or "not logged in" in _low:
         return (
-            "\U0001f511 Не удалось авторизоваться у провайдера: нет рабочего аккаунта или невалидные креды "
-            "(нужен повторный вход/ключ). Это НЕ лимит. Детали — в логах гейтвея."
+            "\U0001f511 Похоже на проблему авторизации провайдера (невалидные креды/нужен повторный вход). "
+            "Но если аккаунт один — это может быть и исчерпанный лимит: сверься с /accounts и /limits."
         )
 '''
 

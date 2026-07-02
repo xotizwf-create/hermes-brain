@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-07-01
+updated: 2026-07-02
 secret_refs: []
 ---
 
@@ -369,6 +369,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Контракт еженедельного отчёта собственнику (суть)](projects/albery/owner-reports.md#контракт-еженедельного-отчёта-собственнику-суть)
 - [Жёсткие правила, выстраданные на практике](projects/albery/owner-reports.md#жёсткие-правила-выстраданные-на-практике)
 - [Ключевые регламенты в «О компании» (имена файлов в зеркале Google Drive)](projects/albery/owner-reports.md#ключевые-регламенты-в-о-компании-имена-файлов-в-зеркале-google-drive)
+
+## `projects/albery/refactor-plan.md` · [project] refactoring, architecture, plan
+- [Контекст](projects/albery/refactor-plan.md#контекст)
+- [Шаги (каждый — отдельный PR)](projects/albery/refactor-plan.md#шаги-каждый-отдельный-pr)
+- [Статус](projects/albery/refactor-plan.md#статус)
 
 ## `projects/albery/runbook.md` · [project] runbook, ops
 - [Service](projects/albery/runbook.md#service)
@@ -1333,7 +1338,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Remote LLM Telegram bridge silence / limit-burn triage](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-llm-telegram-bridge-silence-limit-burn-triage)
 - [Remote project env secret retrieval pattern](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-project-env-secret-retrieval-pattern)
 - [MCP/API side-effect timeout triage](vendor-skills/devops/secure-project-server-ops/SKILL.md#mcpapi-side-effect-timeout-triage)
-- [Albery Google Sheets quality guard](vendor-skills/devops/secure-project-server-ops/SKILL.md#albery-google-sheets-quality-guard)
+- [Albery Google Sheets / Docs quality guards](vendor-skills/devops/secure-project-server-ops/SKILL.md#albery-google-sheets-docs-quality-guards)
 - [Remote Hermes cron inspection](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-hermes-cron-inspection)
 - [Remote Hermes `openai-codex` auth repair](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-hermes-openai-codex-auth-repair)
 - [Remote Hermes Telegram routing / notification-chat migration](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-hermes-telegram-routing-notification-chat-migration)
@@ -1373,6 +1378,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Durable pitfalls from 2026-06 bridge fix](vendor-skills/devops/secure-project-server-ops/references/claude-code-telegram-bridge.md#durable-pitfalls-from-2026-06-bridge-fix)
 - [Minimal verification shape](vendor-skills/devops/secure-project-server-ops/references/claude-code-telegram-bridge.md#minimal-verification-shape)
 - [What to tell the owner](vendor-skills/devops/secure-project-server-ops/references/claude-code-telegram-bridge.md#what-to-tell-the-owner)
+
+## `vendor-skills/devops/secure-project-server-ops/references/google-oauth-private-file-fetch.md` · [?]
+- [Durable lesson](vendor-skills/devops/secure-project-server-ops/references/google-oauth-private-file-fetch.md#durable-lesson)
+- [Fix pattern](vendor-skills/devops/secure-project-server-ops/references/google-oauth-private-file-fetch.md#fix-pattern)
+- [Remote deployment/push pitfall](vendor-skills/devops/secure-project-server-ops/references/google-oauth-private-file-fetch.md#remote-deploymentpush-pitfall)
+- [What not to save as a rule](vendor-skills/devops/secure-project-server-ops/references/google-oauth-private-file-fetch.md#what-not-to-save-as-a-rule)
 
 ## `vendor-skills/devops/secure-project-server-ops/references/gov-exams-app-liteexams.md` · [?]
 - [Project identity](vendor-skills/devops/secure-project-server-ops/references/gov-exams-app-liteexams.md#project-identity)
@@ -1423,6 +1434,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Trigger](vendor-skills/devops/secure-project-server-ops/references/remote-env-mcp-secret-retrieval.md#trigger)
 - [Safe flow](vendor-skills/devops/secure-project-server-ops/references/remote-env-mcp-secret-retrieval.md#safe-flow)
 - [Pitfalls](vendor-skills/devops/secure-project-server-ops/references/remote-env-mcp-secret-retrieval.md#pitfalls)
+
+## `vendor-skills/devops/secure-project-server-ops/references/remote-hermes-codex-device-auth.md` · [?]
+- [Durable lessons](vendor-skills/devops/secure-project-server-ops/references/remote-hermes-codex-device-auth.md#durable-lessons)
+- [Safe flow](vendor-skills/devops/secure-project-server-ops/references/remote-hermes-codex-device-auth.md#safe-flow)
+- [Pitfalls](vendor-skills/devops/secure-project-server-ops/references/remote-hermes-codex-device-auth.md#pitfalls)
 
 ## `vendor-skills/devops/secure-project-server-ops/references/remote-llm-telegram-bridge-triage.md` · [?]
 - [Durable diagnosis pattern](vendor-skills/devops/secure-project-server-ops/references/remote-llm-telegram-bridge-triage.md#durable-diagnosis-pattern)
@@ -2492,6 +2508,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Regulatory Standards / Legal-Normative Evidence](vendor-skills/research/research-intelligence-workflows/SKILL.md#regulatory-standards-legal-normative-evidence)
 - [Russian Corporate Ownership / Beneficiary Schemes](vendor-skills/research/research-intelligence-workflows/SKILL.md#russian-corporate-ownership-beneficiary-schemes)
 - [Public Image / Media Retrieval](vendor-skills/research/research-intelligence-workflows/SKILL.md#public-image-media-retrieval)
+- [University Exchange / Academic Mobility Programs](vendor-skills/research/research-intelligence-workflows/SKILL.md#university-exchange-academic-mobility-programs)
 - [Travel Schedule / Ticket Chain Research](vendor-skills/research/research-intelligence-workflows/SKILL.md#travel-schedule-ticket-chain-research)
 - [Academic Search and Paper Writing](vendor-skills/research/research-intelligence-workflows/SKILL.md#academic-search-and-paper-writing)
 - [Blog/RSS Monitoring](vendor-skills/research/research-intelligence-workflows/SKILL.md#blogrss-monitoring)
@@ -2531,6 +2548,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [What mattered in the Брянск → Москва → Казань session](vendor-skills/research/research-intelligence-workflows/references/travel-chain-ticket-research.md#what-mattered-in-the-брянск-москва-казань-session)
 - [Practical heuristics](vendor-skills/research/research-intelligence-workflows/references/travel-chain-ticket-research.md#practical-heuristics)
 - [Output shape that worked](vendor-skills/research/research-intelligence-workflows/references/travel-chain-ticket-research.md#output-shape-that-worked)
+
+## `vendor-skills/research/research-intelligence-workflows/references/university-exchange-program-research.md` · [?]
+- [Source strategy](vendor-skills/research/research-intelligence-workflows/references/university-exchange-program-research.md#source-strategy)
+- [KFU / Казанский федеральный университет example](vendor-skills/research/research-intelligence-workflows/references/university-exchange-program-research.md#kfu-казанский-федеральный-университет-example)
+- [Output pattern](vendor-skills/research/research-intelligence-workflows/references/university-exchange-program-research.md#output-pattern)
+- [Pitfalls](vendor-skills/research/research-intelligence-workflows/references/university-exchange-program-research.md#pitfalls)
 
 ## `vendor-skills/smart-home/openhue/SKILL.md` · [?]
 - [Prerequisites](vendor-skills/smart-home/openhue/SKILL.md#prerequisites)

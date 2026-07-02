@@ -8,7 +8,8 @@ project repo. Read this file first, then `INDEX.md`.
 - Built 2026-05-29 by extracting the agent's knowledge out of the website repo ("Сайт мой")
   into its own private repo so it can scale across many projects for years.
 - GitHub: https://github.com/xotizwf-create/hermes-brain (PRIVATE, branch `main`).
-- Local: `C:\hermes-brain` (outside OneDrive). Mirrored to server `/root/.hermes/agent-knowledge`.
+- Local working copy: `g:\OneDrive\Рабочий стол\Мои проекты\Hermes Brain` (the old `C:\hermes-brain`
+  clone went stale at 2026-05-31 and was removed 2026-07-02). Mirrored to server `/root/.hermes/agent-knowledge`.
 
 ## Architecture (the design we committed to)
 - **Canonical store = files in git.** No database for content. Versioned, diffable, reviewable.
@@ -78,14 +79,23 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   shared store `/opt/hermes/secure/projects`. Live at `www.andigital.ru/andigital/secret/<token>/`. Turnkey/resaleable (README).
 - `secure-access`, `postgres-production` — credentials & Postgres ops.
 
-## Current state (2026-05-30)
-- Brain scaffolded, committed, pushed to GitHub, and **mirrored to prod** `217.198.12.236:/root/.hermes/agent-knowledge`.
-- `albery` is the first project. The legacy `agent.md` import was **de-mojibaked** and **split** into
-  `projects/albery/{server-context,vpn-gateway,hermes}.md`.
-- Single source of truth established: legacy `agent.md` + `agent-knowledge/` in the "Сайт мой" repo
-  archived to `_legacy_agent_archive/`; Hermes `config.yaml` system_prompt points at our `INDEX.md`.
+## Current state (2026-07-02)
+- Brain lives in two checkouts of the GitHub repo: this local working copy + prod clone
+  `217.198.12.236:/root/.hermes/agent-knowledge` (two-way git sync, see `skills/update-knowledge/`).
+- **Projects registered (5):** `albery`, `andigital`, `gov-exams-app`, `prostye-postavki`, `hermes-brain`
+  (see `projects/registry.yaml`).
+- **Hermes on 217 = v0.17.0** (config v30). After-update lessons live in `logs/changelog.md` (June):
+  Telegram adapter moved to `plugins/platforms/telegram/adapter.py` (old anchor patches under
+  `/root/.hermes/patches` no longer apply); `compression.codex_gpt55_autoraise` disabled 2026-06-22
+  (it burned Plus limits 3.6× and dumbed answers). Always diff migrated config vs backup after `hermes update`.
+- **Second agent on 217:** Claude Code Telegram bot `@GoogleDeck_Bot` (coder/maintenance) —
+  `engineering/claude-code-tg-agent.md`.
+- **Dedicated Albery Hermes lives on 186.246.7.32** (NOT 217) — `projects/albery/servers.md`.
 - Server connection (no SSH key on PC): `python _deploy_helper.py new "<cmd>"` from the "Сайт мой"
   repo (Paramiko, password from `.env.local`, never printed). Targets: new=217.198.12.236, estonia=95.85.243.43, prod(old)=186.246.7.32.
+- **Repo hygiene (2026-07-02):** the root was cleaned of ~30 ad-hoc leftovers. One-off scripts and
+  task outputs go ONLY to `tmp/` (gitignored), never the repo root — `.gitignore` now also blocks
+  `_*_tmp.*` / `.tmp_*` / root `*.xlsx` patterns.
 
 ## Done (2026-05-30) — full session retrospective in `logs/session-2026-05-30.md`
 1. ✅ Split `server-context.md` → `vpn-gateway.md` + `hermes.md` (+ encoding repair).
@@ -117,14 +127,13 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   Skill: `hh-auto-apply`. Старый `hh-ai-business-automation-watch` (every 2h) живёт отдельно.
 
 ## Open tasks (next steps, not yet done)
-- Reconcile legacy `186.246.7.32` references in `vpn-gateway.md`/`hermes.md` against the live host.
-- Task 4 (deferred): add the user's second project via the `add-project` skill.
-- MCP connection logic: shipped skill `connect-mcp` + manager (live-tested on 217). Use it for any
-  new MCP server: owner pastes a URL → Hermes connects itself. See `connectors/mcp-servers.md`.
-- Re-wire Albery MCP: confirmed 2026-05-30 that host 217.198.12.236 has **0 MCP servers** (no
-  Bitrix/Zoom hands) AND it is **not** the Albery host (it's `andigital`, `/var/www/andidigital`).
-  The MCP host `mcp.m4s.ru` is separate; `MCP_SHARED_SECRET` is not on 217. To connect, get the
-  secret from the owner / the Albery box, then `connect-mcp` add albery. (Also reconcile the stale
-  `production_host: 217...` + `/var/www/albery/.env` references in the albery docs.)
+- **Albery refactor (owner-approved plan, 2026-07-02):** split the monoliths — `app.py` (23.5k lines),
+  `mcp/context_server.py` (5.9k), `Интерфейс/src/App.tsx` (9.2k). Full staged plan:
+  `projects/albery/refactor-plan.md`. Do NOT add new code to `app.py`.
+- Reconcile legacy `186.246.7.32` references in `vpn-gateway.md`/`hermes.md` against the live host
+  (host truth corrected 2026-06-11 in `projects/albery/servers.md`; sweep the older docs).
+- Skills revision pass: 25 custom skills — check for dead paths/hosts after the June changes.
+- Re-wire Albery MCP on 217 if ever needed: `MCP_SHARED_SECRET` is not on 217; get it from the
+  owner / the Albery box (186), then `connect-mcp` add albery. See `connectors/mcp-servers.md`.
 
 Keep this section current as tasks complete.

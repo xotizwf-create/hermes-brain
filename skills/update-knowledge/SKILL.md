@@ -26,6 +26,10 @@ own; if none exists, create a new instruction. Do not ask separately whether to 
    dirty files, stop and resolve them first: inspect the diff, then either commit the previous approved
    change with its changelog line or explicitly revert junk. Do not mix unrelated brain edits in one
    commit and do not leave the repo dirty after answering the owner.
+   **One-off scripts and task outputs go ONLY to `tmp/` (gitignored) — never the repo root.** The
+   2026-07-02 cleanup moved ~30 `_*_tmp.*` / `.xlsx` leftovers out of the root; one of them was even
+   breaking `validate.py`. If a scratch script proves reusable, promote it to `scripts/` with a real
+   name and docstring instead of leaving it in the root.
 1. Decide the target file (or new file). New docs MUST have valid frontmatter
    (`id`, `type`, `updated`, optional `tags`/`secret_refs`/`aliases`) per `schema/frontmatter.schema.yaml`.
 2. Make the edit. Bump `updated`. Never write secret values — references only.
@@ -69,8 +73,10 @@ visible failures, not a bigger model. Four habits, always on:
    — add/clarify the doc or skill (good title + frontmatter `description`/`tags`) so it ranks next time.
 
 ## Sync model: two-way git (single source of truth)
-Canonical = the GitHub repo `hermes-brain`. Both the local working copy (`C:\hermes-brain`) and the
-server brain (`/root/.hermes/agent-knowledge`, a **git clone**) are checkouts of it. Sync = git.
+Canonical = the GitHub repo `hermes-brain`. Both the local working copy
+(`g:\OneDrive\Рабочий стол\Мои проекты\Hermes Brain`; the old `C:\hermes-brain` clone was removed
+2026-07-02 as stale) and the server brain (`/root/.hermes/agent-knowledge`, a **git clone**) are
+checkouts of it. Sync = git.
 
 - **Local edit → everywhere:** commit locally → `git push` → on the server `git -C
   /root/.hermes/agent-knowledge pull --ff-only`.

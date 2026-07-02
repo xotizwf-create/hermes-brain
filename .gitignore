@@ -29,3 +29,10 @@ __pycache__/
 node_modules/
 tmp_*
 tmp/
+
+# Ad-hoc task leftovers — one-off scripts/outputs live ONLY in tmp/, never the repo root
+_*_tmp.*
+.tmp_*
+_nspd_*
+_weekly_*
+/*.xlsx
