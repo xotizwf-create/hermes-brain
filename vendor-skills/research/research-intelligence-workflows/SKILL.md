@@ -91,6 +91,14 @@ When the user asks for internet photos or source-backed media, optimize for deli
 4. Verify the file is a real image (`file`, PIL dimensions) and, when relevance matters, inspect with vision before sending.
 5. On Telegram, send as native media using `MEDIA:/absolute/path` because the user expects actual attachments, not bare local paths or only web links.
 
+### University Admissions / Program Entrance Research
+
+When the user asks for university programs, admissions tracks, entrance exams, or preparation links, use official admissions pages and institute/faculty pages first; aggregator pages are discovery only. Research the whole admissions page cluster, not one landing page: institute applicant page, central admissions portal, plan/intake PDF, rules PDF, exam/program page, schedules, criteria/rubrics, and any profile/program brochure.
+
+For Russian university pages with accordions or dynamic blocks (e.g. KFU admissions pages), use the browser/DOM to expand the relevant institute and extract hidden links; plain text extraction may miss the program/criteria PDFs. Cross-check dynamic admissions pages against the official intake plan PDF: pages can show extra or stale directions, while the plan PDF indicates the current-cycle programs/intake. Report this distinction explicitly instead of merging both lists as equally current.
+
+Output should include: official source links, program/direction code, profile names, form and duration when available, entrance exam form, minimum score if stated, links to exam program PDFs and assessment criteria, schedule links, and a practical prep sequence. If PDFs are image-only or text extraction is poor, still provide the verified official PDF links and avoid inventing internal topics unless OCR was actually performed.
+
 ### University Exchange / Academic Mobility Programs
 
 When the user asks about student exchange, academic mobility, study abroad, or university partner programs, research the whole official mobility page cluster rather than one landing/FAQ page. Capture: what the program is, partner countries/universities, eligible student levels, language/TOEFL requirements, costs and scholarship caveats, application timing, document set, selection process, post-selection nomination/visa/housing steps, and the exact coordinator contact. If deadline pages are stale, label them stale and tell the user to confirm current dates with the official coordinator. Detailed KFU example and output pattern live in `references/university-exchange-program-research.md`.
