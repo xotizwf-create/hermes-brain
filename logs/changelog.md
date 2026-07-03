@@ -2,7 +2,7 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-07-01
+updated: 2026-07-03
 secret_refs: []
 ---
 
@@ -10,6 +10,9 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
+
+## 2026-07-03
+- **Albery — Центр Агента: настройка возможностей субагента (тумблеры/галочки с реальным энфорсментом).** Под каждого субагента теперь гибко настраиваются MCP-инструменты (тумблеры), инструкции и скиллы из общей библиотеки (галочки), поверх фиксированного baseline, который не отключить. Энфорсмент настоящий: MCP-инструменты скоупятся на уровне коннектора (`tools/list` отдаёт только включённые + обязательный baseline; выключенный невидим и невызываем), инструкции/скиллы инжектятся в промпт ТОЛЬКО выбранные. Скиллы — промпт-энфорсмент (Hermes грузит скиллы глобально; движковое скрытие — отдельная задача). Бэкенд `agent_center.py` (эндпоинты `GET/PUT /api/agent-center/agents/<slug>/config`, `_agent_tool_names` + baseline, `agent_selected_knowledge`), инжект в `b24bot.py`, UI `AgentCapabilityPanel` в `Интерфейс/src/agent/views/AgentsView.tsx`, миграция `038_agent_config.sql` (идемпотентная, ALWAYS_APPLY: `agents.tools_customized` + `agent_knowledge_links`). Локально: tsc+vite OK, pytest 84 pass. Задеплоено на прод 186 (коммит Albery `f6c27a6`, миграция применена, рестарт, dist-своп, `deploy_smoke` = SMOKE OK); E2E-смоук на проде: admin-инструменты и битые id отсекаются, served-набор схлопывается в baseline+выбранное, инжект = только выбранное. Док: `projects/albery/agent-center.md`.
 
 ## 2026-07-01
 - **Albery — `fetch_url` теперь читает закрытые Google Sheets/Docs от имени `a9ent.ai@gmail.com`.** Причина: инструмент чтения ссылок переписывал Google Sheets/Docs в публичный export CSV/TXT и скачивал обычным HTTP без OAuth, поэтому закрытые файлы, доступные агентскому аккаунту, всё равно давали «нет доступа». Фикс в live-коде `mcp/context_server.py`: для `docs.google.com/spreadsheets/...` чтение выбранного `gid` идёт через Google Sheets API; для `docs.google.com/document/...` — экспорт в `text/plain` через Google Drive API (Docs API не требуется). Обычные URL остались на прежнем HTTP-пути. Проверено на приватной тестовой таблице и приватном Google Doc, доступных только `a9ent.ai@gmail.com`; live gateway перезапущен. Коммит Albery `0fd733e` запушен в GitHub, на сервере также локальный коммит `4101924`. Док: `projects/albery/hermes.md`.
