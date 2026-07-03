@@ -29,6 +29,10 @@ in the owner's language; don't dump raw HTML.
   little or "лучше открыть через браузер": use `browser_navigate` then `browser_snapshot`
   (and `browser_click`/`browser_type`/`browser_scroll` to interact). The browser toolset is enabled.
 - **"Найди в интернете…" / no URL yet:** use `web_search`, then read the best result with `fetch_url.py`.
+- **Legacy dynamic forms** (university admissions rankings, old government forms): if browser snapshots
+  show empty controls, inspect raw HTML and form query parameters. Some official Russian sites declare
+  UTF-8 but serve option text in `cp1251`; retry that decoding before giving up. See
+  `references/dynamic-admissions-pages.md`.
 - `web_extract` (Firecrawl) is also available but **summarizes** large pages (costs tokens, truncates)
   — use it only when you explicitly want a summary, not the full text.
 

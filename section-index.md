@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-07-02
+updated: 2026-07-03
 secret_refs: []
 ---
 
@@ -258,6 +258,14 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reasoning](profile/preferences.md#reasoning)
 - [Working style](profile/preferences.md#working-style)
 
+## `projects/albery/agent-center.md` · [project] agent-center, ui, subagents, monitoring, usage, mcp, b24bot, self-learning, reference
+- [Где что живёт](projects/albery/agent-center.md#где-что-живёт)
+- [Конвейер деплоя (каждый этап так и катился)](projects/albery/agent-center.md#конвейер-деплоя-каждый-этап-так-и-катился)
+- [Что уже живое (все данные реальные, автообновление)](projects/albery/agent-center.md#что-уже-живое-все-данные-реальные-автообновление)
+- [Субагенты (главная механика)](projects/albery/agent-center.md#субагенты-главная-механика)
+- [Инциденты и уроки этой стройки (НЕ повторять)](projects/albery/agent-center.md#инциденты-и-уроки-этой-стройки-не-повторять)
+- [Открытое / следующие шаги](projects/albery/agent-center.md#открытое-следующие-шаги)
+
 ## `projects/albery/bitrix-bot.md` · [project] albery, bitrix, imbot, chatbot, hermes, mcp
 - [Текущее состояние (2026-06-15)](projects/albery/bitrix-bot.md#текущее-состояние-2026-06-15)
 - [Архитектура](projects/albery/bitrix-bot.md#архитектура)
@@ -410,6 +418,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Google Apps Script (Google Drive company sync)](projects/albery/server-integrations-sync.md#google-apps-script-google-drive-company-sync)
 
 ## `projects/albery/server-mcp-tools.md` · [project] albery, mcp, bitrix, zoom, fetch-url, webhooks, reference
+- [Core-коннекторы: двухступенчатая загрузка инструментов (2026-07-02)](projects/albery/server-mcp-tools.md#core-коннекторы-двухступенчатая-загрузка-инструментов-2026-07-02)
 - [Недавние прод-изменения (вебхуки Bitrix/Zoom, инкрементальная синхронизация)](projects/albery/server-mcp-tools.md#недавние-прод-изменения-вебхуки-bitrixzoom-инкрементальная-синхронизация)
 - [FAQ MCP](projects/albery/server-mcp-tools.md#faq-mcp)
 - [Поиск по знаниям компании — гибридный (FTS + триграммы + ILIKE), с 2026-06-14](projects/albery/server-mcp-tools.md#поиск-по-знаниям-компании-гибридный-fts-триграммы-ilike-с-2026-06-14)
@@ -2509,6 +2518,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Regulatory Standards / Legal-Normative Evidence](vendor-skills/research/research-intelligence-workflows/SKILL.md#regulatory-standards-legal-normative-evidence)
 - [Russian Corporate Ownership / Beneficiary Schemes](vendor-skills/research/research-intelligence-workflows/SKILL.md#russian-corporate-ownership-beneficiary-schemes)
 - [Public Image / Media Retrieval](vendor-skills/research/research-intelligence-workflows/SKILL.md#public-image-media-retrieval)
+- [University Admissions / Program Entrance Research](vendor-skills/research/research-intelligence-workflows/SKILL.md#university-admissions-program-entrance-research)
 - [University Exchange / Academic Mobility Programs](vendor-skills/research/research-intelligence-workflows/SKILL.md#university-exchange-academic-mobility-programs)
 - [Travel Schedule / Ticket Chain Research](vendor-skills/research/research-intelligence-workflows/SKILL.md#travel-schedule-ticket-chain-research)
 - [Academic Search and Paper Writing](vendor-skills/research/research-intelligence-workflows/SKILL.md#academic-search-and-paper-writing)
