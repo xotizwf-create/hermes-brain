@@ -263,6 +263,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Где что живёт](projects/albery/agent-center.md#где-что-живёт)
 - [Конвейер деплоя (каждый этап так и катился)](projects/albery/agent-center.md#конвейер-деплоя-каждый-этап-так-и-катился)
 - [Что уже живое (все данные реальные, автообновление)](projects/albery/agent-center.md#что-уже-живое-все-данные-реальные-автообновление)
+- [Bitrix webhook: сначала быстрый ACK, потом всё сетевое (2026-07-04)](projects/albery/agent-center.md#bitrix-webhook-сначала-быстрый-ack-потом-всё-сетевое-2026-07-04)
 - [Доступ к Универсальному агенту = СТРОГИЙ allowlist (2026-07-03)](projects/albery/agent-center.md#доступ-к-универсальному-агенту-строгий-allowlist-2026-07-03)
 - [Имя + должность агента, синхронизация с Bitrix (2026-07-03)](projects/albery/agent-center.md#имя-должность-агента-синхронизация-с-bitrix-2026-07-03)
 - [Управление агентской системой из чата — owner-only MCP-инструменты (2026-07-03)](projects/albery/agent-center.md#управление-агентской-системой-из-чата-owner-only-mcp-инструменты-2026-07-03)
