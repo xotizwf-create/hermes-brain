@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-07-03
+updated: 2026-07-04
 secret_refs: []
 ---
 
@@ -184,6 +184,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-07-04](logs/changelog.md#2026-07-04)
 - [2026-07-01](logs/changelog.md#2026-07-01)
 - [2026-06-28](logs/changelog.md#2026-06-28)
 - [2026-06-25](logs/changelog.md#2026-06-25)
@@ -258,12 +259,21 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reasoning](profile/preferences.md#reasoning)
 - [Working style](profile/preferences.md#working-style)
 
-## `projects/albery/agent-center.md` · [project] agent-center, ui, subagents, monitoring, usage, mcp, b24bot, self-learning, reference
+## `projects/albery/agent-center.md` · [project] agent-center, ui, subagents, monitoring, usage, mcp, b24bot, self-learning, github-registry, reference
 - [Где что живёт](projects/albery/agent-center.md#где-что-живёт)
 - [Конвейер деплоя (каждый этап так и катился)](projects/albery/agent-center.md#конвейер-деплоя-каждый-этап-так-и-катился)
 - [Что уже живое (все данные реальные, автообновление)](projects/albery/agent-center.md#что-уже-живое-все-данные-реальные-автообновление)
+- [Доступ к Универсальному агенту = СТРОГИЙ allowlist (2026-07-03)](projects/albery/agent-center.md#доступ-к-универсальному-агенту-строгий-allowlist-2026-07-03)
+- [Имя + должность агента, синхронизация с Bitrix (2026-07-03)](projects/albery/agent-center.md#имя-должность-агента-синхронизация-с-bitrix-2026-07-03)
+- [Управление агентской системой из чата — owner-only MCP-инструменты (2026-07-03)](projects/albery/agent-center.md#управление-агентской-системой-из-чата-owner-only-mcp-инструменты-2026-07-03)
+- [Единый редактор для ВСЕХ агентов (2026-07-03)](projects/albery/agent-center.md#единый-редактор-для-всех-агентов-2026-07-03)
 - [Субагенты (главная механика)](projects/albery/agent-center.md#субагенты-главная-механика)
+- [Настройка возможностей субагента (2026-07-03) — тумблеры/галочки с РЕАЛЬНЫМ энфорсментом](projects/albery/agent-center.md#настройка-возможностей-субагента-2026-07-03-тумблерыгалочки-с-реальным-энфорсментом)
+- [База знаний в GitHub + РЕАЛЬНЫЙ энфорсмент инструкций (2026-07-04)](projects/albery/agent-center.md#база-знаний-в-github-реальный-энфорсмент-инструкций-2026-07-04)
+- [История диалогов пер-агент — каждый бот свою, не смешивать (2026-07-04)](projects/albery/agent-center.md#история-диалогов-пер-агент-каждый-бот-свою-не-смешивать-2026-07-04)
 - [Инциденты и уроки этой стройки (НЕ повторять)](projects/albery/agent-center.md#инциденты-и-уроки-этой-стройки-не-повторять)
+- [Модель агентов (согласовано владельцем 2026-07-03)](projects/albery/agent-center.md#модель-агентов-согласовано-владельцем-2026-07-03)
+- [Универсальный (основной) агент как первоклассный настраиваемый Агент (этап 2, LIVE 2026-07-03)](projects/albery/agent-center.md#универсальный-основной-агент-как-первоклассный-настраиваемый-агент-этап-2-live-2026-07-03)
 - [Открытое / следующие шаги](projects/albery/agent-center.md#открытое-следующие-шаги)
 
 ## `projects/albery/bitrix-bot.md` · [project] albery, bitrix, imbot, chatbot, hermes, mcp
@@ -375,6 +385,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Где живут инструкции (важно: это и есть прод)](projects/albery/owner-reports.md#где-живут-инструкции-важно-это-и-есть-прод)
 - [Типы отчётов и их контракты](projects/albery/owner-reports.md#типы-отчётов-и-их-контракты)
 - [Контракт еженедельного отчёта собственнику (суть)](projects/albery/owner-reports.md#контракт-еженедельного-отчёта-собственнику-суть)
+- [Автопостановка отчётов в задачи Bitrix + уведомления владельцу (полный автомат, 2026-07-04)](projects/albery/owner-reports.md#автопостановка-отчётов-в-задачи-bitrix-уведомления-владельцу-полный-автомат-2026-07-04)
 - [Жёсткие правила, выстраданные на практике](projects/albery/owner-reports.md#жёсткие-правила-выстраданные-на-практике)
 - [Ключевые регламенты в «О компании» (имена файлов в зеркале Google Drive)](projects/albery/owner-reports.md#ключевые-регламенты-в-о-компании-имена-файлов-в-зеркале-google-drive)
 
@@ -667,6 +678,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [GOST-style formatting defaults (unless owner overrides)](skills/legal-documents-ru/SKILL.md#gost-style-formatting-defaults-unless-owner-overrides)
 - [Contract skeleton (договор возмездного оказания услуг, ГК РФ гл. 39)](skills/legal-documents-ru/SKILL.md#contract-skeleton-договор-возмездного-оказания-услуг-гк-рф-гл-39)
 - [Delivery — send files straight into the owner's Telegram](skills/legal-documents-ru/SKILL.md#delivery-send-files-straight-into-the-owners-telegram)
+- [Auditing app-generated legal DOCX/export pipelines](skills/legal-documents-ru/SKILL.md#auditing-app-generated-legal-docxexport-pipelines)
 - [Pitfalls](skills/legal-documents-ru/SKILL.md#pitfalls)
 
 ## `skills/markitdown-docs/SKILL.md` · [skill] markitdown-docs
@@ -2527,6 +2539,17 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Knowledge Bases / LLM Wiki](vendor-skills/research/research-intelligence-workflows/SKILL.md#knowledge-bases-llm-wiki)
 - [Pitfalls](vendor-skills/research/research-intelligence-workflows/SKILL.md#pitfalls)
 - [Verification Checklist](vendor-skills/research/research-intelligence-workflows/SKILL.md#verification-checklist)
+
+## `vendor-skills/research/research-intelligence-workflows/references/kfu-admissions-program-budget-research.md` · [?]
+- [Key lesson](vendor-skills/research/research-intelligence-workflows/references/kfu-admissions-program-budget-research.md#key-lesson)
+- [Official dynamic source pattern](vendor-skills/research/research-intelligence-workflows/references/kfu-admissions-program-budget-research.md#official-dynamic-source-pattern)
+- [Output pattern for program ranking](vendor-skills/research/research-intelligence-workflows/references/kfu-admissions-program-budget-research.md#output-pattern-for-program-ranking)
+- [2026 KFU example rows observed in one session](vendor-skills/research/research-intelligence-workflows/references/kfu-admissions-program-budget-research.md#2026-kfu-example-rows-observed-in-one-session)
+
+## `vendor-skills/research/research-intelligence-workflows/references/kpfu-official-curriculum-plan-research.md` · [?]
+- [Official source pattern](vendor-skills/research/research-intelligence-workflows/references/kpfu-official-curriculum-plan-research.md#official-source-pattern)
+- [What to extract for program fit](vendor-skills/research/research-intelligence-workflows/references/kpfu-official-curriculum-plan-research.md#what-to-extract-for-program-fit)
+- [Reporting pattern](vendor-skills/research/research-intelligence-workflows/references/kpfu-official-curriculum-plan-research.md#reporting-pattern)
 
 ## `vendor-skills/research/research-intelligence-workflows/references/magnit-delivery-api-checks.md` · [?]
 - [Proven workflow](vendor-skills/research/research-intelligence-workflows/references/magnit-delivery-api-checks.md#proven-workflow)

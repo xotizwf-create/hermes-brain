@@ -64,9 +64,18 @@ python3 /root/.hermes/agent-knowledge/scripts/send_telegram_file.py \
 - Works for any file type (PDF, DOCX, images). This is how the agent puts artifacts "прямо сюда".
 - Send each file as its own call; returns `OK` on success.
 
+## Auditing app-generated legal DOCX/export pipelines
+When the complaint is that an in-app legal agent produces an ugly/low-quality contract, inspect the whole chain, not only the legal prompt:
+1. Read the actual conversation/user ask and the agent's response to separate **content quality** from **export/rendering quality**.
+2. Find the export function that turns the answer into `.docx`/`.pdf`. If it treats contracts as generic Markdown, fix the exporter: prompts alone cannot enforce Word margins, paragraph styles, table borders, or first-line indents after conversion.
+3. Add a contract/official-document mode keyed by terms like `договор`, `соглашение`, `акт`, `контракт`, `оферта`, `ГОСТ`.
+4. In that mode, force the document properties in code: A4, GOST-style margins, Times New Roman 14 pt, 1.5 spacing, justified body paragraphs, first-line indent, centered bold title/section headings, and visible table borders.
+5. Verify the generated artifact structurally, not only visually: inspect DOCX XML for margins, font size (`w:sz=28`), justification (`w:jc=both`), first-line indent, table presence/borders, and absence of generic Word heading/title styles in the contract body. Then restart/deploy the app and smoke-test the live service.
+
 ## Pitfalls
 - Don't write the source file under the agent's own runtime (`/root/claude-agent`) — the safety
   guard blocks it. Use `/tmp`.
 - Don't edit the agent's Telegram bridge to attach files — that's the blocked runtime. The Bot-API
   helper above sidesteps it entirely.
+- Don't assume a bad-looking contract is purely a lawyer-agent prompt problem. Generic Markdown→DOCX exporters often destroy legal formatting; fix the renderer/exporter when the layout is wrong.
 - Verify `pdfinfo` reports A4 and the expected page count before reporting success.
