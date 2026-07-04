@@ -229,6 +229,14 @@ ALWAYS_APPLY): колонка `agents.tools_customized` + таблица `agent_
   probe-файл долетел до origin и убран. Вотчдог из плана НЕ нужен (заменён синхронным sync).
 - **Манифесты — источник связей:** `agent_knowledge_links` (БД) больше НЕ читается; `_load_agents_full`
   и панель config берут связи из `agents/<slug>.yaml`. Тулзы остаются в `agents.tools` (БД, энфорс есть).
+- **Редактирование КОНТЕНТА инструкций = зеркало БД→git** (Phase 6, по выбору владельца «зеркалить UI→git»).
+  Живой UI «Инструкции для ИИ» (`/api/ai-instruction-folders` PUT/DELETE) и админ-тул `upsert_ai_instruction`
+  пишут в БД `ai_instruction_folders` КАК И РАНЬШЕ, но каждая правка сразу зеркалится в git-файлы:
+  `agent_center.resync_instructions_to_git()` → `agent_knowledge.resync_instructions_to_git(rows)` (scope
+  СОХРАНЯЕТСЯ, unchanged-файлы пропускаются, удалённые в БД с `db_id` удаляются, promoted/без db_id не
+  трогаются) → `registry_git_sync` пуш. Итог: редактируешь в приложении как привычно, агент (читает git)
+  видит сразу, история на GitHub. Идемпотентно (проверено: no-op когда git==БД). ⚠️ Прямые правки файлов
+  на GitHub перезапишутся следующей правкой из UI — основная поверхность редактирования = приложение.
 - ⚠️ **Не сделано / follow-ups:** (1) движковое скрытие невыбранных Hermes-скиллов всё ещё промпт-край
   (скиллы грузятся глобально); (2) деплой-синк `agent_knowledge/skills`+`hermes_base` → `/root/.hermes/skills`
   не автоматизирован (реестр = зеркало живого; нужен только если скиллы правят в git); (3) в бэкап
