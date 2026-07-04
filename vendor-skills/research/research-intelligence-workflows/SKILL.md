@@ -97,7 +97,11 @@ When the user asks for university programs, admissions tracks, entrance exams, o
 
 For Russian university pages with accordions or dynamic blocks (e.g. KFU admissions pages), use the browser/DOM to expand the relevant institute and extract hidden links; plain text extraction may miss the program/criteria PDFs. Cross-check dynamic admissions pages against the official intake plan PDF: pages can show extra or stale directions, while the plan PDF indicates the current-cycle programs/intake. Report this distinction explicitly instead of merging both lists as equally current.
 
-Output should include: official source links, program/direction code, profile names, form and duration when available, entrance exam form, minimum score if stated, links to exam program PDFs and assessment criteria, schedule links, and a practical prep sequence. If PDFs are image-only or text extraction is poor, still provide the verified official PDF links and avoid inventing internal topics unless OCR was actually performed.
+When comparing program prospects by curriculum, do not judge from program titles alone. For KFU specifically, use the official `sveden/education` disclosures: rows for the direction/profile often link “Учебный план” and “Описание образовательной программы” to public Yandex Disk folders. List/download those files through the Yandex Disk public API, prefer the newest relevant year, extract text with `pdftotext -layout`, and fall back to ОПОП/competence-matrix PDFs if the учебный план is scanned. KFU-specific commands, API shape, and reporting notes live in `references/kpfu-official-curriculum-plan-research.md`.
+
+If the user constrains program choice to budget-funded places, filter by official budget-seat count before ranking fit. Do not recommend a good-fit profile with `0 бюджет`; instead mark it as excluded and promote the closest budget-funded alternative. KFU’s admissions program archive can load rows dynamically via WordPress `admin-ajax.php` (`action=getPrograms`, paged `params=?query=&sptypes%5B%5D=2` for магистратура), so parse the site’s “load more” endpoint and continue until `hasNextPage=false`. Budget-seat workflow and example parser are in `references/kfu-admissions-program-budget-research.md`.
+
+Output should include: official source links, program/direction code, profile names, form and duration when available, entrance exam form, minimum score if stated, links to exam program PDFs and assessment criteria, schedule links, and a practical prep sequence. If the user asks which program fits them, add a ranked fit table grounded in actual curriculum disciplines and their stated trajectory. If PDFs are image-only or text extraction is poor, still provide the verified official PDF links and avoid inventing internal topics unless OCR was actually performed.
 
 ### University Exchange / Academic Mobility Programs
 
@@ -150,6 +154,8 @@ Preserve link structure and provenance when building local wikis. Do not invent 
 - For Russian ownership charts, filling AO shareholder gaps with plausible beneficiary claims from unofficial sources. If official ЕГРЮЛ/disclosure evidence stops at an AO/registrar, report the gap and required shareholder-register extracts instead.
 - For travel chains, optimizing only for the cheapest ticket and ignoring transfer/check-in buffers or disruption-prone time windows. Always show the trade-off between budget and robustness.
 - For university exchange research, relying on one FAQ/landing page and missing the separate eligibility, application, after-selection, documents, deadlines, and contacts pages. Follow the full official navigation cluster and label stale deadline pages clearly.
+- For university program-fit comparisons, ranking by program title/prestige without reading the учебный план/ОПОП. Extract actual disciplines and label the source year; if a curriculum PDF is scanned/image-only, use official ОПОП evidence or say OCR was not performed instead of guessing.
+- For university admissions recommendations with a budget-only constraint, leaving attractive `0 бюджет` programs in the recommendation set. Filter by budget-seat counts first, show the counts, and only mention `0 бюджет` options as excluded/context.
 
 ## Verification Checklist
 
