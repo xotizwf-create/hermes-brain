@@ -33,6 +33,7 @@ Class-level research workflow for finding sources, monitoring feeds, querying do
 - Build Russian corporate ownership / beneficiary schemes from official evidence such as ЕГРЮЛ extracts, issuer disclosures, and shareholder-register extracts.
 - Plan time-sensitive multimodal travel chains from live schedules/prices while balancing budget, buffer time, and disruption risk.
 - Research university exchange / academic mobility programs: partner catalogs, eligibility, documents, costs, deadlines, coordinators, and application sequence.
+- Identify Russian TV/streaming episodes from remembered scenes, reconcile conflicting season numbering, and find legal/free clip or catalog links.
 
 ## Workflow
 
@@ -120,6 +121,10 @@ When the user asks for a travel chain (e.g. train to Moscow plus same-day flight
 
 Session example and wording notes live in `references/travel-chain-ticket-research.md`.
 
+### Russian TV / Streaming Episode Identification
+
+When the user remembers a scene from a Russian series/show and asks for the season, episode, or where to watch, treat it as source-backed media identification. Search exact scene fragments and character-name variants, find clip titles/video IDs, then cross-check the episode in official streaming catalogs and reference databases. Prefer the official streaming catalog numbering in the final answer, but mention alternate numbering when databases split seasons/blocks differently. If only a clip is free and the full episode is subscription-only, say that clearly and give the legal free clip separately. Detailed RUTUBE/PREMIER pattern and the “Реальные пацаны: Сальто” example live in `references/russian-tv-episode-identification.md`.
+
 ### Academic Search and Paper Writing
 
 Use arXiv/paper metadata, then read abstracts/full text as needed. For paper writing, maintain claims→evidence→experiment mapping.
@@ -156,6 +161,8 @@ Preserve link structure and provenance when building local wikis. Do not invent 
 - For university exchange research, relying on one FAQ/landing page and missing the separate eligibility, application, after-selection, documents, deadlines, and contacts pages. Follow the full official navigation cluster and label stale deadline pages clearly.
 - For university program-fit comparisons, ranking by program title/prestige without reading the учебный план/ОПОП. Extract actual disciplines and label the source year; if a curriculum PDF is scanned/image-only, use official ОПОП evidence or say OCR was not performed instead of guessing.
 - For university admissions recommendations with a budget-only constraint, leaving attractive `0 бюджет` programs in the recommendation set. Filter by budget-seat counts first, show the counts, and only mention `0 бюджет` options as excluded/context.
+- For TV/streaming episode identification, silently mixing episode-numbering schemes. Official streaming catalogs, TheTVDB, broadcaster blocks, and fan sites may number the same Russian series differently; state the schema and cross-check before answering.
+- For “где посмотреть бесплатно” requests, linking pirate mirrors or implying a subscription episode is free. Provide legal/free clips or official free catalog pages; if the full episode is paywalled, say so plainly.
 
 ## Verification Checklist
 
