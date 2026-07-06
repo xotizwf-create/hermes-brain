@@ -167,14 +167,17 @@ subprocess'у `hermes` (ход = daemon-поток внутри Flask, окно 
 - **MCP-контракт (жёстко, инцидент 2026-07-06):** (1) ЛЮБОЙ новый MCP-эндпоинт Albery обязан
   отвечать на `ping` пустым результатом и НЕ отвечать на `notifications/*` — hermes 0.17
   пингует каждые 180с и считает неответ смертью соединения (тест в
-  `tests/mcp/test_tool_registry.py` это пинит). (2) `mcp_discovery_timeout: 20` в
-  `/root/.hermes/config.yaml` — НЕ возвращать к дефолту 1.5 (ход `hermes -z` тихо стартует без
-  инструментов, если discovery не уложился; после `hermes doctor --fix` проверить, что ключ не
-  сброшен). (3) Патчей hermes теперь ТРИ: media_rescue, provider_error, **mcp_resilience**
-  (сброс бюджета ретраев + вечный медленный ретрай вместо give-up; исходники в мозге
-  `scripts/`, применение — ExecStartPre drop-ins 20-/25-/26-*.conf). После апдейта hermes —
-  проверить якоря всех трёх. ⚠️ `MCPServerTask` использует `__slots__` — патчам нельзя вешать
-  новые атрибуты на self.
+  `tests/mcp/test_tool_registry.py` это пинит). (2) Ходы `hermes -z` берут инструменты ТОЛЬКО
+  благодаря правке (e) патча mcp_resilience: голый oneshot-путь hermes 0.17 НЕ ждёт фонового
+  MCP-discovery и под нагрузкой тихо бежит с нулём инструментов (rc=0!). Кап ожидания =
+  `mcp_discovery_timeout: 20` в `/root/.hermes/config.yaml` — НЕ возвращать к дефолту 1.5 и
+  проверять после `hermes doctor --fix`. (3) Патчей hermes теперь ТРИ: media_rescue,
+  provider_error, **mcp_resilience** (правит mcp_tool.py: сброс бюджета ретраев + вечный
+  медленный ретрай вместо give-up, И oneshot.py: ожидание discovery перед снимком инструментов;
+  исходники в мозге `scripts/`, применение — ExecStartPre drop-ins 20-/25-/26-*.conf). После
+  апдейта hermes — проверить якоря всех трёх. ⚠️ `MCPServerTask` использует `__slots__` —
+  патчам нельзя вешать новые атрибуты на self. Быстрая проверка «ход видит тулы»: state.db →
+  input_tokens/api_call: ~6k = без тул-схем (плохо), ~17k+ = схемы на месте.
 - Здоровье смотреть: `/agent-monitoring` (7 систем + лента), вотчдог сам шлёт TG в
   Albery_Уведомления при проблемах и «✅» при восстановлении.
 
