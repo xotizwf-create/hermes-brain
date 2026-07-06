@@ -74,6 +74,32 @@ rm -f /root/.hermes/cache/brain_index.sqlite 2>/dev/null || true
 
 Known old Hermes maintenance snapshots may be removed only when they are not the live DB/state and are dated/labelled as pre-update or maintenance backups.
 
+### Wave 4 — compact stores without deleting data
+
+Use only after Wave 1–3 freed enough working space. Some compaction operations need temporary disk roughly comparable to the file being compacted.
+
+- For SQLite state/session DBs, never delete the main DB. First run a quick integrity check, then checkpoint WAL, then `VACUUM`, then checkpoint WAL again. If the standalone `sqlite3` CLI is unavailable, use Python's stdlib `sqlite3`:
+
+```bash
+python3 - <<'PY'
+import os, sqlite3
+path='/root/.hermes/state.db'
+con=sqlite3.connect(path, timeout=30)
+print('quick_check', con.execute('PRAGMA quick_check').fetchone()[0])
+print('checkpoint_before', con.execute('PRAGMA wal_checkpoint(TRUNCATE)').fetchall())
+con.execute('VACUUM')
+con.execute('PRAGMA optimize')
+print('checkpoint_after', con.execute('PRAGMA wal_checkpoint(TRUNCATE)').fetchall())
+con.close()
+for f in [path, path+'-wal', path+'-shm']:
+    if os.path.exists(f): print(os.path.basename(f), os.path.getsize(f))
+PY
+```
+
+Pitfall: a failed or successful `VACUUM` may leave a very large `*-wal` file until an explicit `PRAGMA wal_checkpoint(TRUNCATE)` runs. If disk usage jumps during compaction, check `du -h <db>*` before assuming data grew.
+
+- For installed git checkouts with large `.git/objects` (for example a runtime checkout under `/usr/local/lib/...`), `git gc --prune=now` can reclaim space without deleting working-tree code. Run it inside the checkout and verify service health after; do not remove `.git` unless the deployment model explicitly permits losing history/rollback metadata.
+
 ## Prevent journal regrowth
 
 ```bash

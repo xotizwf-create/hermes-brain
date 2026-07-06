@@ -51,6 +51,17 @@ Umbrella for media-generation and media-transformation workflows. Choose the med
 4. Validate the artifact exists and is viewable/playable/analyzable.
 5. Deliver `MEDIA:<path>` or URL where supported.
 
+## Web Photo / Existing Image Requests
+
+Use this when the user asks to "find photos", "send pictures from the internet", or otherwise wants existing images rather than generated media.
+
+1. Do **not** switch to image generation unless the user asked for generated images or accepts it as a fallback.
+2. Search for open, directly displayable image sources first (Wikimedia Commons, official media pages, permissive stock pages). Prefer URLs that render as Markdown images in chat.
+3. If stock sites such as Pexels/Unsplash/Pixabay block browser access with anti-bot checks, try their search result metadata, official APIs if configured, or Wikimedia Commons API with an explicit `User-Agent` to resolve `File:` pages into `upload.wikimedia.org` image URLs.
+4. Verify each image URL is a real image URL (`.jpg`, `.jpeg`, `.png`, `.webp`, etc.) before embedding it.
+5. Be honest about attributes that are not verified. For example, do not label a person as Russian unless the source supports it; say "open images matching the style" or explain that exact verified results were limited.
+6. For people in sexualized, age-sensitive, or vice-related contexts (smoking, alcohol, glamour), keep results adult-only and non-explicit; avoid sources that appear fetish-oriented or age-ambiguous.
+
 ## TTS Voice Workflow
 
 Use this when the user asks for a spoken answer, voice samples, or switching between voice personas.
