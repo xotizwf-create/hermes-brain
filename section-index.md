@@ -757,6 +757,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [The one command](skills/reminders-and-watchers/SKILL.md#the-one-command)
 - [Delivery format — clean, no technical text](skills/reminders-and-watchers/SKILL.md#delivery-format-clean-no-technical-text)
 - [Reliability rules for reminders](skills/reminders-and-watchers/SKILL.md#reliability-rules-for-reminders)
+- [Silent technical refresh / keepalive jobs](skills/reminders-and-watchers/SKILL.md#silent-technical-refresh-keepalive-jobs)
 - [Watchdog/self-check alert style](skills/reminders-and-watchers/SKILL.md#watchdogself-check-alert-style)
 - [One-shot reminder — "напомни завтра в 18:00 написать Даше"](skills/reminders-and-watchers/SKILL.md#one-shot-reminder-напомни-завтра-в-1800-написать-даше)
 - [Recurring reminder — "каждый день в 10:00 напоминай скинуть архив"](skills/reminders-and-watchers/SKILL.md#recurring-reminder-каждый-день-в-1000-напоминай-скинуть-архив)

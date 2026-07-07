@@ -51,6 +51,22 @@ Watchers: header optional; on nothing-to-report return `[SILENT]`.
    If the reminder itself now runs successfully, run that exact cron job once to clear the stale
    failure state, then rerun `reminder_audit.py` and verify it prints nothing.
 
+## Silent technical refresh / keepalive jobs
+
+Some recurring jobs are not reminders for the owner; they are tiny technical refreshes/keepalives that
+should run quietly and alert only if they fail (for example, starting an external CLI's rolling limit
+window with the cheapest possible real request). For these:
+- use a **script-only** cron (`--script ... --no-agent`) so the scheduled job itself spends no LLM
+  tokens;
+- make the script write **nothing to stdout on success** and exit `0`; non-empty stdout should be a
+  short Russian failure alert only;
+- wrap the external CLI in `timeout` so it cannot hang forever;
+- keep the real action minimal (e.g. `claude -p --model claude-haiku-4-5 --output-format json 'OK'`);
+- deliver failures to the notifications group, not the owner's private chat;
+- convert МСК schedules to the server timezone and verify `next_run_at` plus a manual scheduler run.
+
+Detailed recipe and example script: `references/silent-technical-cron.md`.
+
 ## Watchdog/self-check alert style
 
 Operational watchdogs are for the owner, not for engineers reading logs. If a watcher detects

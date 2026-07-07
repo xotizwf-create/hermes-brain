@@ -47,6 +47,7 @@ avoid.
 - Prefer git-first (`engineering/agentic-coding.md`) when the file lives in a repo; direct live edit
   is for the truly tiny tail-end case.
 - If a hotfix touches live data and the API/UI still shows the bug after the DB looks correct, treat it as a data+serializer issue: verify through the same outward layer and patch the smallest serving code path too. See `references/live-data-plus-serializer-fix.md`.
+- If the tiny hotfix is for a production Telegram bot, also check `safe-production-bot-text-hotfix`. For LLM wrapper bots, verify diagnostic/account commands separately from the normal model path: a `/account`/limit-probe 401 may only mean the diagnostic endpoint/header path is stale while the official CLI still works. In that case, patch the user-facing diagnostic message instead of reflexively rotating credentials.
 - For bot/webhook incidents with client-aborted requests/timeouts but healthy service metrics, check whether the handler performs external/cosmetic calls before acknowledging the platform. Move those calls into the background worker and return the ACK immediately. See `references/webhook-quick-ack-hotfix.md`.
 - Secrets: references only; never printed or committed.
 

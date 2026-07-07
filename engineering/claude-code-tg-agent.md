@@ -73,6 +73,7 @@ Native command menu via `setMyCommands` + an inline-button menu on `/start` and 
 - Session switching: `/switch N` switches immediately; bare `/switch` must set `pendingSwitchChat`
   and accept the next numeric message as the session number. Without this, a standalone `3` after
   `/switch` is forwarded to Claude as a normal task.
+- `/account` caveat (2026-07-07): the direct Anthropic `/v1/messages` OAuth probe can return `401 Invalid authentication credentials` even while Claude Code CLI works with the same `CLAUDE_CODE_OAUTH_TOKEN`. Treat that as a broken limit-probe/auth-header path, not proof that Telegram or Claude CLI is disconnected. Verify with `CLAUDE_CODE_OAUTH_TOKEN=$(cat /root/.hermes/secure/claude_code/oauth_token) claude -p ...`; the bridge now explains this in `/account` instead of saying only “ответ 401”.
 - Limit handling: Claude Code stream-json may emit `rate_limit_event` during a **successful** response.
   Do not classify raw stdout containing `rate_limit_event` as a real Pro limit. The bridge must return
   a successful `result` before checking diagnostic text for actual limit errors; otherwise every normal
