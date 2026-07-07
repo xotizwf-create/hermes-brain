@@ -16,7 +16,7 @@ or "в Word и PDF" — follow this. Proven on 2026-06-21 (договор ока
   margins, fonts, spacing, indents, tables; converts cleanly to both DOCX and PDF.
 
 ## Method (do this)
-1. Write the document as a `.fodt` XML file in a writable scratch dir (`/tmp/...`).
+1. If drafting from scratch, write the document as a `.fodt` XML file in a writable scratch dir (`/tmp/...`).
    **Not** `/root/claude-agent/...` or the brain clone working tree (guard / dirty-state noise).
 2. Convert to BOTH formats:
    ```bash
@@ -26,6 +26,23 @@ or "в Word и PDF" — follow this. Proven on 2026-06-21 (договор ока
    ```
 3. Verify: `pdfinfo doc.pdf` (pages, A4 595×842 pt) and that the .docx size is non-zero.
 4. Rename to a human Russian filename, then deliver (see Delivery).
+
+## When the owner provides a contract template (`.doc` / `.docx`)
+Use the supplied template rather than rebuilding the contract from scratch.
+1. Put work files under `/tmp/<job>/`; final user files under `/root/.hermes/outbox/`.
+2. For old binary `.doc`, first convert it with LibreOffice:
+   ```bash
+   libreoffice --headless --convert-to docx --outdir /tmp/<job> /path/to/template.doc
+   ```
+3. Inspect the converted DOCX structurally with `python-docx`: print paragraph texts and table rows/cells before editing. Contract data often lives in tables and appendix cells, not only paragraphs.
+4. Replace all requested business fields everywhere they appear: contract number/date, preamble, product name, quantity, unit price, total, VAT wording, specification table, technical-description table, appendix headers.
+5. If the owner says to remove procurement boilerplate like `ИКЗ`, `идентификатор закупки`, or `на основании протокола`, remove both the standalone line and embedded mentions in paragraphs/tables. Do not leave an orphaned blank procurement line at the top.
+6. Verify before delivery by reopening the saved DOCX and checking:
+   - required new values are present;
+   - old contract number/product/amount are absent;
+   - banned phrases (`ИКЗ`, `идентификационный код закупки`, `на основании протокола`) are absent;
+   - the DOCX is non-zero and LibreOffice can convert it to PDF as a smoke test.
+7. Send the final `.docx` as a real Telegram attachment and only report success after the send helper returns `OK`.
 
 ## GOST-style formatting defaults (unless owner overrides)
 Based on GOST R 7.0.97-2016 for organizational documents; safe defaults for contracts:

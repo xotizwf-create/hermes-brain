@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-07-04
+updated: 2026-07-07
 secret_refs: []
 ---
 
@@ -271,11 +271,35 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Субагенты (главная механика)](projects/albery/agent-center.md#субагенты-главная-механика)
 - [Настройка возможностей субагента (2026-07-03) — тумблеры/галочки с РЕАЛЬНЫМ энфорсментом](projects/albery/agent-center.md#настройка-возможностей-субагента-2026-07-03-тумблерыгалочки-с-реальным-энфорсментом)
 - [База знаний в GitHub + РЕАЛЬНЫЙ энфорсмент инструкций (2026-07-04)](projects/albery/agent-center.md#база-знаний-в-github-реальный-энфорсмент-инструкций-2026-07-04)
+- [Документы = оформление на стороне агента: export_document (2026-07-05)](projects/albery/agent-center.md#документы-оформление-на-стороне-агента-export_document-2026-07-05)
 - [История диалогов пер-агент — каждый бот свою, не смешивать (2026-07-04)](projects/albery/agent-center.md#история-диалогов-пер-агент-каждый-бот-свою-не-смешивать-2026-07-04)
+- [Автоматизации агентов — подвкладка + планировщик + самопостановка из чата (2026-07-05)](projects/albery/agent-center.md#автоматизации-агентов-подвкладка-планировщик-самопостановка-из-чата-2026-07-05)
+- [Атрибуция создателя + гарантия бесконфликтности (2026-07-05, follow-up, Albery `fd54a5b`)](projects/albery/agent-center.md#атрибуция-создателя-гарантия-бесконфликтности-2026-07-05-follow-up-albery-fd54a5b)
+- [Агент-разработчик создан + полный аудит надёжности (2026-07-06)](projects/albery/agent-center.md#агент-разработчик-создан-полный-аудит-надёжности-2026-07-06)
+- [Мониторинг пер-агент: «Все агенты» + изолированные показатели (2026-07-06, Albery `9a62ba7`)](projects/albery/agent-center.md#мониторинг-пер-агент-все-агенты-изолированные-показатели-2026-07-06-albery-9a62ba7)
+- [Зависание агентов (юрист + разработчик) — рестарт убивал живой ход (2026-07-06, Albery `4562094`)](projects/albery/agent-center.md#зависание-агентов-юрист-разработчик-рестарт-убивал-живой-ход-2026-07-06-albery-4562094)
+- [Самоориентация агентов + красные точки только на ошибки (2026-07-06, Albery `4562094`)](projects/albery/agent-center.md#самоориентация-агентов-красные-точки-только-на-ошибки-2026-07-06-albery-4562094)
+- [Скорость и параллельность агентов — разбор + диета инструкций (2026-07-06, Albery `e0a725c`)](projects/albery/agent-center.md#скорость-и-параллельность-агентов-разбор-диета-инструкций-2026-07-06-albery-e0a725c)
+- [Hermes на 186 обновлён 0.14.0 → 0.17.0 + «Маршрутная карта» (2026-07-06)](projects/albery/agent-center.md#hermes-на-186-обновлён-0140-0170-маршрутная-карта-2026-07-06)
+- [Никаких зависаний: отмена хода, fail-fast, дисциплина пакетов (2026-07-06, Albery `a0b6f51`→`8fa259b`)](projects/albery/agent-center.md#никаких-зависаний-отмена-хода-fail-fast-дисциплина-пакетов-2026-07-06-albery-a0b6f518fa259b)
+- [Интернет + Google у каждого агента по умолчанию (2026-07-06, Albery `fa08cd0`)](projects/albery/agent-center.md#интернет-google-у-каждого-агента-по-умолчанию-2026-07-06-albery-fa08cd0)
+- [Инцидент «агенты не видят свои инструменты» и его закрытие (2026-07-06 вечер)](projects/albery/agent-center.md#инцидент-агенты-не-видят-свои-инструменты-и-его-закрытие-2026-07-06-вечер)
 - [Инциденты и уроки этой стройки (НЕ повторять)](projects/albery/agent-center.md#инциденты-и-уроки-этой-стройки-не-повторять)
 - [Модель агентов (согласовано владельцем 2026-07-03)](projects/albery/agent-center.md#модель-агентов-согласовано-владельцем-2026-07-03)
 - [Универсальный (основной) агент как первоклассный настраиваемый Агент (этап 2, LIVE 2026-07-03)](projects/albery/agent-center.md#универсальный-основной-агент-как-первоклассный-настраиваемый-агент-этап-2-live-2026-07-03)
 - [Открытое / следующие шаги](projects/albery/agent-center.md#открытое-следующие-шаги)
+
+## `projects/albery/agent-system-guide.md` · [project] agent-center, subagents, isolation, reliability, runbook, rules, reference
+- [1. Устройство на пальцах](projects/albery/agent-system-guide.md#1-устройство-на-пальцах)
+- [2. Пять слоёв изоляции (все проверены вживую 2026-07-05/06)](projects/albery/agent-system-guide.md#2-пять-слоёв-изоляции-все-проверены-вживую-2026-07-0506)
+- [3. Создание / удаление агентов — ТОЛЬКО два пути](projects/albery/agent-system-guide.md#3-создание-удаление-агентов-только-два-пути)
+- [4. Изменение возможностей агентов](projects/albery/agent-system-guide.md#4-изменение-возможностей-агентов)
+- [5. Изменение КОДА — конвейер (не отступать ни на шаг)](projects/albery/agent-system-guide.md#5-изменение-кода-конвейер-не-отступать-ни-на-шаг)
+- [5а. Рестарт НИКОГДА не вешает живой ход (защита, 2026-07-06)](projects/albery/agent-system-guide.md#5а-рестарт-никогда-не-вешает-живой-ход-защита-2026-07-06)
+- [6. Ресурсы и стабильность (бокс 2 ГБ!)](projects/albery/agent-system-guide.md#6-ресурсы-и-стабильность-бокс-2-гб)
+- [7. Если что-то сломалось (симптом → действие)](projects/albery/agent-system-guide.md#7-если-что-то-сломалось-симптом-действие)
+- [8. Открытые мягкие места (честный список, 2026-07-06)](projects/albery/agent-system-guide.md#8-открытые-мягкие-места-честный-список-2026-07-06)
+- [9. Правило для будущих сессий ИИ](projects/albery/agent-system-guide.md#9-правило-для-будущих-сессий-ии)
 
 ## `projects/albery/bitrix-bot.md` · [project] albery, bitrix, imbot, chatbot, hermes, mcp
 - [Текущее состояние (2026-06-15)](projects/albery/bitrix-bot.md#текущее-состояние-2026-06-15)
@@ -302,6 +326,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Деплой (бэкенд-only, правило #7)](projects/albery/bitrix-bot.md#деплой-бэкенд-only-правило-7)
 - [Реализовано 2026-06-15 (коммиты Albery)](projects/albery/bitrix-bot.md#реализовано-2026-06-15-коммиты-albery)
 - [Постановка задач: результат обязателен + постановщик (2026-06-25)](projects/albery/bitrix-bot.md#постановка-задач-результат-обязателен-постановщик-2026-06-25)
+- [Кнопки не работали + сырые ошибки мозга у юриста (2026-07-04, `b24bot.py`, коммит Albery `05d55bd`)](projects/albery/bitrix-bot.md#кнопки-не-работали-сырые-ошибки-мозга-у-юриста-2026-07-04-b24botpy-коммит-albery-05d55bd)
+- [Follow-up: кнопки у СУБАГЕНТОВ всё ещё висели + общие сессии мозга (коммит `595a765`)](projects/albery/bitrix-bot.md#follow-up-кнопки-у-субагентов-всё-ещё-висели-общие-сессии-мозга-коммит-595a765)
+- [Follow-up 2: эфемерное per-dialog состояние тоже текло между ботами (коммит `9ed0a5b`)](projects/albery/bitrix-bot.md#follow-up-2-эфемерное-per-dialog-состояние-тоже-текло-между-ботами-коммит-9ed0a5b)
 - [Open tasks](projects/albery/bitrix-bot.md#open-tasks)
 
 ## `projects/albery/decisions.md` · [project] decisions, adr
@@ -676,6 +703,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 ## `skills/legal-documents-ru/SKILL.md` · [skill] legal-documents-ru
 - [Toolchain on server 217 (what is and isn't available)](skills/legal-documents-ru/SKILL.md#toolchain-on-server-217-what-is-and-isnt-available)
 - [Method (do this)](skills/legal-documents-ru/SKILL.md#method-do-this)
+- [When the owner provides a contract template (`.doc` / `.docx`)](skills/legal-documents-ru/SKILL.md#when-the-owner-provides-a-contract-template-doc-docx)
 - [GOST-style formatting defaults (unless owner overrides)](skills/legal-documents-ru/SKILL.md#gost-style-formatting-defaults-unless-owner-overrides)
 - [Contract skeleton (договор возмездного оказания услуг, ГК РФ гл. 39)](skills/legal-documents-ru/SKILL.md#contract-skeleton-договор-возмездного-оказания-услуг-гк-рф-гл-39)
 - [Delivery — send files straight into the owner's Telegram](skills/legal-documents-ru/SKILL.md#delivery-send-files-straight-into-the-owners-telegram)
@@ -1051,6 +1079,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [When to Use](vendor-skills/creative/generative-media-production/SKILL.md#when-to-use)
 - [Router](vendor-skills/creative/generative-media-production/SKILL.md#router)
 - [Common Workflow](vendor-skills/creative/generative-media-production/SKILL.md#common-workflow)
+- [Web Photo / Existing Image Requests](vendor-skills/creative/generative-media-production/SKILL.md#web-photo-existing-image-requests)
 - [TTS Voice Workflow](vendor-skills/creative/generative-media-production/SKILL.md#tts-voice-workflow)
 - [Pitfalls](vendor-skills/creative/generative-media-production/SKILL.md#pitfalls)
 - [Verification Checklist](vendor-skills/creative/generative-media-production/SKILL.md#verification-checklist)
@@ -1127,6 +1156,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Session history](vendor-skills/devops/alexandr-it-project-operations/SKILL.md#session-history)
 - [Common Pitfalls](vendor-skills/devops/alexandr-it-project-operations/SKILL.md#common-pitfalls)
 - [Verification Checklist](vendor-skills/devops/alexandr-it-project-operations/SKILL.md#verification-checklist)
+
+## `vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-hermes-model-routing.md` · [?]
+- [Durable lessons](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-hermes-model-routing.md#durable-lessons)
+- [Checks](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-hermes-model-routing.md#checks)
+- [Interpretation pattern](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-hermes-model-routing.md#interpretation-pattern)
+- [Safer design for simple Bitrix service questions](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-hermes-model-routing.md#safer-design-for-simple-bitrix-service-questions)
 
 ## `vendor-skills/devops/alexandr-it-project-operations/references/albery-drive-folder-operations.md` · [?]
 - [Durable lesson](vendor-skills/devops/alexandr-it-project-operations/references/albery-drive-folder-operations.md#durable-lesson)
@@ -1361,6 +1396,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Remote LLM Telegram bridge silence / limit-burn triage](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-llm-telegram-bridge-silence-limit-burn-triage)
 - [Remote project env secret retrieval pattern](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-project-env-secret-retrieval-pattern)
 - [MCP/API side-effect timeout triage](vendor-skills/devops/secure-project-server-ops/SKILL.md#mcpapi-side-effect-timeout-triage)
+- [Albery Agent Center / per-agent knowledge registry](vendor-skills/devops/secure-project-server-ops/SKILL.md#albery-agent-center-per-agent-knowledge-registry)
 - [Albery Google Sheets / Docs quality guards](vendor-skills/devops/secure-project-server-ops/SKILL.md#albery-google-sheets-docs-quality-guards)
 - [Remote Hermes cron inspection](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-hermes-cron-inspection)
 - [Remote Hermes `openai-codex` auth repair](vendor-skills/devops/secure-project-server-ops/SKILL.md#remote-hermes-openai-codex-auth-repair)
@@ -1369,6 +1405,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Low-downtime Node/Vite release workflow](vendor-skills/devops/secure-project-server-ops/SKILL.md#low-downtime-nodevite-release-workflow)
 - [Communication style](vendor-skills/devops/secure-project-server-ops/SKILL.md#communication-style)
 - [References](vendor-skills/devops/secure-project-server-ops/SKILL.md#references)
+
+## `vendor-skills/devops/secure-project-server-ops/references/albery-agent-center-skill-registry.md` · [?]
+- [Pattern](vendor-skills/devops/secure-project-server-ops/references/albery-agent-center-skill-registry.md#pattern)
+- [Example: lawyer agent contract drafting skill](vendor-skills/devops/secure-project-server-ops/references/albery-agent-center-skill-registry.md#example-lawyer-agent-contract-drafting-skill)
+- [Pitfalls](vendor-skills/devops/secure-project-server-ops/references/albery-agent-center-skill-registry.md#pitfalls)
 
 ## `vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md` · [?]
 - [Symptom A — MCP timeout / possible duplicate risk](vendor-skills/devops/secure-project-server-ops/references/albery-bitrix-rest-dispatch.md#symptom-a-mcp-timeout-possible-duplicate-risk)
@@ -1499,6 +1540,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Wave 1 — very safe caches/log pressure](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#wave-1-very-safe-cacheslog-pressure)
 - [Wave 2 — only after confirming current kernel](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#wave-2-only-after-confirming-current-kernel)
 - [Wave 3 — known temporary agent/tool leftovers](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#wave-3-known-temporary-agenttool-leftovers)
+- [Wave 4 — compact stores without deleting data](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#wave-4-compact-stores-without-deleting-data)
 - [Prevent journal regrowth](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#prevent-journal-regrowth)
 - [Verification](vendor-skills/devops/small-vps-disk-cleanup/SKILL.md#verification)
 
@@ -2534,6 +2576,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [University Admissions / Program Entrance Research](vendor-skills/research/research-intelligence-workflows/SKILL.md#university-admissions-program-entrance-research)
 - [University Exchange / Academic Mobility Programs](vendor-skills/research/research-intelligence-workflows/SKILL.md#university-exchange-academic-mobility-programs)
 - [Travel Schedule / Ticket Chain Research](vendor-skills/research/research-intelligence-workflows/SKILL.md#travel-schedule-ticket-chain-research)
+- [Russian TV / Streaming Episode Identification](vendor-skills/research/research-intelligence-workflows/SKILL.md#russian-tv-streaming-episode-identification)
 - [Academic Search and Paper Writing](vendor-skills/research/research-intelligence-workflows/SKILL.md#academic-search-and-paper-writing)
 - [Blog/RSS Monitoring](vendor-skills/research/research-intelligence-workflows/SKILL.md#blogrss-monitoring)
 - [Prediction Markets](vendor-skills/research/research-intelligence-workflows/SKILL.md#prediction-markets)
@@ -2578,6 +2621,10 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Practical workflow](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#practical-workflow)
 - [ФНС ЕГРЮЛ recursive extraction pattern](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#фнс-егрюл-recursive-extraction-pattern)
 - [Pitfall](vendor-skills/research/research-intelligence-workflows/references/russian-corporate-ownership-evidence.md#pitfall)
+
+## `vendor-skills/research/research-intelligence-workflows/references/russian-tv-episode-identification.md` · [?]
+- [Workflow pattern](vendor-skills/research/research-intelligence-workflows/references/russian-tv-episode-identification.md#workflow-pattern)
+- [Example: Реальные пацаны — “Сальто” scene](vendor-skills/research/research-intelligence-workflows/references/russian-tv-episode-identification.md#example-реальные-пацаны-сальто-scene)
 
 ## `vendor-skills/research/research-intelligence-workflows/references/travel-chain-ticket-research.md` · [?]
 - [What mattered in the Брянск → Москва → Казань session](vendor-skills/research/research-intelligence-workflows/references/travel-chain-ticket-research.md#what-mattered-in-the-брянск-москва-казань-session)
