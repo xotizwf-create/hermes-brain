@@ -22,6 +22,7 @@ Use this when applying a small text-only change to a production Telegram bot and
 - Prefer exact-match replacement and exact count verification over broad regex edits.
 - Always keep a reversible file backup before editing.
 - For Telegram command UX changes, verify the exact command path separately from the normal text-message path: slash commands often return early and can bypass reactions/likes, typing indicators, or final acknowledgements.
+- For LLM wrapper bots, distinguish diagnostic/account/limit commands from the normal model path. A `/account` or `/limits` 401 can be a broken limit probe while the official CLI/inference path still works; verify both before saying the bot/model is disconnected.
 - Do not send two user-visible acknowledgements for one action. Prefer one lightweight reaction/typing signal while work runs, then one final result message; remove redundant "accepted/checking" text unless the owner explicitly wants it.
 
 ## Workflow
@@ -63,4 +64,5 @@ Use this when applying a small text-only change to a production Telegram bot and
 - SSH port open with no banner often means temporary SSH/host load; wait and retry with short timeouts before escalating.
 - Grep in shell can produce misleading results with quoting/Unicode; use a small Python exact string count when the result is contradictory.
 - Telegram callback timeout errors right before a restart may be stale user callbacks, not necessarily a broken bot. Check for new errors after restart.
+- In LLM bots, an account/limit diagnostic can fail independently of the normal response path; see `references/llm-bot-auth-vs-limit-probes.md` before rotating credentials or reporting an outage.
 - For slash-command reaction/like fixes, see `references/telegram-command-reaction-verification.md`.
