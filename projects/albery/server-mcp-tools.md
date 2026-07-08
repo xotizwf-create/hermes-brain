@@ -279,6 +279,40 @@ Postgres.
   `get_employee_absences(date_from=date_to=дедлайн)`; если `on_vacation` → задачу не
   ставить, сообщить владельцу «X в отпуске — задача не поставлена». См. [[albery-employee-absences-tool]].
 
+### CRM: воронки и сделки — полное управление (2026-07-08, MCP `0.15.0`)
+
+12 инструментов: `list/create/update/delete_crm_pipeline`, `manage_crm_pipeline_stage` (add/update/
+delete стадий), `list_crm_deal_fields` + `manage_crm_deal_field` (собственные поля UF_CRM_*, включая
+enumeration со списком вариантов), `list/get/create/update/delete_crm_deal`. Коммиты Albery `cf8993e`
++ `5803ee8`.
+
+**Транспорт — КЛЮЧЕВОЕ:** у обоих входящих вебхуков (`BITRIX_WEBHOOK_BASE`,
+`B24_TESTBOT_WEBHOOK_BASE`, оба → b24-0xrp3s) scope `crm` **отсутствует** (разведано вживую —
+`insufficient_scope`). CRM доступен только через **OAuth-токен локального приложения бота**
+(scopes: crm, tasks, im, disk…): новый `b24bot.b24_app_method_call(method, payload)` поверх
+`_b24_app_access_token()` (авторефреш). В context_server всё ходит через `_crm_call` →
+`app_workflow_function("b24_app_method_call")`. `userfieldconfig.*` токену тоже запрещён — поля
+через классический `crm.deal.userfield.*`. Id пользователей CRM = id бот-портала (то же
+пространство, что `_b24_active_users`/`get_employee_absences`).
+
+Нюансы API (пойманы живым смоуком на проде):
+- перенос сделки между воронками работает ТОЛЬКО через `crm.item.update {entityTypeId:2, id,
+  fields:{categoryId, stageId}}` — `crm.deal.update` молча игнорирует `CATEGORY_ID`;
+- доп. проигрышная стадия (`SEMANTICS=F`) обязана сортироваться ПОСЛЕ финальных, иначе Bitrix 400
+  «Нельзя добавить семантику с указанной сортировкой» — дефолтный sort это учитывает;
+- `id=0` основной воронки — валидный id (ловушка `int(x or -1)`);
+- `crm.category.delete` не удалит воронку со сделками; наши инструменты заранее отказывают с
+  количеством и советом перенести сделки.
+
+Тиринг: `delete_crm_pipeline`/`delete_crm_deal` → OWNER_ONLY (включены только у агента `main`);
+удаление стадии/поля — confirm=true до любых сетевых вызовов; 5 повседневных инструментов
+(list_crm_pipelines, list/get/create/update_crm_deal) добавлены в CORE_TOOL_NAMES; в FAQ CRM нет.
+`agents.tools` (text[], НЕ jsonb!) обновлены аддитивно: main +12, финансист/юрист +10 (без delete).
+Возможности дописаны в `ai_agent_capabilities` tier full. Бэкапы перед изменениями:
+`/var/backups/albery/code/pre-crm-funnels-*.tar.gz`, `pre-crm-tables-*.sql`, `crm_snapshot_*.json`
+(4 воронки, 6 сделок). Смоук: `tests/mcp/test_tool_registry.py::test_crm_*` + живой сквозной прогон
+(создать воронку/стадии/поле/сделку → все мутации → полная зачистка, портал вернулся к снапшоту).
+
 ### MCP-инструмент `fetch_url` (добавлено 28.05.2026)
 
 **Зачем.** В Hermes для Telegram-платформы отключены встроенные `web`/`browser` toolset'ы ([agent.md:1538-1543](agent.md#L1538-L1543)) — после инцидента 28.05 с раздутой сессией на 100k токенов. Поэтому Hermes не мог открывать ссылки из чата (Google Sheets/Docs, статьи, регламенты). Включать `web` обратно опасно — одна большая страница съест полконтекста Codex.
