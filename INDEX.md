@@ -2,7 +2,7 @@
 id: index
 type: schema
 tags: [root, routing, entrypoint]
-updated: 2026-07-02
+updated: 2026-07-09
 secret_refs: []
 ---
 
@@ -123,8 +123,10 @@ every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
 - **Performance** → `engineering/optimization.md`.
 - **Code style / review** → `engineering/coding-standards.md`, `engineering/code-review.md`.
 - **Writing/changing code, refactors, debugging, feature work — make Hermes code like Codex** →
-  `engineering/agentic-coding.md`; delegate the actual coding to the Codex CLI via skill
-  `skills/codex-delegation/`.
+  `engineering/agentic-coding.md`: FIRST pick the reasoning mode from its **mode matrix**
+  (chat=`medium` on Hermes; code=`high` via Codex; architecture/refactors/hard bugs=`xhigh`,
+  the maximum), then delegate the actual coding to the Codex CLI via skill
+  `skills/codex-delegation/` (honest auth preflight — `codex login status` can lie).
 - **Tiny live prod change (one support-text string, a config flag, one line)** → skill
   `skills/small-prod-edit/` (backup → exact replace → verify → restart only that service; no
   subsystem fishing).

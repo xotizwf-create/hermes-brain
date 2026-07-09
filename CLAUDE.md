@@ -127,6 +127,12 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   Skill: `hh-auto-apply`. Старый `hh-ai-business-automation-watch` (every 2h) живёт отдельно.
 
 ## Open tasks (next steps, not yet done)
+- **Re-auth Codex CLI on 217 (BLOCKER for coding delegation):** discovered 2026-07-09 — `codex login
+  status` says "Logged in" but real calls die with «access token could not be refreshed» (token
+  invalidated by a login elsewhere). Needs owner: `codex login` on 217 or fresh `auth.json` from the
+  PC (600). Until then coding delegation on 217 is down. On 186 codex CLI (0.134.0) is **not logged
+  in at all**. After re-auth: run one real `xhigh` job and confirm the effort in the `codex exec`
+  header (backend must not silently downgrade). Mode policy: `engineering/agentic-coding.md`.
 - **Albery refactor (owner-approved plan, 2026-07-02):** split the monoliths — `app.py` (23.5k lines),
   `mcp/context_server.py` (5.9k), `Интерфейс/src/App.tsx` (9.2k). Full staged plan:
   `projects/albery/refactor-plan.md`. Do NOT add new code to `app.py`.

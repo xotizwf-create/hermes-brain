@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-07-07
+updated: 2026-07-09
 secret_refs: []
 ---
 
@@ -88,8 +88,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [5. Чек-лист перед добавлением нового агента](engineering/agent-team.md#5-чек-лист-перед-добавлением-нового-агента)
 - [Источники](engineering/agent-team.md#источники)
 
-## `engineering/agentic-coding.md` · [engineering] hermes, coding, codex, quality, reasoning, compression, prod-edit, delegation
+## `engineering/agentic-coding.md` · [engineering] hermes, coding, codex, quality, reasoning, compression, prod-edit, delegation, modes
 - [Root causes (mapped to that incident)](engineering/agentic-coding.md#root-causes-mapped-to-that-incident)
+- [Reasoning-mode matrix — под каждую задачу свой режим (canonical, 2026-07-09)](engineering/agentic-coding.md#reasoning-mode-matrix-под-каждую-задачу-свой-режим-canonical-2026-07-09)
 - [The core rule: delegate real coding to Codex](engineering/agentic-coding.md#the-core-rule-delegate-real-coding-to-codex)
 - [Git-first over live SSH](engineering/agentic-coding.md#git-first-over-live-ssh)
 - [Server config for coding quality](engineering/agentic-coding.md#server-config-for-coding-quality)
@@ -184,6 +185,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-07-08](logs/changelog.md#2026-07-08)
 - [2026-07-04](logs/changelog.md#2026-07-04)
 - [2026-07-01](logs/changelog.md#2026-07-01)
 - [2026-06-28](logs/changelog.md#2026-06-28)
@@ -285,6 +287,16 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Интернет + Google у каждого агента по умолчанию (2026-07-06, Albery `fa08cd0`)](projects/albery/agent-center.md#интернет-google-у-каждого-агента-по-умолчанию-2026-07-06-albery-fa08cd0)
 - [Инцидент «агенты не видят свои инструменты» и его закрытие (2026-07-06 вечер)](projects/albery/agent-center.md#инцидент-агенты-не-видят-свои-инструменты-и-его-закрытие-2026-07-06-вечер)
 - [Инциденты и уроки этой стройки (НЕ повторять)](projects/albery/agent-center.md#инциденты-и-уроки-этой-стройки-не-повторять)
+- [Ведение задач от лица собеседника + вложения + работа В задачах (2026-07-07, перед раскаткой на команду)](projects/albery/agent-center.md#ведение-задач-от-лица-собеседника-вложения-работа-в-задачах-2026-07-07-перед-раскаткой-на-команду)
+- [Юрист-договоры (диагноз+фикс) + ссылки в задачах + recall документов (2026-07-08, Albery `3f00ffd`)](projects/albery/agent-center.md#юрист-договоры-диагнозфикс-ссылки-в-задачах-recall-документов-2026-07-08-albery-3f00ffd)
+- [Глубокое чтение ссылок = уровень Hermes Brain (2026-07-08, Albery `db2d169`)](projects/albery/agent-center.md#глубокое-чтение-ссылок-уровень-hermes-brain-2026-07-08-albery-db2d169)
+- [ИИ-юрист: ОКОНЧАТЕЛЬНЫЙ диагноз договоров + фикс (2026-07-08, Albery `6e9fe23`)](projects/albery/agent-center.md#ии-юрист-окончательный-диагноз-договоров-фикс-2026-07-08-albery-6e9fe23)
+- [Юрист: назад на gpt-5.5 + специализированные договоры + оформление по инструкциям (2026-07-08, Albery `3e2408b`)](projects/albery/agent-center.md#юрист-назад-на-gpt-55-специализированные-договоры-оформление-по-инструкциям-2026-07-08-albery-3e2408b)
+- [Повторяющиеся (регулярные) задачи: создание + просмотр по человеку (2026-07-08, Albery `f606bdb`)](projects/albery/agent-center.md#повторяющиеся-регулярные-задачи-создание-просмотр-по-человеку-2026-07-08-albery-f606bdb)
+- [Полные возможности задач + повтор через СВОЙ планировщик (2026-07-08, Albery `164c7c7`→`6c6224e`)](projects/albery/agent-center.md#полные-возможности-задач-повтор-через-свой-планировщик-2026-07-08-albery-164c7c76c6224e)
+- [Регулярные задачи ВО ВКЛАДКЕ «Автоматизации» + чтение вложений в комментариях задач (2026-07-08 вечер, Albery `b964c48`→`8fb3a2b`)](projects/albery/agent-center.md#регулярные-задачи-во-вкладке-автоматизации-чтение-вложений-в-комментариях-задач-2026-07-08-вечер-albery-b964c488fb3a2b)
+- [UI-фикс: длинный текст растягивал страницу, кнопки автоматизаций уезжали (2026-07-09, Albery `2c88ba9`)](projects/albery/agent-center.md#ui-фикс-длинный-текст-растягивал-страницу-кнопки-автоматизаций-уезжали-2026-07-09-albery-2c88ba9)
+- [Диалоги: отдельная вкладка «В задачах» — in-task обращения не мешаются с чатами (2026-07-09, Albery `0630b1b`+`381d842`)](projects/albery/agent-center.md#диалоги-отдельная-вкладка-в-задачах-in-task-обращения-не-мешаются-с-чатами-2026-07-09-albery-0630b1b381d842)
 - [Модель агентов (согласовано владельцем 2026-07-03)](projects/albery/agent-center.md#модель-агентов-согласовано-владельцем-2026-07-03)
 - [Универсальный (основной) агент как первоклассный настраиваемый Агент (этап 2, LIVE 2026-07-03)](projects/albery/agent-center.md#универсальный-основной-агент-как-первоклассный-настраиваемый-агент-этап-2-live-2026-07-03)
 - [Открытое / следующие шаги](projects/albery/agent-center.md#открытое-следующие-шаги)
@@ -296,6 +308,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [4. Изменение возможностей агентов](projects/albery/agent-system-guide.md#4-изменение-возможностей-агентов)
 - [5. Изменение КОДА — конвейер (не отступать ни на шаг)](projects/albery/agent-system-guide.md#5-изменение-кода-конвейер-не-отступать-ни-на-шаг)
 - [5а. Рестарт НИКОГДА не вешает живой ход (защита, 2026-07-06)](projects/albery/agent-system-guide.md#5а-рестарт-никогда-не-вешает-живой-ход-защита-2026-07-06)
+- [5б. Ведение задач + вложения + работа В задачах (2026-07-07, LIVE)](projects/albery/agent-system-guide.md#5б-ведение-задач-вложения-работа-в-задачах-2026-07-07-live)
 - [6. Ресурсы и стабильность (бокс 2 ГБ!)](projects/albery/agent-system-guide.md#6-ресурсы-и-стабильность-бокс-2-гб)
 - [7. Если что-то сломалось (симптом → действие)](projects/albery/agent-system-guide.md#7-если-что-то-сломалось-симптом-действие)
 - [8. Открытые мягкие места (честный список, 2026-07-06)](projects/albery/agent-system-guide.md#8-открытые-мягкие-места-честный-список-2026-07-06)
@@ -462,6 +475,8 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [FAQ MCP](projects/albery/server-mcp-tools.md#faq-mcp)
 - [Поиск по знаниям компании — гибридный (FTS + триграммы + ILIKE), с 2026-06-14](projects/albery/server-mcp-tools.md#поиск-по-знаниям-компании-гибридный-fts-триграммы-ilike-с-2026-06-14)
 - [Bitrix-инструменты в MCP](projects/albery/server-mcp-tools.md#bitrix-инструменты-в-mcp)
+- [Дедлайны по рабочим часам: зум-задачи и рекомендации (2026-07-09)](projects/albery/server-mcp-tools.md#дедлайны-по-рабочим-часам-зум-задачи-и-рекомендации-2026-07-09)
+- [CRM: воронки и сделки — полное управление (2026-07-08, MCP `0.15.0`)](projects/albery/server-mcp-tools.md#crm-воронки-и-сделки-полное-управление-2026-07-08-mcp-0150)
 - [MCP-инструмент `fetch_url` (добавлено 28.05.2026)](projects/albery/server-mcp-tools.md#mcp-инструмент-fetch_url-добавлено-28052026)
 - [Google Sheets + Apps Script — полноценные инструменты (2026-06-18, MCP `0.10.0`)](projects/albery/server-mcp-tools.md#google-sheets-apps-script-полноценные-инструменты-2026-06-18-mcp-0100)
 - [Известный баг: 120s таймаут `create_bitrix_task` / `delete_bitrix_task` (исправлено 28.05.2026)](projects/albery/server-mcp-tools.md#известный-баг-120s-таймаут-create_bitrix_task-delete_bitrix_task-исправлено-28052026)
@@ -611,7 +626,8 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 ## `skills/codex-delegation/SKILL.md` · [skill] codex-delegation
 - [Why](skills/codex-delegation/SKILL.md#why)
 - [When to use vs not](skills/codex-delegation/SKILL.md#when-to-use-vs-not)
-- [Precondition: Codex must be installed on the work host](skills/codex-delegation/SKILL.md#precondition-codex-must-be-installed-on-the-work-host)
+- [Pick the reasoning mode per task (before writing the brief)](skills/codex-delegation/SKILL.md#pick-the-reasoning-mode-per-task-before-writing-the-brief)
+- [Precondition: Codex must be installed AND its token must actually work](skills/codex-delegation/SKILL.md#precondition-codex-must-be-installed-and-its-token-must-actually-work)
 - [Workflow](skills/codex-delegation/SKILL.md#workflow)
 - [Rules](skills/codex-delegation/SKILL.md#rules)
 - [Done when](skills/codex-delegation/SKILL.md#done-when)
@@ -832,6 +848,10 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Kanban Codex Lane](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/SKILL.md#kanban-codex-lane)
 - [Pitfalls](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/SKILL.md#pitfalls)
 - [Verification Checklist](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/SKILL.md#verification-checklist)
+
+## `vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/references/claude-code-oauth-token-rotation.md` · [?]
+- [Safe sequence](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/references/claude-code-oauth-token-rotation.md#safe-sequence)
+- [Pitfalls](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/references/claude-code-oauth-token-rotation.md#pitfalls)
 
 ## `vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/references/claude-code-telegram-bridge.md` · [?]
 - [Safe workflow](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/references/claude-code-telegram-bridge.md#safe-workflow)
@@ -1162,7 +1182,15 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Durable lessons](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-hermes-model-routing.md#durable-lessons)
 - [Checks](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-hermes-model-routing.md#checks)
 - [Interpretation pattern](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-hermes-model-routing.md#interpretation-pattern)
+- [AI-lawyer / heavy document-generation add-on](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-hermes-model-routing.md#ai-lawyer-heavy-document-generation-add-on)
 - [Safer design for simple Bitrix service questions](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-hermes-model-routing.md#safer-design-for-simple-bitrix-service-questions)
+
+## `vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-legal-document-timeouts.md` · [?]
+- [Symptom pattern](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-legal-document-timeouts.md#symptom-pattern)
+- [Diagnosis checklist](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-legal-document-timeouts.md#diagnosis-checklist)
+- [Interpretation](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-legal-document-timeouts.md#interpretation)
+- [Recommended fix order](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-legal-document-timeouts.md#recommended-fix-order)
+- [Reporting style to Александр](vendor-skills/devops/alexandr-it-project-operations/references/albery-bitrix-legal-document-timeouts.md#reporting-style-to-александр)
 
 ## `vendor-skills/devops/alexandr-it-project-operations/references/albery-drive-folder-operations.md` · [?]
 - [Durable lesson](vendor-skills/devops/alexandr-it-project-operations/references/albery-drive-folder-operations.md#durable-lesson)
@@ -1380,6 +1408,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Rules](vendor-skills/devops/safe-production-bot-text-hotfix/SKILL.md#rules)
 - [Workflow](vendor-skills/devops/safe-production-bot-text-hotfix/SKILL.md#workflow)
 - [Pitfalls](vendor-skills/devops/safe-production-bot-text-hotfix/SKILL.md#pitfalls)
+
+## `vendor-skills/devops/safe-production-bot-text-hotfix/references/llm-bot-auth-vs-limit-probes.md` · [?]
+- [Lesson](vendor-skills/devops/safe-production-bot-text-hotfix/references/llm-bot-auth-vs-limit-probes.md#lesson)
+- [Triage sequence](vendor-skills/devops/safe-production-bot-text-hotfix/references/llm-bot-auth-vs-limit-probes.md#triage-sequence)
+- [Secret handling](vendor-skills/devops/safe-production-bot-text-hotfix/references/llm-bot-auth-vs-limit-probes.md#secret-handling)
 
 ## `vendor-skills/devops/safe-production-bot-text-hotfix/references/telegram-command-reaction-verification.md` · [?]
 - [Why](vendor-skills/devops/safe-production-bot-text-hotfix/references/telegram-command-reaction-verification.md#why)
