@@ -569,6 +569,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 
 ## `projects/prostye-postavki/deploy.md` · [project] deploy
 - [Current rule](projects/prostye-postavki/deploy.md#current-rule)
+- [⚠ Production branch (verified 2026-07-09)](projects/prostye-postavki/deploy.md#production-branch-verified-2026-07-09)
+- [Working deploy path (proven 2026-07-09)](projects/prostye-postavki/deploy.md#working-deploy-path-proven-2026-07-09)
+- [After deploy: Hermes на 217](projects/prostye-postavki/deploy.md#after-deploy-hermes-на-217)
 - [Flow draft](projects/prostye-postavki/deploy.md#flow-draft)
 - [Git synchronization rule](projects/prostye-postavki/deploy.md#git-synchronization-rule)
 - [Post-deploy checks](projects/prostye-postavki/deploy.md#post-deploy-checks)
@@ -577,9 +580,10 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 ## `projects/prostye-postavki/incidents.md` · [project] incidents
 - [2026-06-15 — импортированные входящие контракты показывали нулевую цену](projects/prostye-postavki/incidents.md#2026-06-15-импортированные-входящие-контракты-показывали-нулевую-цену)
 
-## `projects/prostye-postavki/mcp.md` · [project] prostye-postavki, mcp, prompts, navigation
+## `projects/prostye-postavki/mcp.md` · [project] prostye-postavki, mcp, prompts, navigation, contracts, templates
 - [Где живёт канон](projects/prostye-postavki/mcp.md#где-живёт-канон)
 - [Инструменты навигации](projects/prostye-postavki/mcp.md#инструменты-навигации)
+- [Договор по шаблону (добавлено 2026-07-09)](projects/prostye-postavki/mcp.md#договор-по-шаблону-добавлено-2026-07-09)
 - [Как добавлять новую инструкцию](projects/prostye-postavki/mcp.md#как-добавлять-новую-инструкцию)
 - [Текущая реализация](projects/prostye-postavki/mcp.md#текущая-реализация)
 

@@ -3,7 +3,7 @@ id: prostye-postavki-servers
 type: project
 project: prostye-postavki
 tags: [servers, access]
-updated: 2026-05-31
+updated: 2026-07-09
 secret_refs: [proj/prostye-postavki/server/env, proj/prostye-postavki/ssh/root, proj/prostye-postavki/mcp/token]
 ---
 
@@ -13,11 +13,15 @@ secret_refs: [proj/prostye-postavki/server/env, proj/prostye-postavki/ssh/root, 
 
 ## Production / public endpoints
 - Host alias: `prod-prostye-postavki`
-- Public host/domain: `miramed32.ru`
+- Public host/domain: `miramed32.ru` = **5.129.202.216** (verified 2026-07-09)
 - Working directory: `/var/www/prostye-postavki/app`
 - MCP: `https://miramed32.ru/mcp/<secret-token>`; store only the token reference, never the token.
-- Main service: `prostye-backend.service`.
-- GitHub source of truth: `https://github.com/xotizwf-create/prostavki`.
+- Main service: `prostye-backend.service`; app on `127.0.0.1:8000`, health `/api/health`.
+- GitHub source of truth: `https://github.com/xotizwf-create/prostavki`; **prod branch =
+  `fix/incoming-paste-single-cell`** (см. deploy.md).
+- Access: прямого SSH с ПК нет; заходить через 217 (sshpass, креды в
+  `/opt/hermes/secure/projects/prostye-postavki/.env` — IP/USER/PASSWORD). Схема в deploy.md.
+- Resources: 2 GB RAM + 2 GB swap — preflight обязателен, тяжёлое не гонять.
 
 ## Secure references
 - `proj/prostye-postavki/server/env` — project env / server access bundle if present.

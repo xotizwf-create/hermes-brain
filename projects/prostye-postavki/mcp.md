@@ -2,8 +2,8 @@
 id: prostye-postavki-mcp
 type: project
 project: prostye-postavki
-tags: [prostye-postavki, mcp, prompts, navigation]
-updated: 2026-06-25
+tags: [prostye-postavki, mcp, prompts, navigation, contracts, templates]
+updated: 2026-07-09
 secret_refs: []
 ---
 
@@ -36,6 +36,21 @@ secret_refs: []
 3. Для коммерческих предложений обязательно читать `commercial_offer_workflow`.
 4. Для входящих договоров/контрактов обязательно читать `incoming_contract_processing`.
 5. Для общих вопросов по остаткам, контрактам, поставкам, организациям и инструментам начинать с `prostavki_operator_guide`.
+
+## Договор по шаблону (добавлено 2026-07-09)
+
+Быстрое создание нового договора из существующего договора-DOCX. Движок:
+`backend/app/contract_templates.py` (чистые функции, без БД) + MCP-обвязка в `main.py`.
+
+| Инструмент | Что делает |
+|---|---|
+| `export_contract_template` | Выгрузить входящий DOCX-договор как шаблон (по documentId или organizationQuery); сервер сам определяет №, дату, ИНН сторон, упоминания ФЗ и сроков. PDF/сканы шаблоном не становятся |
+| `create_contract_from_template` | Новый договор из шаблона: **№ всегда = дата создания («Договор №09.07.2026»)**, реквизиты контрагента из справочника организаций, спецификация перестраивается во всех таблицах (включая приложения), сумма пересчитывается цифрами+прописью, ФЗ вычищается из преамбулы; возвращает отчёт (warnings/lawScrub/preambleAfter/validityParagraphs) — агент обязан его проверить и добить промахи через `replacements` |
+| `list_contract_templates` / `delete_contract_template` | Список/мягкое удаление шаблонов (таблица `contract_templates`) |
+
+Бизнес-правила зафиксированы в prompt `contract_from_template_workflow` (читать перед работой).
+Готовый файл отдаётся по `downloadUrl` (`/mcp/<secret>/contract-exports/…`). Смоук-тест движка:
+`backend/tools/contract_template_smoke.py` (гоняется и локально, и на проде при деплое).
 
 ## Как добавлять новую инструкцию
 
