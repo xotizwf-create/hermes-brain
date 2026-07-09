@@ -48,6 +48,10 @@ When reporting to Александр, separate the layers plainly:
 - “Зависает полноценный агентский прогон Hermes/Codex, который запускается вокруг простого вопроса.”
 - “Для служебных запросов нужен быстрый прямой путь или короткий timeout/fallback, а не 600-секундный чатовый ход.”
 
+## AI-lawyer / heavy document-generation add-on
+
+For Albery Bitrix «Агент-юрист» failures while drafting contracts or official documents, use the dedicated note `references/albery-bitrix-legal-document-timeouts.md`. Durable lesson: a user-visible “10 minute limit” may actually be two guarded Hermes/LLM attempts failing earlier with `Broken pipe`; the fix is usually slimming the lawyer connector and moving document generation to a background job, not merely increasing `B24_TESTBOT_HERMES_TIMEOUT`.
+
 ## Safer design for simple Bitrix service questions
 
 For questions like “какие агенты есть?”, “кто активен?”, “статус агентов?”, avoid routing through a full creative/reasoning turn if the answer is deterministic.
