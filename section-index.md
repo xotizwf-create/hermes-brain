@@ -584,6 +584,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Где живёт канон](projects/prostye-postavki/mcp.md#где-живёт-канон)
 - [Инструменты навигации](projects/prostye-postavki/mcp.md#инструменты-навигации)
 - [Договор по шаблону (добавлено 2026-07-09, источник «Контракты» — 2026-07-10)](projects/prostye-postavki/mcp.md#договор-по-шаблону-добавлено-2026-07-09-источник-контракты-2026-07-10)
+- [Быстрый интейк входящих договоров (2026-07-10)](projects/prostye-postavki/mcp.md#быстрый-интейк-входящих-договоров-2026-07-10)
 - [Как добавлять новую инструкцию](projects/prostye-postavki/mcp.md#как-добавлять-новую-инструкцию)
 - [Текущая реализация](projects/prostye-postavki/mcp.md#текущая-реализация)
 
