@@ -249,6 +249,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 ## `personal/side-jobs.md` · [personal] work, freelance
 - [hh.ru: AI agents / business-process automation roles](personal/side-jobs.md#hhru-ai-agents-business-process-automation-roles)
 
+## `profile/communication.md` · [profile] communication, tone, formatting
+- [Универсальный стандарт оформления сообщений (владелец, 2026-07-10 — ДЛЯ ВСЕХ ПРОЕКТОВ)](profile/communication.md#универсальный-стандарт-оформления-сообщений-владелец-2026-07-10-для-всех-проектов)
+
 ## `profile/do-not-do.md` · [profile] rules, hard-limits, security
 - [Secrets](profile/do-not-do.md#secrets)
 - [Git / repos](profile/do-not-do.md#git-repos)
@@ -586,6 +589,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Договор по шаблону (добавлено 2026-07-09, источник «Контракты» — 2026-07-10)](projects/prostye-postavki/mcp.md#договор-по-шаблону-добавлено-2026-07-09-источник-контракты-2026-07-10)
 - [Быстрый интейк входящих договоров (2026-07-10)](projects/prostye-postavki/mcp.md#быстрый-интейк-входящих-договоров-2026-07-10)
 - [Жизненный цикл входящего документа (выяснено 2026-07-10 — критично для агента)](projects/prostye-postavki/mcp.md#жизненный-цикл-входящего-документа-выяснено-2026-07-10-критично-для-агента)
+- [Интейк v3 (2026-07-10, проверено ЖИВЫМ агентом на реальном PDF)](projects/prostye-postavki/mcp.md#интейк-v3-2026-07-10-проверено-живым-агентом-на-реальном-pdf)
 - [Как добавлять новую инструкцию](projects/prostye-postavki/mcp.md#как-добавлять-новую-инструкцию)
 - [Текущая реализация](projects/prostye-postavki/mcp.md#текущая-реализация)
 
@@ -2407,6 +2411,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Pairing With Other Skills](vendor-skills/productivity/markitdown-docs/SKILL.md#pairing-with-other-skills)
 - [Common Pitfalls](vendor-skills/productivity/markitdown-docs/SKILL.md#common-pitfalls)
 - [Verification Checklist](vendor-skills/productivity/markitdown-docs/SKILL.md#verification-checklist)
+
+## `vendor-skills/productivity/obo-mne/SKILL.md` · [?]
+- [Назначение](vendor-skills/productivity/obo-mne/SKILL.md#назначение)
+- [Исходный текст](vendor-skills/productivity/obo-mne/SKILL.md#исходный-текст)
+- [Правило работы с текстом](vendor-skills/productivity/obo-mne/SKILL.md#правило-работы-с-текстом)
 
 ## `vendor-skills/productivity/owner-communication-style/SKILL.md` · [?]
 - [Core voice](vendor-skills/productivity/owner-communication-style/SKILL.md#core-voice)
