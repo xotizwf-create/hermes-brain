@@ -143,6 +143,10 @@ every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
   (Karpathy-derived, MIT; pairs with `engineering/agentic-coding.md` + `aislop-code-quality`).
 - **How the agent should answer/communicate** → `profile/`.
 - **Hermes UX: "Думаю…"/typing, live step progress, reasoning, tone — config knobs** → `engineering/hermes-gateway-ux.md`.
+- **Design MCP tools for an agent / агент неэффективен, много лишних вызовов, «дебажит систему»,
+  плохо заполняет — сделать ИИ супер-эффективным через инструменты** → `engineering/mcp-tool-design.md`
+  (главный принцип: под боль владельца — инструмент, не «умный промпт»; сервер = механика,
+  агент = извлечение и решения; вериф-снапшоты в ответах; проверка живым агентом).
 - **Build a team of agents / split into multiple agents / multi-agent design / when to add an agent**
   → `engineering/agent-team.md` (grounded in 12-factor-agents + Anthropic "Building Effective Agents":
   one workflow = one agent, orchestrator+workers, own your context; checklist before adding an agent).

@@ -147,6 +147,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [«База знаний не в чистом состоянии»](engineering/hermes-troubleshooting.md#база-знаний-не-в-чистом-состоянии)
 - [Gateway itself looks corrupted (giant/duplicated `run.py`, restart hangs, looping self-patcher)](engineering/hermes-troubleshooting.md#gateway-itself-looks-corrupted-giantduplicated-runpy-restart-hangs-looping-self-patcher)
 
+## `engineering/mcp-tool-design.md` · [engineering] mcp, tools, agents, effectiveness, design, lessons
+- [Главный принцип](engineering/mcp-tool-design.md#главный-принцип)
+- [Правила проектирования инструмента](engineering/mcp-tool-design.md#правила-проектирования-инструмента)
+- [Как проверять (обязательный порядок)](engineering/mcp-tool-design.md#как-проверять-обязательный-порядок)
+- [Инфраструктурные грабли (Простые поставки, но общие по духу)](engineering/mcp-tool-design.md#инфраструктурные-грабли-простые-поставки-но-общие-по-духу)
+
 ## `engineering/optimization.md` · [engineering] performance, caching, tuning
 - [Workflow](engineering/optimization.md#workflow)
 - [Database](engineering/optimization.md#database)
@@ -212,6 +218,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 
 ## `logs/learning-log.md` · [log] learning
 - [2026-05-30 — two-way git brain sync is live (verified from the server)](logs/learning-log.md#2026-05-30-two-way-git-brain-sync-is-live-verified-from-the-server)
+- [2026-07-11 — Марафон «Простые поставки»: MCP-инструменты как рычаг эффективности ИИ](logs/learning-log.md#2026-07-11-марафон-простые-поставки-mcp-инструменты-как-рычаг-эффективности-ии)
 
 ## `logs/mistakes.md` · [log] mistakes, postmortem
 - [2026-06-28 — Длинный Telegram-ответ продублировался из-за retry после частичной доставки](logs/mistakes.md#2026-06-28-длинный-telegram-ответ-продублировался-из-за-retry-после-частичной-доставки)
@@ -583,18 +590,14 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 ## `projects/prostye-postavki/incidents.md` · [project] incidents
 - [2026-06-15 — импортированные входящие контракты показывали нулевую цену](projects/prostye-postavki/incidents.md#2026-06-15-импортированные-входящие-контракты-показывали-нулевую-цену)
 
-## `projects/prostye-postavki/mcp.md` · [project] prostye-postavki, mcp, prompts, navigation, contracts, templates
+## `projects/prostye-postavki/mcp.md` · [project] prostye-postavki, mcp, prompts, navigation, contracts, templates, intake, tools
 - [Где живёт канон](projects/prostye-postavki/mcp.md#где-живёт-канон)
-- [Инструменты навигации](projects/prostye-postavki/mcp.md#инструменты-навигации)
-- [Договор по шаблону (добавлено 2026-07-09, источник «Контракты» — 2026-07-10)](projects/prostye-postavki/mcp.md#договор-по-шаблону-добавлено-2026-07-09-источник-контракты-2026-07-10)
-- [Быстрый интейк входящих договоров (2026-07-10)](projects/prostye-postavki/mcp.md#быстрый-интейк-входящих-договоров-2026-07-10)
-- [Жизненный цикл входящего документа (выяснено 2026-07-10 — критично для агента)](projects/prostye-postavki/mcp.md#жизненный-цикл-входящего-документа-выяснено-2026-07-10-критично-для-агента)
-- [Интейк v3 (2026-07-10, проверено ЖИВЫМ агентом на реальном PDF)](projects/prostye-postavki/mcp.md#интейк-v3-2026-07-10-проверено-живым-агентом-на-реальном-pdf)
-- [Несколько договоров в одном файле (2026-07-11)](projects/prostye-postavki/mcp.md#несколько-договоров-в-одном-файле-2026-07-11)
-- [График поставок по периодам + copy/edit контрактов (2026-07-11)](projects/prostye-postavki/mcp.md#график-поставок-по-периодам-copyedit-контрактов-2026-07-11)
-- [Сводка по контрактам и документам (2026-07-11)](projects/prostye-postavki/mcp.md#сводка-по-контрактам-и-документам-2026-07-11)
+- [Навигация по инструкциям](projects/prostye-postavki/mcp.md#навигация-по-инструкциям)
+- [Карта MCP-инструментов по конвейерам (построено 2026-07-09…11)](projects/prostye-postavki/mcp.md#карта-mcp-инструментов-по-конвейерам-построено-2026-07-0911)
+- [Ключевые правила конвейера интейка (промпт incoming_contract_processing)](projects/prostye-postavki/mcp.md#ключевые-правила-конвейера-интейка-промпт-incoming_contract_processing)
+- [Жизненный цикл входящего документа (критично)](projects/prostye-postavki/mcp.md#жизненный-цикл-входящего-документа-критично)
+- [Грабли и уроки (консолидировано за 2026-07-09…11)](projects/prostye-postavki/mcp.md#грабли-и-уроки-консолидировано-за-2026-07-0911)
 - [Как добавлять новую инструкцию](projects/prostye-postavki/mcp.md#как-добавлять-новую-инструкцию)
-- [Текущая реализация](projects/prostye-postavki/mcp.md#текущая-реализация)
 
 ## `projects/prostye-postavki/overview.md` · [project] overview
 - [What it is](projects/prostye-postavki/overview.md#what-it-is)
