@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-07-10
+updated: 2026-07-11
 secret_refs: []
 ---
 
@@ -590,6 +590,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Быстрый интейк входящих договоров (2026-07-10)](projects/prostye-postavki/mcp.md#быстрый-интейк-входящих-договоров-2026-07-10)
 - [Жизненный цикл входящего документа (выяснено 2026-07-10 — критично для агента)](projects/prostye-postavki/mcp.md#жизненный-цикл-входящего-документа-выяснено-2026-07-10-критично-для-агента)
 - [Интейк v3 (2026-07-10, проверено ЖИВЫМ агентом на реальном PDF)](projects/prostye-postavki/mcp.md#интейк-v3-2026-07-10-проверено-живым-агентом-на-реальном-pdf)
+- [Несколько договоров в одном файле (2026-07-11)](projects/prostye-postavki/mcp.md#несколько-договоров-в-одном-файле-2026-07-11)
 - [Как добавлять новую инструкцию](projects/prostye-postavki/mcp.md#как-добавлять-новую-инструкцию)
 - [Текущая реализация](projects/prostye-postavki/mcp.md#текущая-реализация)
 
