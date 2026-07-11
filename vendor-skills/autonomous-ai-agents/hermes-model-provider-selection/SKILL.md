@@ -211,6 +211,17 @@ auxiliary:
 - Do not save API keys, tokens, account IDs, or billing data in skills or references.
 - Do not quote old prices as current. If making a spend decision, refresh pricing first.
 
+## New-model availability checks
+
+When a newly announced model is not in Hermes' static picker/catalog, do not stop there. New OpenAI/Codex model ids can work when passed explicitly even before the curated list is updated. Verify with a one-shot smoke test that does not mutate the live config:
+
+```bash
+hermes chat -q 'Ответь одним словом: OK' --provider openai-codex --model <exact-model-id> -Q
+```
+
+Prefer exact provider ids from official docs over marketing aliases. For GPT-5.6, the useful ids observed were `gpt-5.6-sol`, `gpt-5.6-terra`, and `gpt-5.6-luna`; the bare `gpt-5.6` alias may fail on `openai-codex` even when `gpt-5.6-sol` succeeds. Before switching a live Telegram/profile default, get user confirmation because it changes behavior and spend, then restart/verify the affected gateway.
+
 ## References
 
 - `references/llm-provider-pricing-2026-06-20.md` — research snapshot from the session comparing DeepSeek, MiniMax, OpenRouter, Z.ai/GLM, Groq, Kimi, Qwen, Together, and Fireworks for Hermes Agent.
+- `references/openai-gpt56-codex-2026-07.md` — session note on GPT-5.6 exact model ids and the `openai-codex` smoke-test pattern (`gpt-5.6` alias failed; `gpt-5.6-sol` succeeded).
