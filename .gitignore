@@ -36,3 +36,6 @@ _*_tmp.*
 _nspd_*
 _weekly_*
 /*.xlsx
+
+# Local Google AI Studio mockup, not part of the brain
+/Интерфейс для Агента/
