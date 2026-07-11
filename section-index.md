@@ -191,6 +191,8 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-07-12](logs/changelog.md#2026-07-12)
+- [2026-07-11](logs/changelog.md#2026-07-11)
 - [2026-07-08](logs/changelog.md#2026-07-08)
 - [2026-07-04](logs/changelog.md#2026-07-04)
 - [2026-07-01](logs/changelog.md#2026-07-01)
@@ -304,6 +306,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Юрист: назад на gpt-5.5 + специализированные договоры + оформление по инструкциям (2026-07-08, Albery `3e2408b`)](projects/albery/agent-center.md#юрист-назад-на-gpt-55-специализированные-договоры-оформление-по-инструкциям-2026-07-08-albery-3e2408b)
 - [Повторяющиеся (регулярные) задачи: создание + просмотр по человеку (2026-07-08, Albery `f606bdb`)](projects/albery/agent-center.md#повторяющиеся-регулярные-задачи-создание-просмотр-по-человеку-2026-07-08-albery-f606bdb)
 - [Полные возможности задач + повтор через СВОЙ планировщик (2026-07-08, Albery `164c7c7`→`6c6224e`)](projects/albery/agent-center.md#полные-возможности-задач-повтор-через-свой-планировщик-2026-07-08-albery-164c7c76c6224e)
+- [Ежедневный обход задач (12:00) + досье сотрудников + ЛС (2026-07-12, Albery `4dfa584`)](projects/albery/agent-center.md#ежедневный-обход-задач-1200-досье-сотрудников-лс-2026-07-12-albery-4dfa584)
+- [Оффер-комментарии к задачам агента + диалог в задаче без упоминаний (2026-07-11, Albery `46e52d3`→`816e12c`)](projects/albery/agent-center.md#оффер-комментарии-к-задачам-агента-диалог-в-задаче-без-упоминаний-2026-07-11-albery-46e52d3816e12c)
+- [Редактор расписания во вкладке «Автоматизации» + update_recurring_task (2026-07-11, Albery `67ead8f`)](projects/albery/agent-center.md#редактор-расписания-во-вкладке-автоматизации-update_recurring_task-2026-07-11-albery-67ead8f)
 - [Регулярные задачи ВО ВКЛАДКЕ «Автоматизации» + чтение вложений в комментариях задач (2026-07-08 вечер, Albery `b964c48`→`8fb3a2b`)](projects/albery/agent-center.md#регулярные-задачи-во-вкладке-автоматизации-чтение-вложений-в-комментариях-задач-2026-07-08-вечер-albery-b964c488fb3a2b)
 - [UI-фикс: длинный текст растягивал страницу, кнопки автоматизаций уезжали (2026-07-09, Albery `2c88ba9`)](projects/albery/agent-center.md#ui-фикс-длинный-текст-растягивал-страницу-кнопки-автоматизаций-уезжали-2026-07-09-albery-2c88ba9)
 - [Диалоги: отдельная вкладка «В задачах» — in-task обращения не мешаются с чатами (2026-07-09, Albery `0630b1b`+`381d842`)](projects/albery/agent-center.md#диалоги-отдельная-вкладка-в-задачах-in-task-обращения-не-мешаются-с-чатами-2026-07-09-albery-0630b1b381d842)
@@ -1041,6 +1046,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Fallbacks](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#fallbacks)
 - [Cheap auxiliary models](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#cheap-auxiliary-models)
 - [Pitfalls](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#pitfalls)
+- [New-model availability checks](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#new-model-availability-checks)
 - [References](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/SKILL.md#references)
 
 ## `vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md` · [?]
@@ -1059,6 +1065,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Fallback routing](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#fallback-routing)
 - [Visible reasoning/progress](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#visible-reasoningprogress)
 - [Future-use checklist](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/llm-provider-pricing-2026-06-20.md#future-use-checklist)
+
+## `vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/openai-gpt56-codex-2026-07.md` · [?]
+- [Durable findings](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/openai-gpt56-codex-2026-07.md#durable-findings)
+- [Recommended verification workflow for new OpenAI/Codex models](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/openai-gpt56-codex-2026-07.md#recommended-verification-workflow-for-new-openaicodex-models)
+- [Communication note](vendor-skills/autonomous-ai-agents/hermes-model-provider-selection/references/openai-gpt56-codex-2026-07.md#communication-note)
 
 ## `vendor-skills/creative/baoyu-visual-content/SKILL.md` · [?]
 - [Overview](vendor-skills/creative/baoyu-visual-content/SKILL.md#overview)
@@ -2463,6 +2474,19 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Pitfalls](vendor-skills/productivity/prostye-postavki-contract-period-lookup/SKILL.md#pitfalls)
 - [Verification](vendor-skills/productivity/prostye-postavki-contract-period-lookup/SKILL.md#verification)
 - [Keeping MCP behavior aligned](vendor-skills/productivity/prostye-postavki-contract-period-lookup/SKILL.md#keeping-mcp-behavior-aligned)
+
+## `vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md` · [?]
+- [Core workflow](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#core-workflow)
+- [Exactness and user overrides](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#exactness-and-user-overrides)
+- [Specification safeguards](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#specification-safeguards)
+- [Overwrite and duplicate prevention](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#overwrite-and-duplicate-prevention)
+- [User-facing response](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#user-facing-response)
+- [Reference](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#reference)
+
+## `vendor-skills/productivity/prostye-postavki-incoming-contracts/references/verification-patterns.md` · [?]
+- [Historical parsed-item field mapping](vendor-skills/productivity/prostye-postavki-incoming-contracts/references/verification-patterns.md#historical-parsed-item-field-mapping)
+- [Explicit operational date override](vendor-skills/productivity/prostye-postavki-incoming-contracts/references/verification-patterns.md#explicit-operational-date-override)
+- [Final creation checklist](vendor-skills/productivity/prostye-postavki-incoming-contracts/references/verification-patterns.md#final-creation-checklist)
 
 ## `vendor-skills/productivity/prostye-postavki-price-lookup/SKILL.md` · [?]
 - [Главный принцип](vendor-skills/productivity/prostye-postavki-price-lookup/SKILL.md#главный-принцип)
