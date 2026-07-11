@@ -1004,6 +1004,32 @@ create_recurring_task (не create_bitrix_task), 29с, шаблон 72 ✓, вы
   schedule_my_automation); у портала своих UF-полей задач нет (только системные UF_CRM_TASK/WEBDAV_FILES/
   MAIL_MESSAGE). UI-витрины повторов нет — управление через тулы (list/delete_recurring_task).
 
+## Редактор расписания во вкладке «Автоматизации» + update_recurring_task (2026-07-11, Albery `67ead8f`)
+Владелец: ежедневная регулярная Софьи пришла в СУББОТУ — нужно из UI управлять днями недели и
+временем у ЛЮБОЙ автоматизации + MCP-инструмент, чтобы агент менял время/логику сам. Задача Софьи
+не должна приходить в выходные. Тег отката `pre-schedule-editor-20260711` + дамп реестра + tar кода.
+- **Общий хелпер `context_server.apply_recurring_update(rec_id, changes)`**: weekdays (все 7 =
+  daily, подмножество = weekly → «не в выходные» = [1..5]; day_of_month → monthly), create_time,
+  deadline_time/after_hours, until, title/description/checklist/result_criteria/priority.
+  Пересчитывает schedule_desc + next_run_at + jsonb-spec ВМЕСТЕ. ⚠️ Дедлайн, привязанный ко
+  времени («18:00 того же дня»), при переносе create_time СОХРАНЯЕТ своё время (offset
+  пересчитывается) — иначе перенос создания 09→10 молча уводил бы дедлайн 18→19.
+- **MCP-тул `update_recurring_task`** (TOOLS + CORE; включён main/agent-finansist, dev — сам) —
+  тот же хелпер; Маршрутная карта += маршрут «изменить дни/время/чек-лист → update_recurring_task».
+- **REST**: `PATCH /recurring-tasks/<id>` принимает weekdays/create_time (+прежний is_active);
+  `_recurring_json` отдаёт period/weekdays/create_time для редактора.
+- **UI (`AutomationsPanel`)**: в развёрнутой строке блок «Изменить расписание» — чипы Пн..Вс +
+  время. kind='task' → recurring-ручки; kind='agent' → простой cron «M H * * DOW» редактируется
+  теми же чипами (парсер/сборщик в панели), сложный cron (*/5 и т.п.) — сырой строкой; monthly —
+  только время. Бандл `index-CIjQ0t2e.js`.
+- **Софья переведена на будни ЖИВЫМ вызовом нового тула** через коннектор main: запись 5 →
+  еженедельно Пн–Пт 09:00, next_run = пн 13.07 09:00 (воскресной задачи НЕ будет), чек-лист 12
+  цел. Запись 6 (пн) не тронута. E2e ручки на тест-строке: create daily → PATCH [Пн,Ср]+10:30 →
+  дедлайн 18:00 выжил (offset 27000с), чек-лист цел, невалидный день → 400; строка удалена.
+- Смоуки: 205 юнит-тестов, deploy_smoke OK, журнал чист, рестарт строго в пустое окно
+  (inflight=0 + нет running-автоматизаций, цикл ожидания). Правка LLM-автоматизаций агентом
+  из чата по-прежнему только своих (schedule_my_automation upsert) — владельческие правит UI.
+
 ## Регулярные задачи ВО ВКЛАДКЕ «Автоматизации» + чтение вложений в комментариях задач (2026-07-08 вечер, Albery `b964c48`→`8fb3a2b`)
 Два запроса владельца (диалоги #520–524 и #507/509 в interactions). Тег отката `pre-recurring-tab-20260708`
 + дамп трёх таблиц `/root/backups/pre-recurring-tab-20260708.sql`.
