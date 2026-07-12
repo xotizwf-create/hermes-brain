@@ -197,6 +197,7 @@ class Tab:
         self.ws = websocket.create_connection(info["webSocketDebuggerUrl"],
                                               timeout=40)
         self._mid = 0
+        self._rpc("Page.enable")   # события загрузки для умного ожидания в goto
 
     def _rpc(self, method, **params):
         self._mid += 1
@@ -212,9 +213,34 @@ class Tab:
                         returnByValue=True, awaitPromise=True)
         return res.get("result", {}).get("value")
 
-    def goto(self, url, wait=6.0):
+    def goto(self, url, wait=6.0, ready_sel=None, settle=0.7):
+        """Переход с умным ожиданием: событие загрузки страницы + (опционально)
+        появление селектора ready_sel. wait — верхний предел, а не фиксированный
+        сон: обычная страница hh готова за 1.5-3с вместо прежних 6-10с."""
         self._rpc("Page.navigate", url=url)
-        time.sleep(wait)
+        deadline = time.time() + wait
+        self.ws.settimeout(0.5)
+        try:
+            while time.time() < deadline:
+                try:
+                    msg = json.loads(self.ws.recv())
+                except Exception:
+                    continue      # квант таймаута — проверяем дедлайн и ждём дальше
+                if msg.get("method") in ("Page.loadEventFired",
+                                         "Page.frameStoppedLoading"):
+                    break
+        finally:
+            self.ws.settimeout(40)
+        if ready_sel:
+            probe = "!!document.querySelector(" + json.dumps(ready_sel) + ")"
+            while time.time() < deadline:
+                try:
+                    if self.eval(probe):
+                        break
+                except Exception:
+                    pass
+                time.sleep(0.3)
+        time.sleep(settle)        # короткая пауза на дорисовку React-контента
 
     def screenshot(self, path):
         try:
@@ -252,15 +278,18 @@ def search_vacancies(tab, cfg):
                    + f"&area={cfg['area']}&salary={cfg['salary_from']}"
                    + "&order_by=publication_time"
                    + f"&page={page}&items_on_page=20")
-            tab.goto(url, wait=6)
+            tab.goto(url, wait=8,
+                     ready_sel='a[data-qa="serp-item__title"], a[data-qa*="vacancy-title"]')
             items = tab.eval("""
 (() => [...document.querySelectorAll('a[data-qa="serp-item__title"], a[data-qa*="vacancy-title"]')]
   .map(a => {
     const card = a.closest('[data-qa="vacancy-serp__vacancy"]') || a.closest('div');
     const emp = card && card.querySelector('[data-qa="vacancy-serp__vacancy-employer"]');
+    const sal = card && card.querySelector('[data-qa="vacancy-serp__vacancy-compensation"]');
     const m = a.href.match(/vacancy\\/(\\d+)/);
     return m ? {id: m[1], title: a.textContent.trim(),
                 employer: emp ? emp.textContent.trim() : "",
+                salary: sal ? sal.textContent.trim() : "",
                 url: "https://hh.ru/vacancy/" + m[1]} : null;
   }).filter(Boolean))()
 """) or []
@@ -268,7 +297,7 @@ def search_vacancies(tab, cfg):
                 found.setdefault(it["id"], it)
             if len(items) < 15:
                 break
-        time.sleep(2)
+        time.sleep(1)
     return list(found.values())
 
 
@@ -299,7 +328,7 @@ def salary_ok(salary_text, cfg):
 
 
 def read_vacancy(tab, url):
-    tab.goto(url, wait=6)
+    tab.goto(url, wait=8, ready_sel='[data-qa="vacancy-title"]')
     return tab.eval("""
 (() => ({
   title: (document.querySelector('[data-qa="vacancy-title"]')||{textContent:""}).textContent.trim(),
@@ -323,8 +352,9 @@ def llm_assess(cfg, vac):
     key = env_value(ENV_PATH, r"(?:export\s+)?GROQ_API_KEY\s*=\s*(.+)")
     if not key:
         raise RuntimeError("нет GROQ_API_KEY")
-    # лимиты Groq — токены/минуту: держим паузу между вызовами
-    gap = cfg.get("llm_min_interval_sec", 15) - (time.time() - _LAST_LLM_CALL[0])
+    # лимиты Groq — токены/минуту: короткая пауза между вызовами; при 429
+    # ниже есть retry с backoff, поэтому большой превентивный gap не нужен
+    gap = cfg.get("llm_min_interval_sec", 6) - (time.time() - _LAST_LLM_CALL[0])
     if gap > 0:
         time.sleep(gap)
     system = (
@@ -491,7 +521,7 @@ async (letterText) => {
 
 
 def apply_to(tab, vac_url, letter):
-    tab.goto(vac_url, wait=6)
+    tab.goto(vac_url, wait=8, ready_sel='[data-qa="vacancy-title"]', settle=1.2)
     expr = "(" + APPLY_JS + ")(" + json.dumps(letter, ensure_ascii=False) + ")"
     return tab.eval(expr) or {"ok": False, "stage": "eval-null"}
 
@@ -512,7 +542,8 @@ def check_messages(tab):
     """Сканирует список чатов; возвращает новые входящие, об отказах молчит."""
     seen = jload(MSGS_SEEN_PATH, {})
     first_seed = not seen
-    tab.goto("https://hh.ru/chat", wait=10)
+    tab.goto("https://hh.ru/chat", wait=10,
+             ready_sel='[data-qa^="chatik-open-chat-"]', settle=1.0)
     rows = tab.eval(CHATS_JS) or []
     log(f"ЛС: чатов в списке: {len(rows)}")
     news = []
@@ -544,6 +575,8 @@ def main():
     ap.add_argument("--max", type=int, default=None)
     ap.add_argument("--apply-ids", default=None,
                     help="id,id из раздела proposed журнала — откликнуться на одобренные")
+    ap.add_argument("--list", action="store_true",
+                    help="быстрый разовый список: поиск + префильтр, без LLM и откликов")
     args = ap.parse_args()
 
     cfg = {**DEFAULT_CONFIG, **jload(CONFIG_PATH, {})}
@@ -618,6 +651,20 @@ def main():
                 jsave(LEDGER_PATH, ledger)
                 time.sleep(random.uniform(*cfg["delay_between_applies_sec"]))
             send_report()
+            return
+
+        # ── быстрый разовый список для владельца (--list): без LLM/откликов ──
+        if args.list:
+            cands = search_vacancies(tab, cfg)
+            rows = [c for c in cands
+                    if title_ok(c["title"], cfg)
+                    and employer_ok(c.get("employer", ""), cfg)
+                    and salary_ok(c.get("salary", ""), cfg)]
+            log(f"выдача: {len(cands)}, после префильтра: {len(rows)}")
+            for c in rows:
+                mark = " [уже откликался]" if c["id"] in ledger["applied"] else ""
+                print(f"• {c['title']} — {c.get('employer', '')} | "
+                      f"{c.get('salary') or 'ЗП не указана'}{mark}\n  {c['url']}")
             return
 
         # ЛС проверяем каждый прогон (отказы фильтруются внутри)
