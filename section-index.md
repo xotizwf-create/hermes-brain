@@ -405,11 +405,14 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Hermes Agent (автономный ИИ-агент, мозг = ChatGPT Plus)](projects/albery/hermes.md#hermes-agent-автономный-ии-агент-мозг-chatgpt-plus)
 - [Что это и зачем](projects/albery/hermes.md#что-это-и-зачем)
 - [Ключевые пути и факты](projects/albery/hermes.md#ключевые-пути-и-факты)
+- [Модель агентов: gpt-5.6-terra (смена 2026-07-12)](projects/albery/hermes.md#модель-агентов-gpt-56-terra-смена-2026-07-12)
+- [codex CLI ≠ мозг агентов (важно, разведано 2026-07-12)](projects/albery/hermes.md#codex-cli-мозг-агентов-важно-разведано-2026-07-12)
 - [Важные понятия (чтобы не путать)](projects/albery/hermes.md#важные-понятия-чтобы-не-путать)
 - [Подробности (разбито по темам, 2026-06-13)](projects/albery/hermes.md#подробности-разбито-по-темам-2026-06-13)
 - [Google Sheets / Docs через битрикс-агента](projects/albery/hermes.md#google-sheets-docs-через-битрикс-агента)
 
 ## `projects/albery/incidents.md` · [project] incidents
+- [2026-07-12 — «Полина»: агент назвал ответственным человека, которого нет в компании](projects/albery/incidents.md#2026-07-12-полина-агент-назвал-ответственным-человека-которого-нет-в-компании)
 - [2026-07-02 → 2026-07-12 — батч-синк молча умирал 10 дней (чаты и снапшоты задач устарели)](projects/albery/incidents.md#2026-07-02-2026-07-12-батч-синк-молча-умирал-10-дней-чаты-и-снапшоты-задач-устарели)
 
 ## `projects/albery/knowledge-rag.md` · [project] albery, mcp, rag, search, knowledge, postgres, optimization, reference
@@ -746,6 +749,17 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [2. Simplicity First](skills/karpathy-guidelines/SKILL.md#2-simplicity-first)
 - [3. Surgical Changes](skills/karpathy-guidelines/SKILL.md#3-surgical-changes)
 - [4. Goal-Driven Execution](skills/karpathy-guidelines/SKILL.md#4-goal-driven-execution)
+
+## `skills/leadgen-watch/SKILL.md` · [skill] leadgen-watch
+- [Источники (v1, проверены с ПК 2026-07-12)](skills/leadgen-watch/SKILL.md#источники-v1-проверены-с-пк-2026-07-12)
+- [Запуск](skills/leadgen-watch/SKILL.md#запуск)
+- [Состояние (только на сервере, не в git)](skills/leadgen-watch/SKILL.md#состояние-только-на-сервере-не-в-git)
+- [Реакции владельца на кандидатов (протокол для Гермеса)](skills/leadgen-watch/SKILL.md#реакции-владельца-на-кандидатов-протокол-для-гермеса)
+- [LLM-отбор (правила зашиты в промпт)](skills/leadgen-watch/SKILL.md#llm-отбор-правила-зашиты-в-промпт)
+- [Cron](skills/leadgen-watch/SKILL.md#cron)
+- [Runtime budget and timeout safety](skills/leadgen-watch/SKILL.md#runtime-budget-and-timeout-safety)
+- [Фазы (план владельца, 2026-07-12)](skills/leadgen-watch/SKILL.md#фазы-план-владельца-2026-07-12)
+- [Частые правки](skills/leadgen-watch/SKILL.md#частые-правки)
 
 ## `skills/legal-documents-ru/SKILL.md` · [skill] legal-documents-ru
 - [Toolchain on server 217 (what is and isn't available)](skills/legal-documents-ru/SKILL.md#toolchain-on-server-217-what-is-and-isnt-available)
