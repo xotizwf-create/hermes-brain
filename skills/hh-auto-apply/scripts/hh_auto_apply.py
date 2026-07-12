@@ -290,7 +290,9 @@ def search_vacancies(tab, cfg):
     for q in cfg["queries"]:
         for page in range(cfg["max_pages_per_query"]):
             url = ("https://hh.ru/search/vacancy?text=" + urllib.parse.quote(q)
-                   + f"&area={cfg['area']}&salary={cfg['salary_from']}"
+                   + f"&area={cfg['area']}"
+                   # salary_from=0/пусто = искать без ЗП-фильтра hh
+                   + (f"&salary={cfg['salary_from']}" if cfg.get("salary_from") else "")
                    + "&order_by=publication_time"
                    + f"&page={page}&items_on_page=20")
             tab.goto(url, wait=8,
@@ -298,13 +300,23 @@ def search_vacancies(tab, cfg):
             items = tab.eval("""
 (() => [...document.querySelectorAll('a[data-qa="serp-item__title"], a[data-qa*="vacancy-title"]')]
   .map(a => {
-    const card = a.closest('[data-qa="vacancy-serp__vacancy"]') || a.closest('div');
-    const emp = card && card.querySelector('[data-qa="vacancy-serp__vacancy-employer"]');
-    const sal = card && card.querySelector('[data-qa="vacancy-serp__vacancy-compensation"]');
+    let card = a.closest('[data-qa="vacancy-serp__vacancy"]');
+    if (!card) {
+      // разметка 2026-07: у карточки нет data-qa — поднимаемся до контейнера с текстом
+      card = a;
+      for (let hops = 0; card.parentElement && hops < 8; hops++) {
+        card = card.parentElement;
+        if ((card.innerText || '').length > 150) break;
+      }
+    }
+    const emp = card.querySelector('[data-qa="vacancy-serp__vacancy-employer"]');
+    // у зарплаты больше нет своего data-qa — берём строку с цифрами и валютой
+    const sal = (card.innerText || '').split('\\n').map(s => s.trim())
+      .find(l => /\\d[\\d\\s\\u00a0\\u202f]*\\s*(\\u20bd|руб|\\$|€)/.test(l)) || '';
     const m = a.href.match(/vacancy\\/(\\d+)/);
     return m ? {id: m[1], title: a.textContent.trim(),
                 employer: emp ? emp.textContent.trim() : "",
-                salary: sal ? sal.textContent.trim() : "",
+                salary: sal,
                 url: "https://hh.ru/vacancy/" + m[1]} : null;
   }).filter(Boolean))()
 """) or []
@@ -372,6 +384,13 @@ def llm_assess(cfg, vac):
     gap = cfg.get("llm_min_interval_sec", 6) - (time.time() - _LAST_LLM_CALL[0])
     if gap > 0:
         time.sleep(gap)
+    # правило про минимальную ЗП только когда фильтр включён (salary_from > 0)
+    sal_rule = ""
+    if cfg.get("salary_from"):
+        sal_min = f"{cfg['salary_from']:,}".replace(",", " ")
+        sal_rule = (f"1а. Если в тексте явно указана зарплата и её максимум ниже {sal_min} ₽ "
+                    "в месяц — relevant=false. Если зарплата НЕ указана — это НЕ причина "
+                    "отклонять.\n")
     system = (
         "Ты помогаешь Александру откликаться на вакансии на hh.ru. Его профиль: "
         + cfg["profile"]
@@ -381,8 +400,7 @@ def llm_assess(cfg, vac):
         "процессов и отчётности. Если в описании нет явного ИИ-компонента (чистый "
         "Битрикс24/1С/BI/ERP/системный анализ без ИИ) — relevant=false. Суть работы — "
         "внедрить ИИ в деятельность компании, а не разработать модель.\n"
-        "1а. Если в тексте явно указана зарплата и её максимум ниже 100 000 ₽ в месяц "
-        "— relevant=false. Если зарплата НЕ указана — это НЕ причина отклонять.\n"
+        + sal_rule +
         "1б. Требуемый опыт 5+ лет, уровень Senior/Ведущий с жёсткими требованиями "
         "к стажу — relevant=false (у Александра нет формального стажа такого уровня).\n"
         "1в. Если суть роли — отраслевой менеджмент (управление недвижимостью, "
