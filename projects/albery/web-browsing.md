@@ -23,6 +23,14 @@ updated: 2026-07-12
   `TG_AGENT_TOOLSETS`; добавлен systemd drop-in
   `/etc/systemd/system/albery-tg.service.d/browser.conf` → `albery,web,browser`.
   Убрать браузер у бота = удалить drop-in + `daemon-reload` + рестарт.
+- **Битрикс-агенты (все: юрист, финансист, склад, новостной, main…):** браузер включён
+  ВСЕМ по умолчанию 2026-07-12. Механика: `b24bot.py` собирает toolsets как
+  `<mcp-коннектор агента> + $B24_EXTRA_TOOLSETS` (дефолт был `web`); drop-in
+  `/etc/systemd/system/albery.service.d/browser.conf` → `B24_EXTRA_TOOLSETS=web,browser`.
+  Изоляция не изменилась: terminal/file/exec у битрикс-агентов по-прежнему ВЫКЛЮЧЕНЫ,
+  `allow_private_urls: false` не пускает браузер во внутренние адреса. Рестарт `albery`
+  делался при `bitrix_inflight_turns = 0`. Проверено: `hermes -z -t agent-main,web,browser`
+  → `B24-BROWSER-OK`. Откат: удалить drop-in + daemon-reload + рестарт при inflight=0.
 - **Инструкция агенту** — секция «Поиск в интернете» в `/root/.hermes/SOUL.md`
   (подгружается свежей на каждое сообщение, рестарт не нужен): web_search → открыть
   1-3 результата; browser_navigate+browser_snapshot для страниц; fetch_url (MCP) для
