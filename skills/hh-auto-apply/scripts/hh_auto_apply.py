@@ -659,9 +659,20 @@ def main():
         tab = Tab("about:blank")
         if not check_login(tab):
             if not args.list:
-                tg_send("⚠️ hh.ru: сессия разлогинилась. Зайди в браузер по ссылке "
-                        "из `bash /opt/hh-browser-start.sh` и войди заново — "
-                        "автоотклики на паузе.")
+                # не спамить каждый час: напоминание о логине максимум раз в 12ч
+                marker = STATE_DIR + "/hh_login_alert.ts"
+                last = 0.0
+                try:
+                    last = float(open(marker).read().strip())
+                except Exception:
+                    pass
+                if time.time() - last > 12 * 3600:
+                    tg_send("⚠️ hh.ru: сессия разлогинилась. Запусти "
+                            "`bash /opt/hh-browser-start.sh` и войди по noVNC-ссылке — "
+                            "до этого поиск кандидатов стоит.")
+                    open(marker, "w").write(str(time.time()))
+                else:
+                    log("сессия разлогинена — напоминание уже отправляли, молчим")
                 return
             log("сессия разлогинена — для --list не критично, ищем без логина")
 
