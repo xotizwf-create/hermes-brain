@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-07-11
+updated: 2026-07-12
 secret_refs: []
 ---
 
@@ -409,6 +409,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Подробности (разбито по темам, 2026-06-13)](projects/albery/hermes.md#подробности-разбито-по-темам-2026-06-13)
 - [Google Sheets / Docs через битрикс-агента](projects/albery/hermes.md#google-sheets-docs-через-битрикс-агента)
 
+## `projects/albery/incidents.md` · [project] incidents
+- [2026-07-02 → 2026-07-12 — батч-синк молча умирал 10 дней (чаты и снапшоты задач устарели)](projects/albery/incidents.md#2026-07-02-2026-07-12-батч-синк-молча-умирал-10-дней-чаты-и-снапшоты-задач-устарели)
+
 ## `projects/albery/knowledge-rag.md` · [project] albery, mcp, rag, search, knowledge, postgres, optimization, reference
 - [Зачем чанкинг (Ступень A)](projects/albery/knowledge-rag.md#зачем-чанкинг-ступень-a)
 - [Архитектура](projects/albery/knowledge-rag.md#архитектура)
@@ -517,6 +520,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Откат / временно отключить VPN (сервер вернётся на прямой IP, сайт продолжит работать)](projects/albery/vpn-gateway.md#откат-временно-отключить-vpn-сервер-вернётся-на-прямой-ip-сайт-продолжит-работать)
 - [Диагностика](projects/albery/vpn-gateway.md#диагностика)
 - [Если внешний ресурс не открывается](projects/albery/vpn-gateway.md#если-внешний-ресурс-не-открывается)
+
+## `projects/albery/web-browsing.md` · [project] albery, hermes, browser, web-search, tools
+- [Что стоит и как устроено](projects/albery/web-browsing.md#что-стоит-и-как-устроено)
+- [Проверено боем (2026-07-12)](projects/albery/web-browsing.md#проверено-боем-2026-07-12)
+- [Память/ресурсы (2 ГБ RAM + 2 ГБ swap)](projects/albery/web-browsing.md#памятьресурсы-2-гб-ram-2-гб-swap)
+- [Откат](projects/albery/web-browsing.md#откат)
 
 ## `projects/andigital/remote-pc-access.md` · [project] andigital, meshcentral, remote-access, security, windows, consent
 - [Current status — restored MVP / operational](projects/andigital/remote-pc-access.md#current-status-restored-mvp-operational)
@@ -709,7 +718,8 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Done when](skills/hermes-self-repair/SKILL.md#done-when)
 
 ## `skills/hh-auto-apply/SKILL.md` · [skill] hh-auto-apply
-- [ТЕКУЩИЙ РЕЖИМ (apply) — автоотклики без сопроводительного](skills/hh-auto-apply/SKILL.md#текущий-режим-apply-автоотклики-без-сопроводительного)
+- [ТЕКУЩИЙ РЕЖИМ (review, с 2026-07-12) — пауза снята, автоотклики ВЫКЛЮЧЕНЫ](skills/hh-auto-apply/SKILL.md#текущий-режим-review-с-2026-07-12-пауза-снята-автоотклики-выключены)
+- [РЕЖИМ apply — автоотклики без сопроводительного (ВЫКЛЮЧЕН 2026-07-12)](skills/hh-auto-apply/SKILL.md#режим-apply-автоотклики-без-сопроводительного-выключен-2026-07-12)
 - [РЕЖИМ ОБУЧЕНИЯ (mode=review) — старый полуавтоматический сценарий](skills/hh-auto-apply/SKILL.md#режим-обучения-modereview-старый-полуавтоматический-сценарий)
 - [Профиль поиска (что нужно владельцу)](skills/hh-auto-apply/SKILL.md#профиль-поиска-что-нужно-владельцу)
 - [Инфраструктура (уже на сервере)](skills/hh-auto-apply/SKILL.md#инфраструктура-уже-на-сервере)
@@ -2656,6 +2666,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [University Exchange / Academic Mobility Programs](vendor-skills/research/research-intelligence-workflows/SKILL.md#university-exchange-academic-mobility-programs)
 - [Travel Schedule / Ticket Chain Research](vendor-skills/research/research-intelligence-workflows/SKILL.md#travel-schedule-ticket-chain-research)
 - [Russian TV / Streaming Episode Identification](vendor-skills/research/research-intelligence-workflows/SKILL.md#russian-tv-streaming-episode-identification)
+- [Rapid Free-Certificate Research](vendor-skills/research/research-intelligence-workflows/SKILL.md#rapid-free-certificate-research)
 - [Academic Search and Paper Writing](vendor-skills/research/research-intelligence-workflows/SKILL.md#academic-search-and-paper-writing)
 - [Blog/RSS Monitoring](vendor-skills/research/research-intelligence-workflows/SKILL.md#blogrss-monitoring)
 - [Prediction Markets](vendor-skills/research/research-intelligence-workflows/SKILL.md#prediction-markets)
@@ -2682,6 +2693,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 ## `vendor-skills/research/research-intelligence-workflows/references/official-municipal-source-evidence.md` · [?]
 - [Pattern](vendor-skills/research/research-intelligence-workflows/references/official-municipal-source-evidence.md#pattern)
 - [Example: Sarapul sewerage claim](vendor-skills/research/research-intelligence-workflows/references/official-municipal-source-evidence.md#example-sarapul-sewerage-claim)
+
+## `vendor-skills/research/research-intelligence-workflows/references/rapid-free-certificate-research.md` · [?]
+- [Validation method](vendor-skills/research/research-intelligence-workflows/references/rapid-free-certificate-research.md#validation-method)
+- [Reporting pattern](vendor-skills/research/research-intelligence-workflows/references/rapid-free-certificate-research.md#reporting-pattern)
+- [TestDome pattern observed in July 2026](vendor-skills/research/research-intelligence-workflows/references/rapid-free-certificate-research.md#testdome-pattern-observed-in-july-2026)
 
 ## `vendor-skills/research/research-intelligence-workflows/references/regulatory-standards-evidence.md` · [?]
 - [Pattern learned](vendor-skills/research/research-intelligence-workflows/references/regulatory-standards-evidence.md#pattern-learned)
