@@ -165,9 +165,24 @@ def ensure_browser():
     if not browser_alive():
         free_mb = int(subprocess.check_output(
             "free -m | awk 'NR==2{print $7}'", shell=True).strip())
-        if free_mb < 250:
-            raise RuntimeError(f"мало памяти для браузера: {free_mb} МБ")
+        # start.sh на время сессии останавливает meshcentral — его память
+        # фактически достанется браузеру, учитываем её в preflight
+        mesh_mb = 0
+        try:
+            out = subprocess.check_output(
+                ["systemctl", "show", "meshcentral", "-p", "MemoryCurrent"],
+                text=True).strip().partition("=")[2]
+            if out.isdigit():
+                mesh_mb = int(out) // (1024 * 1024)
+        except Exception:
+            pass
+        if free_mb + mesh_mb < 250:
+            raise RuntimeError(
+                f"мало памяти для браузера: {free_mb} МБ (+{mesh_mb} МБ meshcentral)")
+        # HH_NOVNC=1: автоматическим прогонам VNC/noVNC не нужен (~30-40 МБ);
+        # владелец логинится через ручной запуск start.sh без этой переменной
         subprocess.Popen(["bash", "/opt/hh-browser-start.sh", "https://hh.ru/"],
+                         env={**os.environ, "HH_NOVNC": "1"},
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         for _ in range(30):
             time.sleep(2)
@@ -595,7 +610,7 @@ def main():
         log(f"ночь ({hour_msk}:00 МСК) и браузер не поднят — спим до утра")
         return
 
-    started = ensure_browser()
+    started = False
     tab = None
     mode = cfg.get("mode", "review")
     applied, manual, errors, letters_fyi, proposed = [], [], [], [], []
@@ -620,6 +635,9 @@ def main():
             log("новых релевантных вакансий/событий нет — отчёт не шлём")
 
     try:
+        # внутри try, чтобы отказ (например, «мало памяти») ушёл алертом в TG,
+        # а не умер молча в логе крона
+        started = ensure_browser()
         tab = Tab("about:blank")
         if not check_login(tab):
             if not args.list:
