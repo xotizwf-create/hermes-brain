@@ -581,7 +581,8 @@ def main():
 
     cfg = {**DEFAULT_CONFIG, **jload(CONFIG_PATH, {})}
     jsave(CONFIG_PATH, cfg)
-    if cfg.get("paused"):
+    if cfg.get("paused") and not args.list:
+        # пауза останавливает автоцикл, но не разовый список по просьбе владельца
         log("paused в конфиге — выходим")
         return
     ledger = jload(LEDGER_PATH, {"applied": {}, "manual": {}, "skipped": {}})
@@ -621,10 +622,12 @@ def main():
     try:
         tab = Tab("about:blank")
         if not check_login(tab):
-            tg_send("⚠️ hh.ru: сессия разлогинилась. Зайди в браузер по ссылке "
-                    "из `bash /opt/hh-browser-start.sh` и войди заново — "
-                    "автоотклики на паузе.")
-            return
+            if not args.list:
+                tg_send("⚠️ hh.ru: сессия разлогинилась. Зайди в браузер по ссылке "
+                        "из `bash /opt/hh-browser-start.sh` и войди заново — "
+                        "автоотклики на паузе.")
+                return
+            log("сессия разлогинена — для --list не критично, ищем без логина")
 
         # ── одобренные владельцем отклики (--apply-ids) ──────────────────
         if args.apply_ids:
