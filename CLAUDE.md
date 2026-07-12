@@ -78,6 +78,9 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   to manage per-project secrets in a browser, tied to GitHub repos; runs as unprivileged `hermesvault`,
   shared store `/opt/hermes/secure/projects`. Live at `www.andigital.ru/andigital/secret/<token>/`. Turnkey/resaleable (README).
 - `secure-access`, `postgres-production` — credentials & Postgres ops.
+- `leadgen-watch` — поиск ПРОЕКТОВ (не вакансий) для лидгена владельца: FL.ru + freelance.ru +
+  TG-каналы → LLM-фильтр → кандидаты с черновиком отклика в TG (review-only); там же план
+  холодного email-аутрича (Фаза 3).
 
 ## Current state (2026-07-02)
 - Brain lives in two checkouts of the GitHub repo: this local working copy + prod clone
@@ -125,6 +128,9 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   («норм» → `--apply-ids`, «не норм» → `hh_feedback.json` в промпт); автоотклики включатся после
   «фильтр норм» (`mode: apply`). Ночью (вне 8–23 МСК) автоотклики не шлются, review/ЛС работают.
   Skill: `hh-auto-apply`. Старый `hh-ai-business-automation-watch` (every 2h) живёт отдельно.
+- `leadgen-watch` — **hourly** (с 2026-07-12, no-agent): мониторинг проектов на FL.ru +
+  freelance.ru + 6 публичных TG-каналов → Groq-фильтр + черновик отклика → кандидаты
+  владельцу в TG (review-only, ночью 23–8 МСК копит pending). Skill: `leadgen-watch`.
 
 ## Open tasks (next steps, not yet done)
 - **Re-auth Codex CLI on 217 (BLOCKER for coding delegation):** discovered 2026-07-09 — `codex login
@@ -141,5 +147,10 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
 - Skills revision pass: 25 custom skills — check for dead paths/hosts after the June changes.
 - Re-wire Albery MCP on 217 if ever needed: `MCP_SHARED_SECRET` is not on 217; get it from the
   owner / the Albery box (186), then `connect-mcp` add albery. See `connectors/mcp-servers.md`.
+- **Leadgen Фаза 2/3 (ждёт владельца, план в `skills/leadgen-watch/SKILL.md`):** аккаунты на
+  биржах (Kwork-продавец, профиль подрядчика Workspace → email-дайджесты тендеров), для
+  email-аутрича — отдельный домен + выбор 2–3 ниш; дальше агент строит аутрич-машину
+  (SPF/DKIM/прогрев, парсинг компаний, персональные письма в review). Фаза 4: кейс Albery
+  на vc.ru + TenChat + партнёрка Битрикс24.
 
 Keep this section current as tasks complete.
