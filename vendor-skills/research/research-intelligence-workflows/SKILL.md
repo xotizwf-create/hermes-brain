@@ -34,6 +34,7 @@ Class-level research workflow for finding sources, monitoring feeds, querying do
 - Plan time-sensitive multimodal travel chains from live schedules/prices while balancing budget, buffer time, and disruption risk.
 - Research university exchange / academic mobility programs: partner catalogs, eligibility, documents, costs, deadlines, coordinators, and application sequence.
 - Identify Russian TV/streaming episodes from remembered scenes, reconcile conflicting season numbering, and find legal/free clip or catalog links.
+- Find short courses/tests with free named certificates while validating duration, payment gates, and issuance conditions.
 
 ## Workflow
 
@@ -125,6 +126,10 @@ Session example and wording notes live in `references/travel-chain-ticket-resear
 
 When the user remembers a scene from a Russian series/show and asks for the season, episode, or where to watch, treat it as source-backed media identification. Search exact scene fragments and character-name variants, find clip titles/video IDs, then cross-check the episode in official streaming catalogs and reference databases. Prefer the official streaming catalog numbering in the final answer, but mention alternate numbering when databases split seasons/blocks differently. If only a clip is free and the full episode is subscription-only, say that clearly and give the legal free clip separately. Detailed RUTUBE/PREMIER pattern and the “Реальные пацаны: Сальто” example live in `references/russian-tv-episode-identification.md`.
 
+### Rapid Free-Certificate Research
+
+For requests combining “very short,” “free,” and “certificate,” validate the whole certification path rather than trusting search snippets. Distinguish a course from a quiz/test, confirm whether the credential/download itself is free, estimate duration only from the actual certification questions, and disclose any score/rank threshold. Put exact matches before near matches and name the failed constraint for every near match. The detailed checklist and TestDome example are in `references/rapid-free-certificate-research.md`.
+
 ### Academic Search and Paper Writing
 
 Use arXiv/paper metadata, then read abstracts/full text as needed. For paper writing, maintain claims→evidence→experiment mapping.
@@ -163,6 +168,7 @@ Preserve link structure and provenance when building local wikis. Do not invent 
 - For university admissions recommendations with a budget-only constraint, leaving attractive `0 бюджет` programs in the recommendation set. Filter by budget-seat counts first, show the counts, and only mention `0 бюджет` options as excluded/context.
 - For TV/streaming episode identification, silently mixing episode-numbering schemes. Official streaming catalogs, TheTVDB, broadcaster blocks, and fan sites may number the same Russian series differently; state the schema and cross-check before answering.
 - For “где посмотреть бесплатно” requests, linking pirate mirrors or implying a subscription episode is free. Provide legal/free clips or official free catalog pages; if the full episode is paywalled, say so plainly.
+- For free-certificate searches, calling a test a course, treating a free test as proof of a free certificate, or omitting a top-percentile/pass condition. Verify and label each constraint separately.
 
 ## Verification Checklist
 
