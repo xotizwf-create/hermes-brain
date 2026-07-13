@@ -50,6 +50,14 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
    and user-facing failures (this is what broke LiteExams device-binding on 2026-05-30/31). The
    universal, scale-adaptive procedure (assess → plan budget → protect → execute, same for a 512 MB
    VPS or a big box) is the mandatory first step for any server work: `engineering/server-preflight.md`.
+8. **Log every Albery change as a closed Bitrix task (engineering-record discipline, owner 2026-07-13).**
+   When you change the Albery running system (code, config, DB instructions, prompts, `SOUL.md`, migrations)
+   — one atomic change per commit — record it as a Bitrix task on the Albery portal: responsible =
+   Alexander Nikitenko (id 16), creator = ИИ Агент (id 22), deadline = the moment the work was done
+   (keeps tasks in chronological order). Fill FULL context (problem + who reported it, root cause, what
+   was done, files, commit hash + link `https://github.com/xotizwf-create/Albery/commit/<hash>`,
+   verification, rollback/backup) and close it immediately with a result comment. This is in addition to
+   `logs/changelog.md`, not a replacement. Procedure, template and REST gotchas: `projects/albery/change-tracking.md`.
 
 ## Key skills
 - `add-project` — register a new project safely (no secrets, refs only).
