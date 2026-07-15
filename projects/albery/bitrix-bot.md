@@ -3,7 +3,7 @@ id: albery-bitrix-bot
 type: project
 project: albery
 tags: [albery, bitrix, imbot, chatbot, hermes, mcp]
-updated: 2026-07-13
+updated: 2026-07-15
 secret_refs: []
 ---
 
@@ -172,10 +172,29 @@ deployment 200). Корень: в промпт **НЕ инжектился `dial
 ### Документы (pdf/docx/xlsx/md/txt/csv) + ответ файлом PDF/Excel/Word (2026-06-18, **исправлено 2026-06-19**)
 В `_b24_message_extras` файл качается через `disk.file.get → DOWNLOAD_URL`, затем извлекается текст
 (`_b24_extract_document`): pdf → `pypdf`, docx → `python-docx`, xlsx → `openpyxl`,
-md/txt/csv/json/html → как текст. Устаревший бинарный `.doc` не поддержан (нет libreoffice/antiword) —
-агент честно попросит прислать PDF/DOCX. Текст подмешивается блоком `[Пользователь прислал документ
+md/txt/csv/json/html → как текст. Текст подмешивается блоком `[Пользователь прислал документ
 «…». Извлечённое содержимое: …]` (бюджет ~12k симв/док). Зависимости (`pypdf`,`python-docx`,`openpyxl`,
 `reportlab`) — чистый python, в `requirements.txt`. Сообщение только с файлом больше не отбрасывается.
+
+**ЛЮБОЙ формат + голосовые (2026-07-15, Albery `180ff2c`, Bitrix 1520).** Длинный хвост форматов
+вынесен в новый `docextract.py`, роутинг из той же единой точки `_b24_extract_document` (значит
+работает во всех трёх каналах: чат, комментарии задач, результаты задач — все идут через
+`_b24_message_extras`/`task_comment_files`):
+- `.xls` → `xlrd`; `.pptx` → `python-pptx` (слайды+таблицы+заметки); `.ppt` → `catppt`;
+  `.doc` → `antiword`/`catdoc` (apt: catdoc, antiword); `.odt/.ods/.odp` — zip+`content.xml`;
+  `.rtf` → `striprtf`; `.mht/.mhtml` — MIME-разбор (снимки «Saved by Blink» идут quoted-printable
+  БЕЗ charset → декодировать payload самим, иначе кракозябры); `.html/.xml` — видимый текст через
+  lxml; `.zip` — листинг + текст читаемых вложенных (guard от zip-бомб).
+- **Голосовые/аудио** (m4a/mp3/ogg/opus/wav/webm/flac/mp4…): `_b24_transcribe_audio` → Groq Whisper
+  (`whisper-large-v3`, авто-язык, env `B24_STT_MODEL`; тот же ключ и Cloudflare-UA-грабля, что у
+  vision OCR). В чате расшифровка идёт ОТДЕЛЬНЫМ блоком «ГОЛОСОВОЕ… ВЫПОЛНИ то, о чём просят»
+  (voice_texts — 5-й элемент кортежа `_b24_message_extras`), в задачах — вложение «голосовое/аудио»
+  с расшифровкой; хранится kind=audio (get_attachment_text/пересылка работают). Whisper даже
+  нормализует числа: «пятьсот девяносто четыре» → «594» (проверено полным ходом агента).
+- Нечитаемое аудио/бинарник → честный отказ, NUL-защита в task-пути как в чате (33635db).
+Проверка 15.07: реальные файлы владельца .xls 39 480 симв., .pptx 4 641, .mhtml 72 548; e2e через
+реальный Диск (upload → FILE_ID → скачал → расшифровал); голосовая команда «найди задачу 594» →
+агент выполнил и ответил верно. Откат: `git revert 180ff2c`, бэкап `b24bot.py.bak-fileread-20260715-1659`.
 
 **❗ Скачивание — токеном БОТА, не вебхука (корневой фикс 2026-06-19, коммит Albery `3dde14f`).** Симптом
 (тот самый баг владельца): пришлёшь `.docx` боту, спросишь «что в файле?» — а он **уверенно описывает
