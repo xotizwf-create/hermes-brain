@@ -5,7 +5,16 @@ description: Use when reading, correcting, registering, or overwriting incoming 
 
 # Incoming contracts in «Простые поставки»
 
-Use this skill for the full incoming-document pipeline: inspect the source, extract exact fields, save parsed data, verify it, and create or overwrite the contract card.
+Use this skill for the full incoming-document pipeline: inspect the source, extract exact fields, save parsed data, verify it, and create or overwrite the contract.
+
+## Unfilled signature dates and delivery terms
+
+An incoming file may be an unfilled template: it has a number, parties, and a specification, while the signature date, a concrete delivery date, or the delivery schedule is blank. In that case:
+
+1. Save with `allowPartial=true`; **never invent** a contract date or deadline.
+2. Do **not** pass a relative `deadlineDays` when the signature date is not evidenced. Working-day calculations can otherwise be anchored to the current day and create a false deadline.
+3. Add `notes` stating exactly which source fields are blank.
+4. Tell the owner which contract numbers have missing dates. After they provide them, update the existing record with `save_contract_from_incoming_document(contractId=..., extracted=...)` rather than creating a duplicate.
 
 ## Core workflow
 
@@ -21,7 +30,9 @@ Use this skill for the full incoming-document pipeline: inspect the source, extr
    - every specification row: exact document name, unit, quantity, unit price, row sum;
    - plan quantity/date when requested.
 6. Preserve source wording in `docName`; use `name` as the concise working name only when there is a reliable catalog match or an obvious harmless normalization.
-7. Save fields with `save_incoming_contract_document_fields`.
+7. Treat `parsedEdits` as a convenience hint, **not source evidence**. It can contain upload-day defaults or stale auto-extracted values. When the signed contract header or appendix has blank date/placeholders (for example `«___» ______ 2026`), keep `contractDate` blank and use `allowPartial=true`; never replace the blank with `parsedEdits.contractDate`. Likewise, retain a duration-only deadline in `deadlineText`/`deadlineDays` when its start date is absent rather than fabricating an absolute deadline.
+8. If a full text response is too large or its table order is scrambled, search the text specifically for `СПЕЦИФИКАЦИЯ` and the delivery schedule, then inspect the matching original page(s). Do not rely on the first or most readable-looking occurrence: templates often contain blank acceptance forms and technical appendices before the signed specification.
+9. Save fields with `save_incoming_contract_document_fields`.
 8. Immediately verify with `read_incoming_contract_document(includeText=false)`. Check parties, dates, VAT, every item, and totals.
 9. Create the card with `save_contract_from_incoming_document`. Set `markDocsSent` only when the user explicitly says documents were sent.
 10. Verify creation from the returned `itemsSaved`, `totalAmount`, `sumWarnings`, and `linkedOrganizations`. Do not add redundant diagnostic reads when the tool explicitly says these fields are sufficient.
