@@ -9,7 +9,7 @@ Use this when the owner asks to create or fix a Google Sheet, calculator, dashbo
 
 ## First principles
 
-1. **Use the API, not browser clicking.** Prefer Google Sheets API `spreadsheets.batchUpdate` + `spreadsheets.values.update` with `valueInputOption=USER_ENTERED`. For bound Apps Script use the Apps Script API. Credentials and scopes are documented in `skills/google-account/`.
+1. **Use the API, not browser clicking.** Prefer Google Sheets API `spreadsheets.batchUpdate` + `spreadsheets.values.update` with `valueInputOption=USER_ENTERED`. For bound Apps Script use the Apps Script API. Credentials and scopes are documented in `skills/google-account/`. **Before building any button/menu automation, read `skills/google-account/references/sheets-apps-script-automation.md` → "Bound Apps Script automation — the robust pattern (and the `scripts.run` 404 trap)"**: never execute a bound script over the API (it 404s), deploy `onOpen`/`onEdit` simple triggers as content only, do the computation + verification yourself via the Sheets API, and assert against a known example before reporting success.
 2. **Simple formulas beat clever formulas.** The owner prefers readable, stable spreadsheets. Avoid one huge `IFERROR(QUERY({ ... }))` formula that builds the whole dashboard at once. Split logic into understandable helper blocks/columns.
 3. **Design is part of correctness.** Dashboards must be visually scannable: KPI cards, clear section headers, divider bands/lines, framed table zones, framed chart zones, consistent colors and spacing.
 4. **Charts are not verified by existence.** A chart object can exist and still show `Нет данных`. Always verify the chart source range contains non-empty numeric rows.
