@@ -1,0 +1,102 @@
+---
+id: albery-wb-analytics
+type: project
+project: albery
+tags: [albery, wildberries, analytics, wb-api, dashboard]
+updated: 2026-07-16
+secret_refs: [proj/albery/wb/analytics-token]
+---
+
+# Albery — сервис аналитики WB (вкладка «WB-кабинет»)
+
+Старт 2026-07-16 (владелец). Цель: полноценная аналитика кабинета Wildberries внутри Albery UI +
+инструменты для ИИ-агента. Разделы: **Общий дашборд · РНП · ОПиУ · ДДС · По артикулам ·
+Налоговый калькулятор**. Фильтры по бренду (в кабинете два: **Allberi, Arintela**). История ~полгода,
+дальше — непрерывная синхронизация. Референсы владельца: скрины стороннего сервиса (таблица
+артикулов с динамикой остатков/заказов по дням; налоговый калькулятор с Реализация/Услуги/
+Налоги и затраты/Операционная прибыль).
+
+## Ключ и доступ
+- Токен в `/var/www/albery/.env` → `WB_ANALYTICS_TOKEN` (600, вне git; бэкап `.env.bak-wbkey-*`).
+  Продавец: ООО «АЛБЕРИ», ИНН 2312330583, oid 4328220. Полный (НЕ read-only) доступ, **exp 15.01.2027**
+  — поставить напоминание о ротации к декабрю 2026. Значение нигде не печатать.
+- Заголовок: `Authorization: <token>` (без Bearer).
+
+## Разведка API (боевая, 16.07.2026, задача 1606)
+| Контур | Статус | Что отдаёт |
+|---|---|---|
+| statistics `/api/v1/supplier/stocks` | ✅ 200 | остатки по складам: nmId, barcode, brand, subject, qty, inWayTo/From, Price |
+| statistics `/api/v1/supplier/orders` | ✅ 200 | заказы: date, nmId, brand, гео (область/регион), склад, цены |
+| statistics `/api/v1/supplier/sales` | ✅ 200 | выкупы/возвраты: forPay, priceWithDisc, spp |
+| statistics v5 `reportDetailByPeriod` | ✅ 200 | финотчёт-строки: retail_amount, ppvz_for_pay, delivery_rub, storage_fee, penalty, deduction, acquiring_fee, комиссия, doc_type, supplier_oper_name — базис ОПиУ/ДДС/налогов |
+| content v2 `cards/list` | ✅ 200 | карточки: nmID, vendorCode, brand, title, фото — справочник |
+| prices `goods/filter` | ✅ 200 | текущие цены/скидки по размерам |
+| advert `promotion/count` | ✅ 200 | 399 кампаний; затраты — через `upd`/`fullstats` |
+| seller-analytics `paid_storage` | ✅ 202 | async-task (taskId → download) — хранение посуточно |
+| seller-analytics `nm-report/detail` | ❌ 404 | путь устарел — воронку строим из orders + снапшоты stocks; уточнить актуальный путь в доке |
+
+**⚠️ Лимитер:** второй запрос подряд к statistics → **HTTP 429** (глобальный, per seller). Синк —
+строго последовательный, один воркер, экспоненциальный бэкофф, паузы ≥60с между тяжёлыми методами.
+Никогда не дёргать WB API из UI/агента напрямую — только из БД.
+
+## Схема БД (предложена владельцу 16.07, ждёт «ок»)
+PostgreSQL, та же база albery. Сырьё всегда в `raw jsonb` (переживаем изменения API).
+
+- `wb_cards` — справочник: nm_id PK, imt_id, vendor_code, brand, title, subject_id/name, photo_url, raw, updated_at.
+- `wb_orders` — факт заказов: srid UNIQUE, g_number, date, last_change_date, nm_id→cards, barcode, brand,
+  subject, tech_size, warehouse, region/oblast, is_cancel, total_price, discount_percent, spp, finished_price,
+  price_with_disc, raw. IDX (date), (nm_id,date), (brand,date).
+- `wb_sales` — выкупы/возвраты: sale_id UNIQUE (S…/R…), srid, date, nm_id, for_pay, finished_price,
+  price_with_disc, spp, is_return (по префиксу R), raw. IDX как orders.
+- `wb_stocks_daily` — ежедневный снапшот остатков: PK (snapshot_date, nm_id, barcode, warehouse),
+  quantity, in_way_to, in_way_from, qty_full, price, discount. Для «динамики остатков» по артикулам.
+- `wb_finance_details` — строки финотчёта: rrd_id PK, realizationreport_id, date_from/to, rr_dt, nm_id,
+  brand_name, subject_name, sa_name, barcode, doc_type_name, supplier_oper_name, quantity, retail_price,
+  retail_amount, retail_price_withdisc_rub, ppvz_for_pay, delivery_rub, return_amount, storage_fee, penalty,
+  deduction, acquiring_fee, ppvz_sales_commission, commission_percent, office_name, order_dt, sale_dt, raw.
+- `wb_adv_costs` — реклама: (date, advert_id) PK, sum, type, campaign_name, raw — строка «Реклама» в ОПиУ.
+- `wb_paid_storage` — хранение: (date, nm_id, barcode, warehouse) PK, amount, volume, coef, raw.
+- `wb_prices_current` — снапшот цен: (snapshot_date, nm_id, size_id) PK, price, discount, club_discount.
+- `wb_cost_prices` — себестоимость (внутренние данные): barcode PK, nm_id, cost numeric, valid_from, source
+  — для «Себестоимость продаж» в ОПиУ/калькуляторе (у команды уже есть эксели с себестоимостью).
+- `wb_tax_settings` — налоговый режим: mode (УСН-Д/УСН-ДР/АУСН/СНГ), rate, vat_mode, vat_rate, effective_from.
+- `wb_sync_state` — endpoint PK, last_from, last_rrd_id, last_run_at, status, note (инкрементальность).
+- `wb_sync_log` — журнал прогонов: started/finished, endpoint, rows, error.
+
+## Маппинг разделов UI → данные
+- **Общий дашборд** — карточки: заказы/выкупы/возвраты за период (orders/sales), выручка, остатки суммарно,
+  топ-артикулы, динамика по дням; селектор дат как в референсе.
+- **РНП** («Рука на пульсе», ежедневка — ПОДТВЕРДИТЬ у владельца состав) — день к дню: заказы шт/₽,
+  выкупы, ДРР (adv_costs/выручка), остатки, скорость заказов.
+- **ОПиУ** — из finance_details агрегаты: продажи − комиссия − логистика − хранение − штрафы − реклама −
+  себестоимость (cost_prices) = прибыль; помесячно.
+- **ДДС** — по supplier_oper_name/doc_type + даты отчётов: поступления от WB (ppvz_for_pay), удержания;
+  фактические платежи по неделям отчётов.
+- **По артикулам** — таблица как референс: фото (cards), артикул, остаток (stocks_daily последний),
+  динамика остатков (спарклайн по stocks_daily), заказы ₽ (orders), скорость заказов шт/день, по дням
+  заказы (heatmap) — фильтр по бренду.
+- **Налоговый калькулятор** — реализация до/после СПП (finance_details retail_amount vs
+  retail_price_withdisc_rub/ppvz_for_pay), услуги WB (комиссия/логистика/реклама/прочие), режимы
+  УСН-Д/УСН-ДР/АУСН/СНГ (tax_settings), себестоимость продаж/самовыкупов, затраты → операционная прибыль.
+
+## Синхронизация (дизайн)
+Отдельный скрипт `scripts/wb_sync.py` (по образцу sync_google_drive: advisory lock + cron), строго
+последовательные вызовы: orders/sales — каждые 30 мин инкрементально (dateFrom = max(last_change_date));
+stocks — снапшот 1 р/день (ночью); finance reportDetailByPeriod — 1 р/день по rrd_id; cards/prices — 1 р/день;
+adv/storage — 1 р/день. Первичная загрузка полугода — чанками с паузами (finance по неделям). 429 → бэкофф
+×2 до 10 мин, всё в wb_sync_log.
+
+## Инструменты агента (MCP, read-only из БД)
+`wb_analytics_summary(period, brand)` · `wb_article_stats(nm_id|vendor_code, period)` ·
+`wb_finance_report(period, brand)` · `wb_tax_estimate(period, mode, rate)` · `wb_stocks_now(brand)`.
+Плюс маршрут в «Маршрутной карте»: вопросы по продажам/остаткам/прибыли WB → эти инструменты, НЕ fetch_url.
+
+## Этапы
+1. ✅ Ключ + разведка + проект схемы (задача 1606).
+2. Миграция БД + wb_sync.py + первичная загрузка полугода (после «ок» владельца по схеме).
+3. UI-болванка 6 разделов в стиле Центра Агента (фронт собирается ЛОКАЛЬНО, не на проде — 2GB RAM!).
+4. Наполнение: Общий дашборд → По артикулам → Налоговый калькулятор → ОПиУ → ДДС → РНП.
+5. MCP-инструменты агента + маршрут.
+6. Фильтры по бренду везде + доп. хотелки владельца.
+
+Каждый этап = закрытая Bitrix-задача (правило №8).
