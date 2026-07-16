@@ -39,3 +39,7 @@ _weekly_*
 
 # Local Google AI Studio mockup, not part of the brain
 /Интерфейс для Агента/
+
+# Owner-provided source material, integrated into the Albery repo (wb-cabinet/) — not brain content
+/Страница WB кабинет/
+/Интерфейс для Агента/
