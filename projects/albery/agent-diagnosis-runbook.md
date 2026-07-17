@@ -3,7 +3,7 @@ id: albery-agent-diagnosis-runbook
 type: project
 project: albery
 tags: [albery, runbook, diagnosis, agents, retrospective]
-updated: 2026-07-16
+updated: 2026-07-17
 secret_refs: []
 ---
 
@@ -56,6 +56,7 @@ secret_refs: []
 | 10 | Незваные ответы | «я отметил Наталью, ответил агент» | слабый триггер упоминания; офферы без зова | 906e31f,f571824 / 1536,1378 |
 | 11 | Дубли | двойные ответы | at-least-once без дедупа MESSAGE_ID | 4c8e309 / 1382 |
 | 12 | Инструкции не доезжают | правила игнорируются | start_here режется (~2k) — F01 | B24_INJECT_CORE_INSTR / 1482 |
+| 13 | Ложное «нет доступа» к Drive-файлам | «не вижу содержимое папки», у владельца «всё работает» | fetch_url читал drive.google.com/file/d/… анонимно (OAuth был только для Docs/Sheets) → страница «Войти», хотя a9ent.ai имел права; успех у других — случайный пробой анонимного пути | `87fba21` / 1646 |
 
 ## Числа корпуса (базовая линия на 16.07.2026)
 
