@@ -58,6 +58,18 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
    was done, files, commit hash + link `https://github.com/xotizwf-create/Albery/commit/<hash>`,
    verification, rollback/backup) and close it immediately with a result comment. This is in addition to
    `logs/changelog.md`, not a replacement. Procedure, template and REST gotchas: `projects/albery/change-tracking.md`.
+9. **Nothing is "done" without a test and a self-check on the real system (owner, 2026-07-20).**
+   The owner should never have to send the same task back twice. For every fix to a running system:
+   (a) find the root cause on FACTS — logs, DB, reproduction — never guess; (b) write a test that
+   FAILS on the current code and reproduces the actual complaint, using the real case from prod
+   (real names, real strings, real dialog ids); (c) fix until it is green; (d) run the full suite as
+   a deploy gate **off the box** (`python scripts/predeploy_check.py` in Albery) — a red gate means
+   no deploy; (e) after deploying, **verify on prod against the real data that was complained about**
+   and show the result — "tests are green" is NOT proof that prod works; (f) only then report it done.
+   This is also how already-working behaviour is protected from the next change: every past fix is
+   locked by its own test, so a regression fails the gate instead of reaching users.
+   Albery specifics and the list of protected behaviours: `docs/playbooks/safe-deploy.md` in the repo.
+   Report outcomes honestly: if something was not verified, say so instead of implying it was.
 
 ## Key skills
 - `add-project` — register a new project safely (no secrets, refs only).
