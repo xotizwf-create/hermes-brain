@@ -45,22 +45,31 @@ def main():
     rows = tab.eval(CHATS_JS) or []
     tab.close()
 
-    # ссылка на анкету обычно в превью последнего сообщения; если обрезана —
-    # открываем сам чат и ищем в полном тексте
+    # Ссылка бывает видна в превью последнего сообщения — но НЕ всегда: если hh
+    # показывает в списке статус («Собеседование», «Отклик на вакансию»), текст
+    # сообщения со ссылкой в превью не попадает. Поэтому открываем тред у всех
+    # чатов, где есть признак активности работодателя. Так была пропущена анкета
+    # Cheesecake: в списке у неё стояло «Собеседование».
+    SKIP = ("отклик на вакансию", "отказ", "просмотрено")
     todo = []
     for r in rows:
         m = FORM_RE.search(r["text"])
         if m:
             todo.append((r["id"], m.group(0)))
             continue
-        if "анкет" in r["text"].lower() or "форм" in r["text"].lower():
+        preview = r["text"].strip().lower()
+        # чат без активности работодателя открывать незачем — это экономит минуты прогона
+        if all(s not in preview for s in SKIP) or "анкет" in preview or "форм" in preview:
             t = H.Tab("https://hh.ru/chat/" + r["id"])
             time.sleep(8)
-            body = t.eval("document.body.innerText") or ""
+            # ТОЛЬКО сообщения треда: в боковом списке чатов висят превью других
+            # переписок, и ссылка оттуда привязалась бы не к тому работодателю
+            body = t.eval(
+                "[...document.querySelectorAll('[data-qa^=\"chatik-chat-message-\"]')]"
+                ".map(m => m.innerText).join(' ')") or ""
             t.close()
-            m = FORM_RE.search(body)
-            if m:
-                todo.append((r["id"], m.group(0)))
+            for link in set(FORM_RE.findall(body)):
+                todo.append((r["id"], link))
 
     report = []
     for chat_id, url in todo:
@@ -75,7 +84,7 @@ def main():
                 seen[url] = {"done": False, "why": "не прочиталась"}
                 continue
             bank = H.jload(F.ANSWERS_PATH, {"rules": []})
-            plan, unanswered = F.build_plan(items, bank)
+            plan, unanswered, _optional = F.build_plan(items, bank)
             if unanswered:
                 tab.close()
                 qs = "\n".join("• " + q for _, q in unanswered)

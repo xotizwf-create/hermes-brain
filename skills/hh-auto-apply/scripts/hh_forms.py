@@ -26,14 +26,22 @@ import hh_auto_apply as H  # noqa: E402
 ANSWERS_PATH = H.STATE_DIR + "/hh_profile_answers.json"
 
 # ── Google Forms: чтение и заполнение через DOM ────────────────────────────
+# Возвращаем РЕАЛЬНЫЙ индекс блока (i), а не позицию в отфильтрованном списке:
+# раньше чтение и заполнение фильтровали по-разному и ответы ложились не в те поля.
+# Выбрасываем: (а) блоки-дубли, которыми Google рисует каждый чекбокс отдельно,
+# (б) информационные блоки без единого поля ввода и без вариантов.
 DUMP_JS = r"""
-(() => [...document.querySelectorAll('[role="listitem"]')].map(li => {
-  const head = (li.querySelector('[role="heading"]') || li).innerText.trim().split('\n')[0];
+(() => [...document.querySelectorAll('[role="listitem"]')].map((li, i) => {
+  const head = (li.querySelector('[role="heading"]') || li)
+      .innerText.trim().split(String.fromCharCode(10))[0];
   const opts = [...li.querySelectorAll('[role="radio"],[role="checkbox"]')]
       .map(o => o.getAttribute('aria-label') || o.innerText.trim()).filter(Boolean);
   const free = !!li.querySelector('input[type="text"], textarea');
-  return {q: head, options: opts, free: free};
-}).filter(x => x.q && !(x.options.length === 1 && x.options[0] === x.q)))()
+  const req = !!li.querySelector('[aria-required="true"]');
+  return {i: i, q: head, options: opts, free: free, req: req};
+}).filter(x => x.q
+    && !(x.options.length === 1 && x.options[0] === x.q)
+    && (x.free || x.options.length)))()
 """
 
 FILL_JS = r"""
@@ -45,13 +53,8 @@ FILL_JS = r"""
     el.dispatchEvent(new Event('input', {bubbles: true}));
     el.dispatchEvent(new Event('change', {bubbles: true}));
   };
-  // тот же фильтр, что в DUMP_JS: иначе индексы плана разъедутся с DOM
-  const items = [...document.querySelectorAll('[role="listitem"]')].filter(li => {
-    const head = (li.querySelector('[role="heading"]') || li).innerText.trim().split(String.fromCharCode(10))[0];
-    const opts = [...li.querySelectorAll('[role="radio"],[role="checkbox"]')]
-        .map(o => o.getAttribute('aria-label') || o.innerText.trim()).filter(Boolean);
-    return head && !(opts.length === 1 && opts[0] === head);
-  });
+  // index в плане — реальный индекс блока из DUMP_JS, фильтровать здесь нечего
+  const items = [...document.querySelectorAll('[role="listitem"]')];
   const log = [];
   for (const step of plan) {
     const li = items[step.index];
@@ -192,26 +195,38 @@ def match_answer(question, bank):
 
 
 def build_plan(items, bank):
-    plan, unanswered = [], []
-    for i, it in enumerate(items):
+    """index в плане — «i» из дампа (реальный индекс блока в DOM), не порядковый номер.
+
+    Возвращает (plan, blocking, optional): отправку блокируют только незакрытые
+    ОБЯЗАТЕЛЬНЫЕ вопросы. Необязательные пропускаем — иначе любой информационный
+    блок с полем «ваш ответ» намертво стопорит анкету.
+    """
+    plan, blocking, optional = [], [], []
+
+    def miss(idx, text, required):
+        (blocking if required else optional).append((idx, text))
+
+    for pos, it in enumerate(items):
+        idx = it.get("i", pos)
+        req = bool(it.get("req"))
         entry = match_answer(it["q"], bank)
         if not entry:
-            unanswered.append((i, it["q"]))
+            miss(idx, it["q"], req)
             continue
         if it["options"]:
             # берём только те варианты, что реально есть в форме
             wanted = [v for v in entry.get("choose", []) if v in it["options"]]
             if not wanted:
-                unanswered.append((i, it["q"] + "  [варианты: " + " | ".join(it["options"]) + "]"))
+                miss(idx, it["q"] + "  [варианты: " + " | ".join(it["options"]) + "]", req)
                 continue
-            plan.append({"index": i, "kind": "choice", "values": wanted})
+            plan.append({"index": idx, "kind": "choice", "values": wanted})
         else:
             val = entry.get("text")
             if not val:
-                unanswered.append((i, it["q"]))
+                miss(idx, it["q"], req)
                 continue
-            plan.append({"index": i, "kind": "text", "value": val})
-    return plan, unanswered
+            plan.append({"index": idx, "kind": "text", "value": val})
+    return plan, blocking, optional
 
 
 def open_form(url):
@@ -251,10 +266,12 @@ def main():
             print("анкеты нет — это обычный отклик, делать нечего")
             tab.close()
             return
-        plan, unanswered = build_plan(items, bank)
-        for i, q in unanswered:
-            print("НЕТ ОТВЕТА В БАНКЕ: #%d %s" % (i, q))
-        if unanswered:
+        plan, blocking, optional = build_plan(items, bank)
+        for i, q in optional:
+            print("пропущен необязательный вопрос: #%d %s" % (i, q))
+        for i, q in blocking:
+            print("НЕТ ОТВЕТА В БАНКЕ (обязательный): #%d %s" % (i, q))
+        if blocking:
             print("анкета НЕ отправлена — спросить владельца")
             tab.close()
             return
@@ -301,13 +318,15 @@ def main():
         tab.close()
         return
 
-    plan, unanswered = build_plan(items, bank)
-    if unanswered:
-        print("НЕТ ОТВЕТА В БАНКЕ (спросить владельца):")
-        for i, q in unanswered:
+    plan, blocking, optional = build_plan(items, bank)
+    for i, q in optional:
+        print("пропущен необязательный вопрос: #%d %s" % (i, q))
+    if blocking:
+        print("НЕТ ОТВЕТА В БАНКЕ (обязательные, спросить владельца):")
+        for i, q in blocking:
             print("  #%d %s" % (i, q))
-    if args.list_unanswered or unanswered:
-        # незаполненная обязательная форма хуже незаполненной вовсе — не отправляем
+    if args.list_unanswered or blocking:
+        # наполовину заполненная обязательная анкета хуже незаполненной — не отправляем
         print("форма НЕ отправлена")
         tab.close()
         return
