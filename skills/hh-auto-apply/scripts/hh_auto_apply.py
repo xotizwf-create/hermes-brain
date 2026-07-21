@@ -50,6 +50,7 @@ DEFAULT_CONFIG = {
     "max_applies_per_run": 8,
     "max_pages_per_query": 2,
     "attach_cover_letters": True,
+    "remote_only": True,     # владелец 2026-07-21: офис/гибрид не рассматриваем
     "delay_between_applies_sec": [25, 50],
     "area": 113,             # 113 = вся Россия
     "salary_from": 100000,   # фильтр hh: ЗП >= 100к ИЛИ не указана
@@ -281,7 +282,7 @@ def check_login(tab):
     return bool(tab.eval(
         "(function(){var f=document.querySelector('[data-qa=\"login\"],"
         "[data-qa=\"account-login-form\"]');"
-        "return !f && /applicant\\/resumes/.test(location.href);})()"))
+        "return !f && /applicant\\/(resumes|profile)/.test(location.href);})()"))
 
 
 # ── поиск ────────────────────────────────────────────────────────────────
@@ -293,6 +294,8 @@ def search_vacancies(tab, cfg):
                    + f"&area={cfg['area']}"
                    # salary_from=0/пусто = искать без ЗП-фильтра hh
                    + (f"&salary={cfg['salary_from']}" if cfg.get("salary_from") else "")
+                   # правило владельца 2026-07-21: офис/гибрид не рассматриваем
+                   + ("&work_format=REMOTE&schedule=remote" if cfg.get("remote_only") else "")
                    + "&order_by=publication_time"
                    + f"&page={page}&items_on_page=20")
             tab.goto(url, wait=8,
@@ -362,6 +365,7 @@ def read_vacancy(tab, url):
   employer: (document.querySelector('[data-qa="vacancy-company-name"]')||{textContent:""}).textContent.trim(),
   salary: (document.querySelector('[data-qa="vacancy-salary"]')||{textContent:""}).textContent.trim(),
   desc: (document.querySelector('[data-qa="vacancy-description"]')||{innerText:""}).innerText.slice(0, 5000),
+  workFormat: ((document.body.innerText.match(/Формат работы:\s*(.+)/) || [])[1] || "").trim(),
   canApply: !!document.querySelector('[data-qa="vacancy-response-link-top"]'),
   alreadyApplied: !!document.querySelector('[data-qa="vacancy-response-link-view-topic"]'),
   hasTest: /тестовое задание|опросом|вопросы работодателя/i.test(
@@ -403,6 +407,9 @@ def llm_assess(cfg, vac):
         + sal_rule +
         "1б. Требуемый опыт 5+ лет, уровень Senior/Ведущий с жёсткими требованиями "
         "к стажу — relevant=false (у Александра нет формального стажа такого уровня).\n"
+        "1г. ТОЛЬКО УДАЛЁНКА: если формат работы — офис, гибрид, «на месте "
+        "работодателя» или требуется переезд, relevant=false (решение владельца "
+        "2026-07-21).\n"
         "1в. Если суть роли — отраслевой менеджмент (управление недвижимостью, "
         "клиникой, объектом, командой курьеров и т.п.), а ИИ лишь упомянут как "
         "инструмент или модное слово — relevant=false.\n"
@@ -435,7 +442,11 @@ def llm_assess(cfg, vac):
         "(запрещено: «идеально подхожу», «рад возможности», «уникальный опыт», "
         "«не упущу шанс», длинные тире). Зацепись за одну конкретную деталь из "
         "описания. Коротко свяжи с его реальным опытом (бухгалтерия/склад/закупки/"
-        "видео/внедрение). Без подписи и контактов. Если relevant=false — letter пустая."
+        "видео/внедрение). Без подписи и контактов. Если relevant=false — letter пустая.\n"
+        "КОНФИДЕНЦИАЛЬНОСТЬ (правило владельца 2026-07-21): НИКОГДА не называй в письме "
+        "имена собственных продуктов Александра, названия компаний-клиентов, домены и "
+        "ссылки на его системы. Описывай опыт обезличенно: «мультиагентная платформа, "
+        "которую я построил», «компания, работающая с госзакупками», «фитнес-клуб»."
     )
     user = (f"Вакансия: {vac['title']}\nКомпания: {vac['employer']}\n"
             f"Зарплата: {vac.get('salary','')}\n\nОписание:\n{vac['desc'][:3500]}")
@@ -774,6 +785,11 @@ def main():
                 continue
             if not employer_ok(vac.get("employer", ""), cfg):
                 ledger["skipped"][c["id"]] = "гос/бигтех работодатель"
+                continue
+            wf = (vac.get("workFormat") or "").lower()
+            if cfg.get("remote_only") and wf and "удал" not in wf:
+                ledger["skipped"][c["id"]] = "не удалёнка: " + wf[:50]
+                log("skip (формат):", vac["title"][:50], "|", wf[:40])
                 continue
             if not salary_ok(vac.get("salary", ""), cfg):
                 ledger["skipped"][c["id"]] = "ЗП ниже порога: " + vac.get("salary", "")[:60]
