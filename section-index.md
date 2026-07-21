@@ -770,9 +770,17 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Done when](skills/hermes-self-repair/SKILL.md#done-when)
 
 ## `skills/hh-auto-apply/SKILL.md` · [skill] hh-auto-apply
-- [ТЕКУЩИЙ РЕЖИМ (review, с 2026-07-12) — пауза снята, автоотклики ВЫКЛЮЧЕНЫ](skills/hh-auto-apply/SKILL.md#текущий-режим-review-с-2026-07-12-пауза-снята-автоотклики-выключены)
+- [ТЕКУЩИЙ РЕЖИМ (apply, с 2026-07-21) — автоотклики ВКЛЮЧЕНЫ](skills/hh-auto-apply/SKILL.md#текущий-режим-apply-с-2026-07-21-автоотклики-включены)
+- [Три жёстких правила владельца (2026-07-21)](skills/hh-auto-apply/SKILL.md#три-жёстких-правила-владельца-2026-07-21)
+- [Проверка перед откликом — обязательна](skills/hh-auto-apply/SKILL.md#проверка-перед-откликом-обязательна)
 - [РЕЖИМ apply — автоотклики без сопроводительного (ВЫКЛЮЧЕН 2026-07-12)](skills/hh-auto-apply/SKILL.md#режим-apply-автоотклики-без-сопроводительного-выключен-2026-07-12)
 - [РЕЖИМ ОБУЧЕНИЯ (mode=review) — старый полуавтоматический сценарий](skills/hh-auto-apply/SKILL.md#режим-обучения-modereview-старый-полуавтоматический-сценарий)
+- [Резюме на hh — как оно настроено (2026-07-21)](skills/hh-auto-apply/SKILL.md#резюме-на-hh-как-оно-настроено-2026-07-21)
+- [Грабли редактора hh (проверено вживую)](skills/hh-auto-apply/SKILL.md#грабли-редактора-hh-проверено-вживую)
+- [Анкеты работодателей — заполняются за владельца (2026-07-21)](skills/hh-auto-apply/SKILL.md#анкеты-работодателей-заполняются-за-владельца-2026-07-21)
+- [Грабли переписки hh (обе стоили ложных «отправлено»)](skills/hh-auto-apply/SKILL.md#грабли-переписки-hh-обе-стоили-ложных-отправлено)
+- [Как вотчер ищет анкеты (не сужать!)](skills/hh-auto-apply/SKILL.md#как-вотчер-ищет-анкеты-не-сужать)
+- [Грабли Google Forms](skills/hh-auto-apply/SKILL.md#грабли-google-forms)
 - [Профиль поиска (что нужно владельцу)](skills/hh-auto-apply/SKILL.md#профиль-поиска-что-нужно-владельцу)
 - [Инфраструктура (уже на сервере)](skills/hh-auto-apply/SKILL.md#инфраструктура-уже-на-сервере)
 - [Запуск](skills/hh-auto-apply/SKILL.md#запуск)
