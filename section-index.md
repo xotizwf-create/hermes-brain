@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-07-12
+updated: 2026-07-21
 secret_refs: []
 ---
 
@@ -191,6 +191,10 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-07-16](logs/changelog.md#2026-07-16)
+- [2026-07-15](logs/changelog.md#2026-07-15)
+- [2026-07-14](logs/changelog.md#2026-07-14)
+- [2026-07-13](logs/changelog.md#2026-07-13)
 - [2026-07-12](logs/changelog.md#2026-07-12)
 - [2026-07-11](logs/changelog.md#2026-07-11)
 - [2026-07-08](logs/changelog.md#2026-07-08)
@@ -223,6 +227,8 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [2026-07-11 — Марафон «Простые поставки»: MCP-инструменты как рычаг эффективности ИИ](logs/learning-log.md#2026-07-11-марафон-простые-поставки-mcp-инструменты-как-рычаг-эффективности-ии)
 
 ## `logs/mistakes.md` · [log] mistakes, postmortem
+- [2026-07-16 — Спроектировал «умную память» (дайджесты), когда владелец хотел простую механику](logs/mistakes.md#2026-07-16-спроектировал-умную-память-дайджесты-когда-владелец-хотел-простую-механику)
+- [2026-07-16 — Доверился ридерам и «успеху» инструмента без пруфа записи (комментарий-результат исчез)](logs/mistakes.md#2026-07-16-доверился-ридерам-и-успеху-инструмента-без-пруфа-записи-комментарий-результат-исчез)
 - [2026-06-28 — Длинный Telegram-ответ продублировался из-за retry после частичной доставки](logs/mistakes.md#2026-06-28-длинный-telegram-ответ-продублировался-из-за-retry-после-частичной-доставки)
 - [2026-06-18 (afternoon) — `compression.threshold: 0.05` was the real codex-burner (corrects the entry below)](logs/mistakes.md#2026-06-18-afternoon-compressionthreshold-005-was-the-real-codex-burner-corrects-the-entry-below)
 - [2026-06-18 — `auxiliary.compression` silently demoted to the 6k-TPM model](logs/mistakes.md#2026-06-18-auxiliarycompression-silently-demoted-to-the-6k-tpm-model)
@@ -306,7 +312,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Юрист: назад на gpt-5.5 + специализированные договоры + оформление по инструкциям (2026-07-08, Albery `3e2408b`)](projects/albery/agent-center.md#юрист-назад-на-gpt-55-специализированные-договоры-оформление-по-инструкциям-2026-07-08-albery-3e2408b)
 - [Повторяющиеся (регулярные) задачи: создание + просмотр по человеку (2026-07-08, Albery `f606bdb`)](projects/albery/agent-center.md#повторяющиеся-регулярные-задачи-создание-просмотр-по-человеку-2026-07-08-albery-f606bdb)
 - [Полные возможности задач + повтор через СВОЙ планировщик (2026-07-08, Albery `164c7c7`→`6c6224e`)](projects/albery/agent-center.md#полные-возможности-задач-повтор-через-свой-планировщик-2026-07-08-albery-164c7c76c6224e)
+- [Полный журнал переписок — владелец видит ВСЁ (2026-07-14, Albery `245a84d`, Bitrix 1448)](projects/albery/agent-center.md#полный-журнал-переписок-владелец-видит-всё-2026-07-14-albery-245a84d-bitrix-1448)
 - [Ежедневный обход задач (12:00) + досье сотрудников + ЛС (2026-07-12, Albery `4dfa584`)](projects/albery/agent-center.md#ежедневный-обход-задач-1200-досье-сотрудников-лс-2026-07-12-albery-4dfa584)
+- [Смягчение фильтра — офферы 3 → 12 (2026-07-14, Albery `0ea4e47`, Bitrix 1398)](projects/albery/agent-center.md#смягчение-фильтра-офферы-3-12-2026-07-14-albery-0ea4e47-bitrix-1398)
 - [Оффер-комментарии к задачам агента + диалог в задаче без упоминаний (2026-07-11, Albery `46e52d3`→`816e12c`)](projects/albery/agent-center.md#оффер-комментарии-к-задачам-агента-диалог-в-задаче-без-упоминаний-2026-07-11-albery-46e52d3816e12c)
 - [Редактор расписания во вкладке «Автоматизации» + update_recurring_task (2026-07-11, Albery `67ead8f`)](projects/albery/agent-center.md#редактор-расписания-во-вкладке-автоматизации-update_recurring_task-2026-07-11-albery-67ead8f)
 - [Регулярные задачи ВО ВКЛАДКЕ «Автоматизации» + чтение вложений в комментариях задач (2026-07-08 вечер, Albery `b964c48`→`8fb3a2b`)](projects/albery/agent-center.md#регулярные-задачи-во-вкладке-автоматизации-чтение-вложений-в-комментариях-задач-2026-07-08-вечер-albery-b964c488fb3a2b)
@@ -315,6 +323,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Модель агентов (согласовано владельцем 2026-07-03)](projects/albery/agent-center.md#модель-агентов-согласовано-владельцем-2026-07-03)
 - [Универсальный (основной) агент как первоклассный настраиваемый Агент (этап 2, LIVE 2026-07-03)](projects/albery/agent-center.md#универсальный-основной-агент-как-первоклассный-настраиваемый-агент-этап-2-live-2026-07-03)
 - [Открытое / следующие шаги](projects/albery/agent-center.md#открытое-следующие-шаги)
+
+## `projects/albery/agent-diagnosis-runbook.md` · [project] albery, runbook, diagnosis, agents, retrospective
+- [Порядок диагностики (обязательный)](projects/albery/agent-diagnosis-runbook.md#порядок-диагностики-обязательный)
+- [Таксономия сбоев (что уже болело и где лежит фикс)](projects/albery/agent-diagnosis-runbook.md#таксономия-сбоев-что-уже-болело-и-где-лежит-фикс)
+- [Числа корпуса (базовая линия на 16.07.2026)](projects/albery/agent-diagnosis-runbook.md#числа-корпуса-базовая-линия-на-16072026)
+- [Антипаттерны исправлений (мои собственные грабли)](projects/albery/agent-diagnosis-runbook.md#антипаттерны-исправлений-мои-собственные-грабли)
 
 ## `projects/albery/agent-system-guide.md` · [project] agent-center, subagents, isolation, reliability, runbook, rules, reference
 - [1. Устройство на пальцах](projects/albery/agent-system-guide.md#1-устройство-на-пальцах)
@@ -357,7 +371,19 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Кнопки не работали + сырые ошибки мозга у юриста (2026-07-04, `b24bot.py`, коммит Albery `05d55bd`)](projects/albery/bitrix-bot.md#кнопки-не-работали-сырые-ошибки-мозга-у-юриста-2026-07-04-b24botpy-коммит-albery-05d55bd)
 - [Follow-up: кнопки у СУБАГЕНТОВ всё ещё висели + общие сессии мозга (коммит `595a765`)](projects/albery/bitrix-bot.md#follow-up-кнопки-у-субагентов-всё-ещё-висели-общие-сессии-мозга-коммит-595a765)
 - [Follow-up 2: эфемерное per-dialog состояние тоже текло между ботами (коммит `9ed0a5b`)](projects/albery/bitrix-bot.md#follow-up-2-эфемерное-per-dialog-состояние-тоже-текло-между-ботами-коммит-9ed0a5b)
+- [Правка присланных документов на месте — edit_attachment_document (2026-07-13, Albery `c226768`)](projects/albery/bitrix-bot.md#правка-присланных-документов-на-месте-edit_attachment_document-2026-07-13-albery-c226768)
+- [Ссылки на профильных агентов с проверкой доступа — get_agent_link (2026-07-15, Albery `2eeb9b9`, Bitrix 1532)](projects/albery/bitrix-bot.md#ссылки-на-профильных-агентов-с-проверкой-доступа-get_agent_link-2026-07-15-albery-2eeb9b9-bitrix-1532)
 - [Open tasks](projects/albery/bitrix-bot.md#open-tasks)
+
+## `projects/albery/change-tracking.md` · [project] albery, process, bitrix, change-log, engineering-discipline
+- [Когда заводить задачу](projects/albery/change-tracking.md#когда-заводить-задачу)
+- [Поля задачи (шаблон)](projects/albery/change-tracking.md#поля-задачи-шаблон)
+- [Как ПИСАТЬ задачу (стандарт качества, требование владельца 2026-07-14)](projects/albery/change-tracking.md#как-писать-задачу-стандарт-качества-требование-владельца-2026-07-14)
+- [Что значит «полный контекст» (чек-лист)](projects/albery/change-tracking.md#что-значит-полный-контекст-чек-лист)
+- [Хронология](projects/albery/change-tracking.md#хронология)
+- [Как создавать (технически, проверено 2026-07-13)](projects/albery/change-tracking.md#как-создавать-технически-проверено-2026-07-13)
+- [Грабли и правила (набито в этой сессии)](projects/albery/change-tracking.md#грабли-и-правила-набито-в-этой-сессии)
+- [Пример — сессия 2026-07-13 (4 изменения)](projects/albery/change-tracking.md#пример-сессия-2026-07-13-4-изменения)
 
 ## `projects/albery/decisions.md` · [project] decisions, adr
 - [2026-05-29 — Brain extracted to isolated repo](projects/albery/decisions.md#2026-05-29-brain-extracted-to-isolated-repo)
@@ -412,6 +438,19 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Google Sheets / Docs через битрикс-агента](projects/albery/hermes.md#google-sheets-docs-через-битрикс-агента)
 
 ## `projects/albery/incidents.md` · [project] incidents
+- [2026-07-15 — падение на аудио/бинарных файлах (.m4a, .xls): NUL-байты (регрессия от «видит все файлы»)](projects/albery/incidents.md#2026-07-15-падение-на-аудиобинарных-файлах-m4a-xls-nul-байты-регрессия-от-видит-все-файлы)
+- [2026-07-15 — агент «видит» только первый файл; файл без подписи теряется (личные сообщения)](projects/albery/incidents.md#2026-07-15-агент-видит-только-первый-файл-файл-без-подписи-теряется-личные-сообщения)
+- [2026-07-15 — агент «не видит вложение» в задаче: 403 на файлах у технического юзера-не-участника](projects/albery/incidents.md#2026-07-15-агент-не-видит-вложение-в-задаче-403-на-файлах-у-технического-юзера-не-участника)
+- [2026-07-15 — мониторинг был слеп: таймаут/перегрузка/ошибка хода писались как «ок» (аудит F09)](projects/albery/incidents.md#2026-07-15-мониторинг-был-слеп-таймаутперегрузкаошибка-хода-писались-как-ок-аудит-f09)
+- [2026-07-15 — правка договора теряла контекст прошлого хода (номер, сроки пустые)](projects/albery/incidents.md#2026-07-15-правка-договора-теряла-контекст-прошлого-хода-номер-сроки-пустые)
+- [2026-07-14 — юрист «снова делает договоры фигово» + литеральные <b> в TG](projects/albery/incidents.md#2026-07-14-юрист-снова-делает-договоры-фигово-литеральные-b-в-tg)
+- [2026-07-14 — цены WB находились для 14 из 43 (моя же защита рубила годные)](projects/albery/incidents.md#2026-07-14-цены-wb-находились-для-14-из-43-моя-же-защита-рубила-годные)
+- [2026-07-14 — агент залипал на недоступных артикулах WB, ход умирал (600с)](projects/albery/incidents.md#2026-07-14-агент-залипал-на-недоступных-артикулах-wb-ход-умирал-600с)
+- [2026-07-14 — таблица цен WB заполнена историей цен вместо витринных (Софья)](projects/albery/incidents.md#2026-07-14-таблица-цен-wb-заполнена-историей-цен-вместо-витринных-софья)
+- [2026-07-14 — бот «терял» присланный файл, если вопрос пришёл отдельным сообщением (Анастасия)](projects/albery/incidents.md#2026-07-14-бот-терял-присланный-файл-если-вопрос-пришёл-отдельным-сообщением-анастасия)
+- [2026-07-13 — бот дублировал ответы в личном чате (двойные сообщения у Александра)](projects/albery/incidents.md#2026-07-13-бот-дублировал-ответы-в-личном-чате-двойные-сообщения-у-александра)
+- [2026-07-13 — агент завалил Оксану незваными ответами в задаче (оффер-фолбэк)](projects/albery/incidents.md#2026-07-13-агент-завалил-оксану-незваными-ответами-в-задаче-оффер-фолбэк)
+- [2026-07-13 — два хода сотрудников зависли на все 600 сек (Наталья #669, Александр #709)](projects/albery/incidents.md#2026-07-13-два-хода-сотрудников-зависли-на-все-600-сек-наталья-669-александр-709)
 - [2026-07-12 — «Полина»: агент назвал ответственным человека, которого нет в компании](projects/albery/incidents.md#2026-07-12-полина-агент-назвал-ответственным-человека-которого-нет-в-компании)
 - [2026-07-02 → 2026-07-12 — батч-синк молча умирал 10 дней (чаты и снапшоты задач устарели)](projects/albery/incidents.md#2026-07-02-2026-07-12-батч-синк-молча-умирал-10-дней-чаты-и-снапшоты-задач-устарели)
 
@@ -524,11 +563,21 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Диагностика](projects/albery/vpn-gateway.md#диагностика)
 - [Если внешний ресурс не открывается](projects/albery/vpn-gateway.md#если-внешний-ресурс-не-открывается)
 
+## `projects/albery/wb-analytics.md` · [project] albery, wildberries, analytics, wb-api, dashboard
+- [Ключ и доступ](projects/albery/wb-analytics.md#ключ-и-доступ)
+- [Разведка API (боевая, 16.07.2026, задача 1606)](projects/albery/wb-analytics.md#разведка-api-боевая-16072026-задача-1606)
+- [Схема БД (предложена владельцу 16.07, ждёт «ок»)](projects/albery/wb-analytics.md#схема-бд-предложена-владельцу-1607-ждёт-ок)
+- [Маппинг разделов UI → данные](projects/albery/wb-analytics.md#маппинг-разделов-ui-данные)
+- [Синхронизация (дизайн)](projects/albery/wb-analytics.md#синхронизация-дизайн)
+- [Инструменты агента (MCP, read-only из БД)](projects/albery/wb-analytics.md#инструменты-агента-mcp-read-only-из-бд)
+- [Этапы](projects/albery/wb-analytics.md#этапы)
+
 ## `projects/albery/web-browsing.md` · [project] albery, hermes, browser, web-search, tools
 - [Что стоит и как устроено](projects/albery/web-browsing.md#что-стоит-и-как-устроено)
 - [Проверено боем (2026-07-12)](projects/albery/web-browsing.md#проверено-боем-2026-07-12)
 - [Память/ресурсы (2 ГБ RAM + 2 ГБ swap)](projects/albery/web-browsing.md#памятьресурсы-2-гб-ram-2-гб-swap)
 - [Откат](projects/albery/web-browsing.md#откат)
+- [2026-07-13 — российские сайты, карточки WB и xlsx-выгрузки (инцидент с Софьей)](projects/albery/web-browsing.md#2026-07-13-российские-сайты-карточки-wb-и-xlsx-выгрузки-инцидент-с-софьей)
 
 ## `projects/andigital/remote-pc-access.md` · [project] andigital, meshcentral, remote-access, security, windows, consent
 - [Current status — restored MVP / operational](projects/andigital/remote-pc-access.md#current-status-restored-mvp-operational)
@@ -881,6 +930,84 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Verification Checklist](skills/vk-hermes-bridge-mvp/SKILL.md#verification-checklist)
 - [VK ↔ Telegram: что 1:1, а что нет (аудит 2026-06-10)](skills/vk-hermes-bridge-mvp/SKILL.md#vk-telegram-что-11-а-что-нет-аудит-2026-06-10)
 - [Current Known Good Pattern](skills/vk-hermes-bridge-mvp/SKILL.md#current-known-good-pattern)
+
+## `tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md` · [?]
+- [1. Executive summary](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#1-executive-summary)
+- [2. Scope и ограничения](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#2-scope-и-ограничения)
+- [Что исследовано](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#что-исследовано)
+- [Ограничения](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#ограничения)
+- [3. Карта текущей архитектуры](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#3-карта-текущей-архитектуры)
+- [4. Анализ задач Александра Никитенко](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#4-анализ-задач-александра-никитенко)
+- [4.1 Полный реестр актуальных задач с активностью в периоде](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#41-полный-реестр-актуальных-задач-с-активностью-в-периоде)
+- [4.2 Матрица 9 задач, где есть фактический agent-thread](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#42-матрица-9-задач-где-есть-фактический-agent-thread)
+- [4.3 Карточки существенных проблемных задач](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#43-карточки-существенных-проблемных-задач)
+- [5. Хронология проблемных запусков](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#5-хронология-проблемных-запусков)
+- [6. Аудит контекста](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#6-аудит-контекста)
+- [6.1 Фактическая сборка](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#61-фактическая-сборка)
+- [6.2 Критическая доставка инструкций](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#62-критическая-доставка-инструкций)
+- [6.3 Overflow policy](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#63-overflow-policy)
+- [7. Аудит сессий](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#7-аудит-сессий)
+- [8. Аудит памяти и retrieval](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#8-аудит-памяти-и-retrieval)
+- [8.1 Слои памяти](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#81-слои-памяти)
+- [8.2 Read-only retrieval probes](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#82-read-only-retrieval-probes)
+- [8.3 Scope и безопасность retrieval](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#83-scope-и-безопасность-retrieval)
+- [9. Аудит промптов и skills](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#9-аудит-промптов-и-skills)
+- [10. Аудит tool calling](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#10-аудит-tool-calling)
+- [10.1 Registry и активные whitelists](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#101-registry-и-активные-whitelists)
+- [10.2 Наблюдаемые вызовы Александра](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#102-наблюдаемые-вызовы-александра)
+- [10.3 Ошибки, retry, idempotency, подтверждение](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#103-ошибки-retry-idempotency-подтверждение)
+- [11. Аудит логирования](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#11-аудит-логирования)
+- [11.1 Что сохраняется](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#111-что-сохраняется)
+- [11.2 Подтверждённые logging gaps](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#112-подтверждённые-logging-gaps)
+- [12. Аудит инфраструктуры](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#12-аудит-инфраструктуры)
+- [12.1 Ресурсы и runtime](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#121-ресурсы-и-runtime)
+- [12.2 Timeout/retry/concurrency](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#122-timeoutretryconcurrency)
+- [12.3 Model assessment](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#123-model-assessment)
+- [13. Классификация проблем](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#13-классификация-проблем)
+- [14. Root cause analysis](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#14-root-cause-analysis)
+- [RCA-1: обязательные instructions не исполняются](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#rca-1-обязательные-instructions-не-исполняются)
+- [RCA-2: агент забывает старые решения](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#rca-2-агент-забывает-старые-решения)
+- [RCA-3: timeout выглядит успехом](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#rca-3-timeout-выглядит-успехом)
+- [RCA-4: duplicate reply](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#rca-4-duplicate-reply)
+- [15. Pareto](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#15-pareto)
+- [16. Целевая архитектура](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#16-целевая-архитектура)
+- [Subagents](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#subagents)
+- [17. План P0–P3](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#17-план-p0p3)
+- [18. Eval-план](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#18-eval-план)
+- [19. Рекомендуемые SLO](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#19-рекомендуемые-slo)
+- [20. Конкретный следующий шаг](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#20-конкретный-следующий-шаг)
+- [Приложение A. Реестр источников](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#приложение-a-реестр-источников)
+- [Приложение B. Реестр идентификаторов](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#приложение-b-реестр-идентификаторов)
+- [B.1 Фактическая связность](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#b1-фактическая-связность)
+- [Приложение C. Реестр промптов](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#приложение-c-реестр-промптов)
+- [Приложение D. Реестр инструментов](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#приложение-d-реестр-инструментов)
+- [D.1 Общий runtime contract](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#d1-общий-runtime-contract)
+- [D.2 Динамически добавляемые per-agent self-tools](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#d2-динамически-добавляемые-per-agent-self-tools)
+- [Приложение E. Пробелы в данных](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#приложение-e-пробелы-в-данных)
+- [Приложение F. Предлагаемые изменения с flags и rollback](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#приложение-f-предлагаемые-изменения-с-flags-и-rollback)
+- [Приложение G. Машиночитаемый JSON](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#приложение-g-машиночитаемый-json)
+- [1. Вердикт по САМОМУ аудиту (диагностике): сильный, доверяю](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#1-вердикт-по-самому-аудиту-диагностике-сильный-доверяю)
+- [2. Вердикт по ПЛАНУ ChatGPT: философия верная, масштаб — нет](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#2-вердикт-по-плану-chatgpt-философия-верная-масштаб-нет)
+- [3. Что предлагаю ДЕЛАТЬ (соразмерный план, без ломки текущего)](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#3-что-предлагаю-делать-соразмерный-план-без-ломки-текущего)
+- [4. Итог одной строкой](tmp/albery-agent-system-audit-2026-07-09_2026-07-15.md#4-итог-одной-строкой)
+
+## `tmp/Платформа Албери под селлеров.md` · [?]
+- [Вердикт](tmp/Платформа Албери под селлеров.md#вердикт)
+- [01 — Главный сдвиг: «30 отдельных серверов» — это и есть источник ваших проблем](tmp/Платформа Албери под селлеров.md#01-главный-сдвиг-30-отдельных-серверов-это-и-есть-источник-ваших-проблем)
+- [Control plane — общий (один на всех)](tmp/Платформа Албери под селлеров.md#control-plane-общий-один-на-всех)
+- [Data plane — на тенанта (изолировано)](tmp/Платформа Албери под селлеров.md#data-plane-на-тенанта-изолировано)
+- [02 — Что уже готово, а что придётся строить](tmp/Платформа Албери под селлеров.md#02-что-уже-готово-а-что-придётся-строить)
+- [Уже есть — переиспользуем](tmp/Платформа Албери под селлеров.md#уже-есть-переиспользуем)
+- [Придётся построить](tmp/Платформа Албери под селлеров.md#придётся-построить)
+- [03 — «1 в 1» и «раскатывать всем»](tmp/Платформа Албери под селлеров.md#03-1-в-1-и-раскатывать-всем)
+- [04 — Реестр рисков: что вы учли и чего не хватает](tmp/Платформа Албери под селлеров.md#04-реестр-рисков-что-вы-учли-и-чего-не-хватает)
+- [05 — Стоимость: откуда берётся экономия](tmp/Платформа Албери под селлеров.md#05-стоимость-откуда-берётся-экономия)
+- [06 — Дорожная карта: как строить, не переписывая всё сразу](tmp/Платформа Албери под селлеров.md#06-дорожная-карта-как-строить-не-переписывая-всё-сразу)
+- [Фаза 0 · Фундамент (0–1 мес)](tmp/Платформа Албери под селлеров.md#фаза-0-фундамент-01-мес)
+- [Фаза 1 · Платформа (1–3 мес)](tmp/Платформа Албери под селлеров.md#фаза-1-платформа-13-мес)
+- [Фаза 2 · Зрелость (3–6 мес)](tmp/Платформа Албери под селлеров.md#фаза-2-зрелость-36-мес)
+- [Фаза 3 · Масштаб (6–12 мес)](tmp/Платформа Албери под селлеров.md#фаза-3-масштаб-612-мес)
+- [07 — Решить сейчас: развилки, от которых зависит всё остальное](tmp/Платформа Албери под селлеров.md#07-решить-сейчас-развилки-от-которых-зависит-всё-остальное)
 
 ## `vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/SKILL.md` · [?]
 - [Overview](vendor-skills/autonomous-ai-agents/ai-coding-agent-delegation/SKILL.md#overview)
@@ -2500,6 +2627,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Keeping MCP behavior aligned](vendor-skills/productivity/prostye-postavki-contract-period-lookup/SKILL.md#keeping-mcp-behavior-aligned)
 
 ## `vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md` · [?]
+- [Unfilled signature dates and delivery terms](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#unfilled-signature-dates-and-delivery-terms)
 - [Core workflow](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#core-workflow)
 - [Exactness and user overrides](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#exactness-and-user-overrides)
 - [Specification safeguards](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#specification-safeguards)
