@@ -169,22 +169,41 @@ CHAT_SEND_JS = r"""
 """
 
 
-def chat_say(tab, text):
-    """Пишет в переписку и ПРОВЕРЯЕТ, что сообщение реально появилось в треде.
-
-    Возвращает строку-результат; успех — только если текст найден среди сообщений.
-    Без этой проверки закрытая работодателем переписка выглядела как успешная отправка.
-    """
+def _say_one(tab, text):
+    """Одно сообщение: ввод, отправка, проверка появления в треде."""
     r = tab.eval("(" + CHAT_JS + ")(" + json.dumps(text, ensure_ascii=False) + ")")
     if not r or "ЗАКРЫТА" in r:
-        return r or "НЕ ОТПРАВЛЕНО: страница не ответила"
+        return False, (r or "НЕ ОТПРАВЛЕНО: страница не ответила")
     time.sleep(1)
     tab.eval(CHAT_SEND_JS)
     time.sleep(3)
+    probe = json.dumps(text[:120], ensure_ascii=False)
     seen = tab.eval(
         "(() => [...document.querySelectorAll('[data-qa^=\"chatik-chat-message-\"]')]"
-        ".some(m => (m.innerText || '').includes(" + json.dumps(text, ensure_ascii=False) + ")))()")
-    return "отправлено и подтверждено в треде" if seen else "НЕ ОТПРАВЛЕНО: в треде сообщения нет"
+        ".some(m => (m.innerText || '').includes(" + probe + ")))()")
+    return bool(seen), ("ок" if seen else "НЕ ОТПРАВЛЕНО: в треде сообщения нет")
+
+
+def chat_say(tab, text):
+    """Пишет в переписку и ПРОВЕРЯЕТ, что сообщение реально появилось в треде.
+
+    Многострочный текст composer hh не отправляет (кнопка активна, но сообщение
+    не уходит и остаётся черновиком), поэтому шлём по абзацам отдельными
+    сообщениями. Проверено 2026-07-22: однострочные уходят, многострочные нет.
+    Успех — только если текст найден среди [data-qa^="chatik-chat-message-"].
+    """
+    paragraphs = [p.strip().replace("\n", " ") for p in text.split("\n\n")]
+    paragraphs = [p for p in paragraphs if p]
+    if not paragraphs:
+        return "НЕ ОТПРАВЛЕНО: пустой текст"
+    sent = 0
+    for p in paragraphs:
+        ok, msg = _say_one(tab, p)
+        if not ok:
+            return "%s (отправлено абзацев: %d из %d)" % (msg, sent, len(paragraphs))
+        sent += 1
+        time.sleep(1.5)
+    return "отправлено и подтверждено в треде (абзацев: %d)" % sent
 
 
 def match_answer(question, bank):
