@@ -148,6 +148,10 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   («норм» → `--apply-ids`, «не норм» → `hh_feedback.json` в промпт); автоотклики включатся после
   «фильтр норм» (`mode: apply`). Ночью (вне 8–23 МСК) автоотклики не шлются, review/ЛС работают.
   Skill: `hh-auto-apply`. Старый `hh-ai-business-automation-watch` (every 2h) живёт отдельно.
+- `hermes-compaction-watchdog` — **каждые 5 мин, СИСТЕМНЫЙ cron** (не `hermes cron`, иначе
+  завис бы вместе с агентом): ловит зависание gateway в петле сжатия контекста, шлёт владельцу
+  тревогу напрямую через Bot API и на повторе сам перезапускает службу. Разбор причины и
+  проверки: `engineering/hermes-compaction-hang.md`.
 - `leadgen-watch` — **hourly** (с 2026-07-12, no-agent): мониторинг проектов на FL.ru +
   freelance.ru + 6 публичных TG-каналов → Groq-фильтр + черновик отклика → кандидаты
   владельцу в TG (review-only, ночью 23–8 МСК копит pending). Skill: `leadgen-watch`.
