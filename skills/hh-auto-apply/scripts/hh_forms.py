@@ -100,7 +100,9 @@ HHQ_DUMP_JS = r"""
     const txt = (n.innerText || '').trim();
     if (txt.length > 15) { lab = txt.split(String.fromCharCode(10))[0]; break; }
   }
-  return {q: lab, options: [], free: true};
+  // req=true всегда: на странице hh нет aria-required, а анкету работодатель
+  // показывает только когда ответы ему нужны. Пустая анкета хуже неотправленной.
+  return {q: lab, options: [], free: true, req: true};
 }))()
 """
 
