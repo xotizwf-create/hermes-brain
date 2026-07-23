@@ -43,3 +43,6 @@ _weekly_*
 # Owner-provided source material, integrated into the Albery repo (wb-cabinet/) — not brain content
 /Страница WB кабинет/
 /Интерфейс для Агента/
+
+# graphify knowledge graph output (generated, rebuildable via `graphify update .`)
+graphify-out/

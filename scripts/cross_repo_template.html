@@ -1,0 +1,370 @@
+<title>Как связаны Hermes Brain и Albery</title>
+<style>
+  :root{
+    --bg:#f4f2fb; --panel:#ffffff; --panel-2:#faf9ff; --ink:#1a1826; --ink-soft:#565270;
+    --line:#e5e1f2; --line-strong:#d3cdec;
+    --brain:#6d5cf0; --brain-soft:#efecfe;
+    --albery:#dd8a2c; --albery-soft:#fcf1e0;
+    --shared:#2ea88a; --shared-soft:#e4f5ef;
+    --runtime:#d6456b;
+    --glow:rgba(109,92,240,.16);
+    --shadow:0 1px 2px rgba(30,22,60,.05),0 12px 32px -12px rgba(60,44,120,.22);
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#100e18; --panel:#191727; --panel-2:#15131f; --ink:#ece9f7; --ink-soft:#9d97bd;
+      --line:#272338; --line-strong:#342f4a;
+      --brain:#8f80ff; --brain-soft:#211d3d; --albery:#f0a343; --albery-soft:#2e2114;
+      --shared:#3fcaa6; --shared-soft:#123028; --runtime:#ff5f85;
+      --glow:rgba(143,128,255,.20); --shadow:0 1px 2px rgba(0,0,0,.4),0 20px 44px -18px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f2fb; --panel:#fff; --panel-2:#faf9ff; --ink:#1a1826; --ink-soft:#565270;
+    --line:#e5e1f2; --line-strong:#d3cdec; --brain:#6d5cf0; --brain-soft:#efecfe;
+    --albery:#dd8a2c; --albery-soft:#fcf1e0; --shared:#2ea88a; --shared-soft:#e4f5ef;
+    --runtime:#d6456b; --glow:rgba(109,92,240,.16);
+    --shadow:0 1px 2px rgba(30,22,60,.05),0 12px 32px -12px rgba(60,44,120,.22);
+  }
+  :root[data-theme="dark"]{
+    --bg:#100e18; --panel:#191727; --panel-2:#15131f; --ink:#ece9f7; --ink-soft:#9d97bd;
+    --line:#272338; --line-strong:#342f4a; --brain:#8f80ff; --brain-soft:#211d3d;
+    --albery:#f0a343; --albery-soft:#2e2114; --shared:#3fcaa6; --shared-soft:#123028;
+    --runtime:#ff5f85; --glow:rgba(143,128,255,.20);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 20px 44px -18px rgba(0,0,0,.7);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1120px;margin:0 auto;padding:clamp(20px,4vw,52px) clamp(16px,4vw,40px) 72px;}
+  .eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-soft);display:flex;align-items:center;gap:9px;}
+  .eyebrow::before{content:"";width:22px;height:1.5px;background:var(--brain);border-radius:2px;}
+  h1{font-size:clamp(28px,4.6vw,46px);line-height:1.05;letter-spacing:-.02em;margin:.42em 0 .3em;
+    text-wrap:balance;font-weight:680;}
+  h1 .b{color:var(--brain)} h1 .a{color:var(--albery)}
+  .lede{font-size:clamp(16px,1.9vw,19px);color:var(--ink-soft);max-width:62ch;margin:0;}
+  /* stat strip */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:30px 0 8px;}
+  @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);}
+  .stat .n{font-size:26px;font-weight:680;letter-spacing:-.01em;font-variant-numeric:tabular-nums;}
+  .stat .l{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+  .stat.brain .n{color:var(--brain)} .stat.albery .n{color:var(--albery)}
+  .stat.shared .n{color:var(--shared)}
+  /* graph */
+  .graphcard{margin:26px 0;background:var(--panel);border:1px solid var(--line);border-radius:18px;
+    box-shadow:var(--shadow);overflow:hidden;}
+  .gbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:14px 18px;
+    border-bottom:1px solid var(--line);background:var(--panel-2);}
+  .gbar .title{font-weight:640;font-size:14px;margin-right:auto;}
+  .filters{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{font:inherit;font-size:12.5px;font-weight:560;cursor:pointer;border:1px solid var(--line-strong);
+    background:var(--panel);color:var(--ink-soft);padding:5px 11px 5px 9px;border-radius:999px;
+    display:inline-flex;align-items:center;gap:7px;transition:.15s;user-select:none;}
+  .chip:hover{border-color:var(--ink-soft)}
+  .chip .dot{width:9px;height:9px;border-radius:50%}
+  .chip[aria-pressed="false"]{opacity:.4}
+  .chip.doc .dot{background:var(--brain)} .chip.runtime .dot{background:var(--runtime)}
+  .chip.shares .dot{background:var(--shared)}
+  canvas{display:block;width:100%;height:520px;touch-action:none;cursor:grab;}
+  @media(max-width:640px){canvas{height:440px}}
+  .ghint{padding:9px 18px;font-size:12px;color:var(--ink-soft);border-top:1px solid var(--line);
+    background:var(--panel-2);display:flex;gap:16px;flex-wrap:wrap}
+  .ghint b{color:var(--ink);font-weight:600}
+  /* tooltip */
+  #tip{position:fixed;pointer-events:none;z-index:20;opacity:0;transition:opacity .1s;
+    max-width:280px;background:var(--ink);color:var(--bg);padding:9px 12px;border-radius:10px;
+    font-size:12.5px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.3);}
+  #tip .tl{font-weight:680;font-family:var(--mono);font-size:12px;margin-bottom:2px;display:block;word-break:break-all}
+  #tip .tm{opacity:.82}
+  /* layer cards */
+  .layers{display:grid;gap:16px;margin-top:40px;}
+  .layer{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 24px;
+    box-shadow:var(--shadow);border-left:4px solid var(--edge,var(--brain));}
+  .layer.l1{--edge:var(--brain)} .layer.l2{--edge:var(--runtime)} .layer.l3{--edge:var(--shared)}
+  .layer h3{margin:0 0 4px;font-size:18px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .layer h3 .tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--edge);background:color-mix(in srgb,var(--edge) 12%,transparent);padding:3px 8px;border-radius:6px;}
+  .layer p{margin:.5em 0 0;color:var(--ink-soft);font-size:14.5px;max-width:70ch}
+  .flow{font-family:var(--mono);font-size:12.5px;margin:14px 0 0;display:flex;flex-wrap:wrap;
+    align-items:center;gap:8px;color:var(--ink)}
+  .pill{padding:4px 9px;border-radius:7px;border:1px solid var(--line-strong);background:var(--panel-2);white-space:nowrap}
+  .pill.b{color:var(--brain);border-color:color-mix(in srgb,var(--brain) 35%,var(--line))}
+  .pill.a{color:var(--albery);border-color:color-mix(in srgb,var(--albery) 40%,var(--line))}
+  .arrow{color:var(--ink-soft);font-family:var(--sans)}
+  .ev{margin:16px 0 0;border-top:1px dashed var(--line-strong);padding-top:14px;}
+  .ev table{width:100%;border-collapse:collapse;font-size:13px}
+  .ev th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);
+    font-weight:600;padding:0 12px 8px 0}
+  .ev td{padding:6px 12px 6px 0;border-top:1px solid var(--line);vertical-align:top}
+  .ev td.mono{font-family:var(--mono);font-size:12px;color:var(--brain)}
+  .ev td.mono2{font-family:var(--mono);font-size:12px;color:var(--albery);word-break:break-all}
+  .ev td.num{font-variant-numeric:tabular-nums;text-align:right;color:var(--ink-soft);white-space:nowrap}
+  .foot{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:var(--ink-soft);font-size:12.5px}
+  .foot code{font-family:var(--mono);background:var(--panel);padding:2px 6px;border-radius:5px;border:1px solid var(--line)}
+  a{color:var(--brain)}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">graphify · кросс-репо анализ · 2026-07-23</div>
+  <h1>Как связаны <span class="b">Hermes&nbsp;Brain</span> и <span class="a">Albery</span></h1>
+  <p class="lede">Оба репозитория разобраны в граф знаний (tree-sitter AST + семантика). Прямых рёбер между репозиториями граф не строит — связь я вычислил по совпадающим сущностям. Она держится на трёх слоях: мозг <b>документирует</b> код Albery, Albery в рантайме <b>вызывает</b> мозг, и оба стоят на <b>одной инфраструктуре</b>.</p>
+
+  <div class="stats">
+    <div class="stat brain"><div class="n" id="s1">1 211</div><div class="l">узлов в Hermes Brain</div></div>
+    <div class="stat albery"><div class="n" id="s2">4 944</div><div class="l">узлов в Albery</div></div>
+    <div class="stat"><div class="n" id="s3">55</div><div class="l">мостов «док ↔ код»</div></div>
+    <div class="stat shared"><div class="n" id="s4">8</div><div class="l">общих узлов инфраструктуры</div></div>
+  </div>
+
+  <div class="graphcard">
+    <div class="gbar">
+      <span class="title">Карта связей</span>
+      <div class="filters" id="filters">
+        <button class="chip doc" data-t="documents" aria-pressed="true"><span class="dot"></span>документирует</button>
+        <button class="chip runtime" data-t="calls" aria-pressed="true"><span class="dot"></span>вызывает в рантайме</button>
+        <button class="chip shares" data-t="shares" aria-pressed="true"><span class="dot"></span>общая инфраструктура</button>
+      </div>
+    </div>
+    <canvas id="cv"></canvas>
+    <div class="ghint">
+      <span>◐ <b>Слева</b> — доки мозга &nbsp;·&nbsp; <b>справа</b> — файлы Albery &nbsp;·&nbsp; <b>по центру</b> — общая инфраструктура</span>
+      <span>Наведи на узел · тяни для перестановки</span>
+    </div>
+  </div>
+
+  <div class="layers">
+    <div class="layer l1">
+      <h3><span class="tag">Слой 1</span> Мозг — это спецификация и память Albery</h3>
+      <p>В мозге лежит папка <code style="font-family:var(--mono);font-size:.9em">projects/albery/*.md</code> — 8 документов, которые описывают реальные модули боевой системы. graphify нашёл <b>55 сущностей</b> с совпадающими именами: одна и та же функция/файл существует и как запись в мозге, и как код в Albery.</p>
+      <div class="flow">
+        <span class="pill b">projects/albery/agent-center.md</span>
+        <span class="arrow">документирует&nbsp;→</span>
+        <span class="pill a">b24bot.py · context_server.py · App.tsx …</span>
+      </div>
+      <div class="ev">
+        <table>
+          <thead><tr><th>Документ мозга</th><th>Файлы Albery</th><th class="num">сущностей</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">agent-center.md</td><td class="mono2">b24bot.py, context_server.py, agent_center.py, task_offers.py, App.tsx, DialogsView.tsx, MonitoringView.tsx…</td><td class="num">29</td></tr>
+            <tr><td class="mono">bitrix-bot.md</td><td class="mono2">b24bot.py, docextract.py, docedit.py, agent_links.py, context_server.py</td><td class="num">16</td></tr>
+            <tr><td class="mono">hermes-automations.md</td><td class="mono2">app.py</td><td class="num">4</td></tr>
+            <tr><td class="mono">vpn-gateway.md</td><td class="mono2">agent.md</td><td class="num">2</td></tr>
+            <tr><td class="mono">server-integrations-sync.md</td><td class="mono2">gdrive.py</td><td class="num">1</td></tr>
+            <tr><td class="mono">owner-reports.md · refactor-plan.md · agent-diagnosis-runbook.md</td><td class="mono2">app.py · agent.md · b24bot.py</td><td class="num">3</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="layer l2">
+      <h3><span class="tag">Слой 2</span> Albery в рантайме зовёт мозг</h3>
+      <p>Это не просто общие имена — это живая зависимость. Код Albery на ходу обращается к тому же GitHub-реестру знаний, что и мозг, и прогоняет реплики через локальный Hermes.</p>
+      <div class="flow">
+        <span class="pill a">b24bot.py → hermes_brain_answer()</span>
+        <span class="arrow">→ прогон хода через →</span>
+        <span class="pill b">локальный Hermes-мозг</span>
+      </div>
+      <div class="ev">
+        <table>
+          <thead><tr><th>Точка в Albery</th><th>Что делает</th></tr></thead>
+          <tbody>
+            <tr><td class="mono2">b24bot.py · hermes_brain_answer()</td><td>один ход через локальный мозг; набор инструментов выбирается по тиру доступа</td></tr>
+            <tr><td class="mono2">agent_knowledge.py</td><td>загрузчик GitHub-реестра знаний — тот же git-источник, что и мозг</td></tr>
+            <tr><td class="mono2">agent_center.py</td><td>commit+push <code style="font-family:var(--mono)">agent_knowledge/</code> — правки владельца/агента улетают в GitHub</td></tr>
+            <tr><td class="mono2">context_server.py (MCP)</td><td>отдаёт живые инструкции из того же реестра</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="layer l3">
+      <h3><span class="tag">Слой 3</span> Общая инфраструктура</h3>
+      <p>Оба проекта описывают один и тот же боевой контур с разных сторон: мозг — как знание об интеграциях, Albery — как их реализацию. graphify выделил эти концепты в обоих графах.</p>
+      <div class="flow" id="infraflow"></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    Построено скиллом <b>graphify</b> (подключён к обоим репозиториям: <code>.claude/skills/graphify/</code> + PreToolUse-хуки).
+    Полные графы — в <code>graphify-out/graph.json</code> каждого репо, слитый — <code>cross-repo-graph.json</code>.
+    Обновление без затрат на LLM: <code>graphify update .</code>
+  </div>
+</div>
+
+<div id="tip"></div>
+
+<script>
+const DATA = __DATA__;
+
+// ---- infra pills ----
+(function(){
+  const wrap=document.getElementById('infraflow');
+  DATA.nodes.filter(n=>n.kind==='infra').forEach(n=>{
+    const s=document.createElement('span');
+    s.className='pill'; s.style.borderColor='color-mix(in srgb,var(--shared) 40%,var(--line))';
+    s.style.color='var(--shared)'; s.textContent=n.label; wrap.appendChild(s);
+  });
+})();
+
+// ---- force graph ----
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d'), tip=document.getElementById('tip');
+const CSS=k=>getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+let W,H,DPR;
+function size(){DPR=Math.min(2,devicePixelRatio||1);const r=cv.getBoundingClientRect();
+  W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+size();addEventListener('resize',()=>{size();placeAnchors();});
+
+const N=DATA.nodes.map(n=>({...n,x:0,y:0,vx:0,vy:0}));
+const byId=Object.fromEntries(N.map(n=>[n.id,n]));
+const L=DATA.links.map(l=>({...l,s:byId[l.s],t:byId[l.t]}));
+const R={hub:26,doc:12,file:9,runtime:11,infra:10};
+function rad(n){return R[n.kind]||8}
+
+// anchor targets by role: brain-side left, albery-side right, shared center
+function placeAnchors(){
+  N.forEach(n=>{
+    let ax;
+    if(n.id==='brain')ax=0.16; else if(n.id==='albery')ax=0.84;
+    else if(n.kind==='doc')ax=0.30; else if(n.kind==='file')ax=0.70;
+    else if(n.kind==='runtime')ax=0.60; else ax=0.50; // infra center
+    n.ax=ax*W;
+    if(!n._init){n.x=n.ax+(Math.random()-.5)*40;n.y=H*(0.15+Math.random()*0.7);n._init=1;}
+  });
+}
+placeAnchors();
+// pin hubs vertically centered-ish
+byId.brain.fy=H*0.5; byId.albery.fy=H*0.5;
+
+const colorFor={documents:()=>CSS('--brain'),calls:()=>CSS('--runtime'),shares:()=>CSS('--shared'),owns:()=>CSS('--line-strong')};
+let active={documents:true,calls:true,shares:true};
+
+function linkVisible(l){
+  if(l.type==='owns'){ // structural: visible if the non-hub end's family is on
+    const other=l.s.kind==='hub'?l.t:l.s;
+    if(other.kind==='doc')return active.documents;
+    if(other.kind==='file')return active.documents;
+    if(other.kind==='runtime')return active.calls;
+    if(other.kind==='infra')return active.shares;
+    return true;
+  }
+  return active[l.type];
+}
+function nodeVisible(n){
+  if(n.kind==='hub')return true;
+  if(n.kind==='doc'||n.kind==='file')return active.documents;
+  if(n.kind==='runtime')return active.calls;
+  if(n.kind==='infra')return active.shares;
+  return true;
+}
+
+// simulation
+function tick(){
+  // repulsion (only visible)
+  const vis=N.filter(nodeVisible);
+  for(let i=0;i<vis.length;i++)for(let j=i+1;j<vis.length;j++){
+    const a=vis[i],b=vis[j];let dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy||1;
+    if(d2>46000)continue;const f=1400/d2,d=Math.sqrt(d2);dx/=d;dy/=d;
+    a.vx+=dx*f;a.vy+=dy*f;b.vx-=dx*f;b.vy-=dy*f;
+  }
+  // springs
+  L.forEach(l=>{if(!linkVisible(l))return;
+    const a=l.s,b=l.t;let dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1;
+    const rest=(a.kind==='hub'||b.kind==='hub')?90:70;const f=(d-rest)*0.02;dx/=d;dy/=d;
+    a.vx+=dx*f;a.vy+=dy*f;b.vx-=dx*f;b.vy-=dy*f;});
+  // anchor pull (x column) + gravity y
+  N.forEach(n=>{
+    if(n===drag)return;
+    n.vx+=(n.ax-n.x)*(n.kind==='hub'?0.02:0.012);
+    n.vy+=(H*0.5-n.y)*0.004;
+    n.vx*=0.86;n.vy*=0.86;
+    if(n.fy!=null)n.y=n.fy;
+    n.x+=n.vx;n.y+=n.vy;
+    const r=rad(n)+4;n.x=Math.max(r,Math.min(W-r,n.x));n.y=Math.max(r,Math.min(H-r,n.y));
+  });
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  // links
+  L.forEach(l=>{if(!linkVisible(l))return;
+    const hot=hover&&(l.s===hover||l.t===hover);
+    ctx.beginPath();ctx.moveTo(l.s.x,l.s.y);
+    // slight curve
+    const mx=(l.s.x+l.t.x)/2,my=(l.s.y+l.t.y)/2-Math.min(30,Math.abs(l.t.x-l.s.x)*0.08);
+    ctx.quadraticCurveTo(mx,my,l.t.x,l.t.y);
+    const c=colorFor[l.type]();
+    ctx.strokeStyle=l.type==='owns'?c:c;
+    ctx.globalAlpha=l.type==='owns'?(hot?.5:.22):(hot?.95:.55);
+    ctx.lineWidth=l.type==='documents'?Math.min(4,0.7+(l.w||1)*0.35):(l.type==='owns'?1:2);
+    if(hover&&!hot)ctx.globalAlpha*=.25;
+    ctx.stroke();
+  });
+  ctx.globalAlpha=1;
+  // nodes
+  N.forEach(n=>{if(!nodeVisible(n))return;
+    const r=rad(n);const hot=hover===n;
+    let fill=CSS('--albery'),ring=null;
+    if(n.repo==='hermes-brain')fill=CSS('--brain');
+    else if(n.repo==='shared')fill=CSS('--shared');
+    if(n.kind==='runtime')fill=CSS('--runtime');
+    if(hover&&!hot&&!isNbr(n))ctx.globalAlpha=.3;
+    // halo for hubs
+    if(n.kind==='hub'){ctx.beginPath();ctx.arc(n.x,n.y,r+7,0,7);ctx.fillStyle=CSS('--glow');ctx.fill();}
+    ctx.beginPath();ctx.arc(n.x,n.y,r,0,7);ctx.fillStyle=fill;ctx.fill();
+    ctx.lineWidth=2;ctx.strokeStyle=CSS('--panel');ctx.stroke();
+    ctx.globalAlpha=1;
+    // labels: hubs always, others on hover/nbr
+    if(n.kind==='hub'||hot||isNbr(n)){
+      const short=n.kind==='hub'?n.label:n.label.replace(/^.*\//,'').slice(0,26);
+      ctx.font=(n.kind==='hub'?'700 14px ':'500 11px ')+CSS('--sans')+',sans-serif';
+      const tw=ctx.measureText(short).width;
+      const lx=n.x, ly=n.y+r+(n.kind==='hub'?20:12);
+      ctx.fillStyle=CSS('--panel');ctx.globalAlpha=.85;
+      ctx.fillRect(lx-tw/2-4,ly-10,tw+8,15);ctx.globalAlpha=1;
+      ctx.fillStyle=CSS('--ink');ctx.textAlign='center';ctx.fillText(short,lx,ly);
+      ctx.textAlign='left';
+    }
+  });
+}
+const nbrSet=new Set();
+function isNbr(n){return nbrSet.has(n)}
+function computeNbr(){nbrSet.clear();if(!hover)return;L.forEach(l=>{if(!linkVisible(l))return;
+  if(l.s===hover)nbrSet.add(l.t);if(l.t===hover)nbrSet.add(l.s);});}
+
+let hover=null,drag=null;
+function at(mx,my){let best=null,bd=1e9;N.forEach(n=>{if(!nodeVisible(n))return;
+  const d=Math.hypot(n.x-mx,n.y-my);if(d<rad(n)+6&&d<bd){bd=d;best=n;}});return best;}
+function pos(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;
+  return[t.clientX-r.left,t.clientY-r.top,t.clientX,t.clientY];}
+cv.addEventListener('mousemove',e=>{const[x,y,cx,cy]=pos(e);
+  if(drag){drag.x=x;drag.y=y;drag.vx=drag.vy=0;return;}
+  const n=at(x,y);if(n!==hover){hover=n;computeNbr();}
+  if(n){tip.style.opacity=1;tip.style.left=Math.min(cx+14,innerWidth-290)+'px';tip.style.top=(cy+14)+'px';
+    tip.innerHTML='<span class="tl">'+n.label+'</span>'+(n.meta?'<span class="tm">'+n.meta+'</span>':'<span class="tm">'+({file:'файл Albery',doc:'документ мозга',infra:'общая инфраструктура',runtime:'рантайм-вызов'}[n.kind]||'')+'</span>');
+    cv.style.cursor='grab';}
+  else{tip.style.opacity=0;cv.style.cursor='default';}});
+cv.addEventListener('mousedown',e=>{const[x,y]=pos(e);drag=at(x,y);if(drag){drag.fy=null;cv.style.cursor='grabbing';}});
+addEventListener('mouseup',()=>{if(drag&&drag.kind==='hub')drag.fy=drag.y;drag=null;cv.style.cursor='default';});
+cv.addEventListener('touchstart',e=>{const[x,y]=pos(e);drag=at(x,y);if(drag){drag.fy=null;hover=drag;computeNbr();e.preventDefault();}},{passive:false});
+cv.addEventListener('touchmove',e=>{if(!drag)return;const[x,y]=pos(e);drag.x=x;drag.y=y;drag.vx=drag.vy=0;e.preventDefault();},{passive:false});
+cv.addEventListener('touchend',()=>{drag=null;});
+cv.addEventListener('mouseleave',()=>{if(!drag){hover=null;tip.style.opacity=0;}});
+
+// filters
+document.getElementById('filters').addEventListener('click',e=>{
+  const b=e.target.closest('.chip');if(!b)return;
+  const on=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',!on);
+  active[b.dataset.t]=!on;computeNbr();});
+
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+let frames=0;
+function loop(){const steps=reduce?1:1;for(let i=0;i<steps;i++)tick();draw();
+  if(frames++<100000)requestAnimationFrame(loop);}
+// warmup
+for(let i=0;i<120;i++)tick();
+loop();
+</script>
