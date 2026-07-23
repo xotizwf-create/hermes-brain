@@ -16,6 +16,15 @@ An incoming file may be an unfilled template: it has a number, parties, and a sp
 3. Add `notes` stating exactly which source fields are blank.
 4. Tell the owner which contract numbers have missing dates. After they provide them, update the existing record with `save_contract_from_incoming_document(contractId=..., extracted=...)` rather than creating a duplicate.
 
+## Local DOCX intake
+
+When the owner asks to load a Word/PDF file that already exists locally rather than a file available by public URL:
+
+1. Confirm the exact local source file exists and is non-empty.
+2. Upload it through the authenticated multipart endpoint described by the project MCP (`POST …/incoming-documents/upload`, form field `file`) rather than trying to make a local path work in `upload_incoming_document(fileUrl=…)`.
+3. Keep the authenticated endpoint and every returned URL out of terminal output, chat, and logs. Print only safe operational fields such as HTTP status, document ID, filename, and size; response objects can contain token-bearing nested URLs.
+4. Read the uploaded document with `read_incoming_contract_document(includeText=true)` before extracting any fields. Then continue the normal pipeline below.
+
 ## Core workflow
 
 1. Read the MCP prompt `incoming_contract_processing` before changing data.
@@ -43,6 +52,7 @@ An incoming file may be an unfilled template: it has a number, parties, and a sp
 - If the user explicitly overrides a source date or deadline (for example, “date and deadline today”), apply that value to `contractDate` / `deadlineDate` and planned item dates as requested.
 - Preserve the original contractual deadline phrase in `deadlineText` or `notes`, clearly noting that the card date was set by direct user instruction. This keeps the operational card faithful to the request without losing the source condition.
 - Resolve “today” with the live Europe/Moscow date, never from model memory.
+- For a source term such as “within N working days from the contract date,” independently calculate the resulting calendar deadline and compare it with `deadlineSaved`. If they differ, correct the card deadline explicitly with `edit_contract`; retain the original duration phrase in `deadlineText`.
 - Match customer and supplier by INN. If `linkedOrganizations.*.isPlaceholder=true`, create/complete the organization by INN and repeat the save using `contractId`.
 
 ## Specification safeguards
