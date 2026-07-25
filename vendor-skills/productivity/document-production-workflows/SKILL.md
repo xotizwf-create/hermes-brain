@@ -69,8 +69,21 @@ For «Простые поставки» incoming contract documents, use `refere
 
 For legacy Word `.doc` contracts that need a few field/specification edits, use the workflow in `references/legacy-doc-contract-editing.md`: convert a copy to `.docx` with LibreOffice headless, edit targeted paragraphs/table cells with `python-docx`, verify required values and absence of stale values, confirm the file opens by converting to PDF, then render/inspect changed PDF pages so tables/prices did not shift before sending Word+PDF.
 
+## University admission packets (motivation letters and portfolios)
+
+Before drafting, reviewing, or naming files for an admission submission:
+
+1. Resolve the **exact** admission year, university, campus/branch, degree code, and programme profile. Similar programme names or the same degree code at another campus may use a different regulation.
+2. Retrieve the official programme's entrance-exam / assessment PDF, not a generic programme page or a neighbouring profile's document.
+3. Extract the operative requirements verbatim: scoring components, character limit including spaces, font and spacing, PDF requirements, portfolio assembly rules, deadline, submission channel, and exact filename pattern.
+4. When the regulation provides a filename template, reproduce its separators and labels exactly; only substitute the applicant's name/initials. Do not invent a “cleaner” naming convention.
+5. Before delivery, verify the final letter against the stated character limit and confirm that the produced filename and file format match the regulation.
+
+If an official rubric is not publicly available, say so clearly. Assess the draft against published requirements and label any qualitative assessment as non-official.
+
 ## Pitfalls
 
+- Using requirements from a similarly named programme, the wrong degree code, or a different campus/branch.
 - Returning prose instead of the requested editable file.
 - Trusting OCR blindly for legal/financial fields.
 - Editing a PDF without verifying the changed page visually or structurally.
