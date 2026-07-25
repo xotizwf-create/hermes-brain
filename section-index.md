@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-07-21
+updated: 2026-07-25
 secret_refs: []
 ---
 
@@ -12,6 +12,28 @@ Greppable map of every knowledge doc → its H2/H3 sections. **Grep a keyword he
 
 Regenerate after editing docs: `python scripts/build_section_index.py` (parallel to `build_registry.py`).
 
+
+## `.claude/skills/graphify/SKILL.md` · [skill] graphify
+- [Usage](.claude/skills/graphify/SKILL.md#usage)
+- [What graphify is for](.claude/skills/graphify/SKILL.md#what-graphify-is-for)
+- [What You Must Do When Invoked](.claude/skills/graphify/SKILL.md#what-you-must-do-when-invoked)
+- [Step 0 - GitHub repos and multi-path merge (only if a URL or several paths)](.claude/skills/graphify/SKILL.md#step-0---github-repos-and-multi-path-merge-only-if-a-url-or-several-paths)
+- [Step 1 - Ensure graphify is installed](.claude/skills/graphify/SKILL.md#step-1---ensure-graphify-is-installed)
+- [Step 2 - Detect files](.claude/skills/graphify/SKILL.md#step-2---detect-files)
+- [Step 2.5 - Video and audio (only if video files detected)](.claude/skills/graphify/SKILL.md#step-25---video-and-audio-only-if-video-files-detected)
+- [Step 3 - Extract entities and relationships](.claude/skills/graphify/SKILL.md#step-3---extract-entities-and-relationships)
+- [Step 4 - Build graph, cluster, analyze, generate outputs](.claude/skills/graphify/SKILL.md#step-4---build-graph-cluster-analyze-generate-outputs)
+- [Step 4.5 - Graph health check (read-only integrity gate)](.claude/skills/graphify/SKILL.md#step-45---graph-health-check-read-only-integrity-gate)
+- [Step 5 - Label communities](.claude/skills/graphify/SKILL.md#step-5---label-communities)
+- [Step 6 - Generate Obsidian vault (opt-in) + HTML](.claude/skills/graphify/SKILL.md#step-6---generate-obsidian-vault-opt-in-html)
+- [Steps 6b-8 - Wiki, Neo4j, FalkorDB, SVG, GraphML, MCP, benchmark (only on their flags)](.claude/skills/graphify/SKILL.md#steps-6b-8---wiki-neo4j-falkordb-svg-graphml-mcp-benchmark-only-on-their-flags)
+- [Step 9 - Save manifest, update cost tracker, clean up, and report](.claude/skills/graphify/SKILL.md#step-9---save-manifest-update-cost-tracker-clean-up-and-report)
+- [Interpreter guard for subcommands](.claude/skills/graphify/SKILL.md#interpreter-guard-for-subcommands)
+- [For --update and --cluster-only](.claude/skills/graphify/SKILL.md#for---update-and---cluster-only)
+- [For /graphify query](.claude/skills/graphify/SKILL.md#for-graphify-query)
+- [For /graphify add and --watch](.claude/skills/graphify/SKILL.md#for-graphify-add-and---watch)
+- [For the commit hook and native CLAUDE.md integration](.claude/skills/graphify/SKILL.md#for-the-commit-hook-and-native-claudemd-integration)
+- [Honesty Rules](.claude/skills/graphify/SKILL.md#honesty-rules)
 
 ## `connectors/albery.md` · [connector] mcp, albery, bitrix, zoom, company-knowledge, reports
 - [Назначение](connectors/albery.md#назначение)
@@ -125,6 +147,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Safety Rules](engineering/deployment.md#safety-rules)
 - [Production resource safety (never OOM the box)](engineering/deployment.md#production-resource-safety-never-oom-the-box)
 
+## `engineering/hermes-compaction-hang.md` · [engineering] hermes, gateway, compression, compaction, groq, codex, watchdog, incident, 217
+- [Что было на самом деле](engineering/hermes-compaction-hang.md#что-было-на-самом-деле)
+- [Что сделано (217, 2026-07-22)](engineering/hermes-compaction-hang.md#что-сделано-217-2026-07-22)
+- [Сторож, который ловит это без владельца](engineering/hermes-compaction-hang.md#сторож-который-ловит-это-без-владельца)
+- [Урок](engineering/hermes-compaction-hang.md#урок)
+
 ## `engineering/hermes-gateway-ux.md` · [engineering] hermes, gateway, telegram, ux, config, display, reasoning, progress, media, attachments
 - [What was wrong (2026-05-30)](engineering/hermes-gateway-ux.md#what-was-wrong-2026-05-30)
 - [The knobs (in `config.yaml` → `display:` unless noted)](engineering/hermes-gateway-ux.md#the-knobs-in-configyaml-display-unless-noted)
@@ -191,6 +219,8 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-07-25](logs/changelog.md#2026-07-25)
+- [2026-07-23](logs/changelog.md#2026-07-23)
 - [2026-07-16](logs/changelog.md#2026-07-16)
 - [2026-07-15](logs/changelog.md#2026-07-15)
 - [2026-07-14](logs/changelog.md#2026-07-14)
@@ -453,6 +483,48 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [2026-07-13 — два хода сотрудников зависли на все 600 сек (Наталья #669, Александр #709)](projects/albery/incidents.md#2026-07-13-два-хода-сотрудников-зависли-на-все-600-сек-наталья-669-александр-709)
 - [2026-07-12 — «Полина»: агент назвал ответственным человека, которого нет в компании](projects/albery/incidents.md#2026-07-12-полина-агент-назвал-ответственным-человека-которого-нет-в-компании)
 - [2026-07-02 → 2026-07-12 — батч-синк молча умирал 10 дней (чаты и снапшоты задач устарели)](projects/albery/incidents.md#2026-07-02-2026-07-12-батч-синк-молча-умирал-10-дней-чаты-и-снапшоты-задач-устарели)
+
+## `projects/albery/iu-consultant-recovery-plan.md` · [project] iu, ai-consultant, sales, telegram, crm, recovery, roadmap, canonical, status
+- [Паспорт плана](projects/albery/iu-consultant-recovery-plan.md#паспорт-плана)
+- [Как продолжать работу в новом диалоге](projects/albery/iu-consultant-recovery-plan.md#как-продолжать-работу-в-новом-диалоге)
+- [Словарь статусов](projects/albery/iu-consultant-recovery-plan.md#словарь-статусов)
+- [Целевой продукт](projects/albery/iu-consultant-recovery-plan.md#целевой-продукт)
+- [Неподвижные продуктовые инварианты](projects/albery/iu-consultant-recovery-plan.md#неподвижные-продуктовые-инварианты)
+- [Снимок системы на старте программы](projects/albery/iu-consultant-recovery-plan.md#снимок-системы-на-старте-программы)
+- [Что уже существует](projects/albery/iu-consultant-recovery-plan.md#что-уже-существует)
+- [Чего пока нет](projects/albery/iu-consultant-recovery-plan.md#чего-пока-нет)
+- [Evidence log](projects/albery/iu-consultant-recovery-plan.md#evidence-log)
+- [Целевая архитектура](projects/albery/iu-consultant-recovery-plan.md#целевая-архитектура)
+- [План реализации](projects/albery/iu-consultant-recovery-plan.md#план-реализации)
+- [P0 — безопасность и прекращение отпугивающего поведения](projects/albery/iu-consultant-recovery-plan.md#p0-безопасность-и-прекращение-отпугивающего-поведения)
+- [P1 — правда, естественный разговор и строгий контракт хода](projects/albery/iu-consultant-recovery-plan.md#p1-правда-естественный-разговор-и-строгий-контракт-хода)
+- [P2 — единое состояние и надёжное исполнение](projects/albery/iu-consultant-recovery-plan.md#p2-единое-состояние-и-надёжное-исполнение)
+- [P3 — handoff как закрываемый процесс и корректная воронка](projects/albery/iu-consultant-recovery-plan.md#p3-handoff-как-закрываемый-процесс-и-корректная-воронка)
+- [P4 — измеримое качество, shadow и canary](projects/albery/iu-consultant-recovery-plan.md#p4-измеримое-качество-shadow-и-canary)
+- [P5 — осторожное расширение автономии](projects/albery/iu-consultant-recovery-plan.md#p5-осторожное-расширение-автономии)
+- [Текущее следующее действие](projects/albery/iu-consultant-recovery-plan.md#текущее-следующее-действие)
+- [`IU-P0-01 — минимальный безопасный набор возможностей`](projects/albery/iu-consultant-recovery-plan.md#iu-p0-01-минимальный-безопасный-набор-возможностей)
+- [Decision log](projects/albery/iu-consultant-recovery-plan.md#decision-log)
+- [`D-001` — один канонический план](projects/albery/iu-consultant-recovery-plan.md#d-001-один-канонический-план)
+- [`D-002` — консультант первой линии до прохождения quality gates](projects/albery/iu-consultant-recovery-plan.md#d-002-консультант-первой-линии-до-прохождения-quality-gates)
+- [`D-003` — LLM предлагает, код разрешает и исполняет](projects/albery/iu-consultant-recovery-plan.md#d-003-llm-предлагает-код-разрешает-и-исполняет)
+- [`D-004` — стадия CRM не диктует реплику](projects/albery/iu-consultant-recovery-plan.md#d-004-стадия-crm-не-диктует-реплику)
+- [`D-005` — никакой тишины при handoff или сбое](projects/albery/iu-consultant-recovery-plan.md#d-005-никакой-тишины-при-handoff-или-сбое)
+- [`D-006` — тестировать outcomes, а не наличие текста сценария](projects/albery/iu-consultant-recovery-plan.md#d-006-тестировать-outcomes-а-не-наличие-текста-сценария)
+- [Журнал реализации](projects/albery/iu-consultant-recovery-plan.md#журнал-реализации)
+- [Риски и стоп-условия](projects/albery/iu-consultant-recovery-plan.md#риски-и-стоп-условия)
+- [Внешние ориентиры архитектуры](projects/albery/iu-consultant-recovery-plan.md#внешние-ориентиры-архитектуры)
+
+## `projects/albery/iu-funnel.md` · [project] iu, воронка, telegram, crm, договор, контракт, шаблон, лидогенерация, wildberries, reference
+- [Что это](projects/albery/iu-funnel.md#что-это)
+- [Стадии воронки (после чистки 23.07.2026)](projects/albery/iu-funnel.md#стадии-воронки-после-чистки-23072026)
+- [Поля сделки, которыми пользуется агент](projects/albery/iu-funnel.md#поля-сделки-которыми-пользуется-агент)
+- [Нумерация договоров](projects/albery/iu-funnel.md#нумерация-договоров)
+- [Шаблон договора — ТРЕБОВАНИЯ (важно при замене)](projects/albery/iu-funnel.md#шаблон-договора-требования-важно-при-замене)
+- [PDF](projects/albery/iu-funnel.md#pdf)
+- [Правила поведения агента (оплачены тестовыми прогонами владельца)](projects/albery/iu-funnel.md#правила-поведения-агента-оплачены-тестовыми-прогонами-владельца)
+- [Инструменты воронки](projects/albery/iu-funnel.md#инструменты-воронки)
+- [Что осталось (на 23.07.2026)](projects/albery/iu-funnel.md#что-осталось-на-23072026)
 
 ## `projects/albery/knowledge-rag.md` · [project] albery, mcp, rag, search, knowledge, postgres, optimization, reference
 - [Зачем чанкинг (Ступень A)](projects/albery/knowledge-rag.md#зачем-чанкинг-ступень-a)
@@ -778,7 +850,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Резюме на hh — как оно настроено (2026-07-21)](skills/hh-auto-apply/SKILL.md#резюме-на-hh-как-оно-настроено-2026-07-21)
 - [Грабли редактора hh (проверено вживую)](skills/hh-auto-apply/SKILL.md#грабли-редактора-hh-проверено-вживую)
 - [Анкеты работодателей — заполняются за владельца (2026-07-21)](skills/hh-auto-apply/SKILL.md#анкеты-работодателей-заполняются-за-владельца-2026-07-21)
+- [Страж сопроводительных — `scripts/hh_letter_guard.py`](skills/hh-auto-apply/SKILL.md#страж-сопроводительных-scriptshh_letter_guardpy)
+- [⚠️ Проверять статус отклика точной строкой, а не `grep -i`](skills/hh-auto-apply/SKILL.md#проверять-статус-отклика-точной-строкой-а-не-grep--i)
+- [⚠️ Сопроводительное могло не приложиться, даже если скрипт сказал `letter: true`](skills/hh-auto-apply/SKILL.md#сопроводительное-могло-не-приложиться-даже-если-скрипт-сказал-letter-true)
+- [⚠️ Многострочные сообщения в чат hh НЕ отправляются](skills/hh-auto-apply/SKILL.md#многострочные-сообщения-в-чат-hh-не-отправляются)
 - [Грабли переписки hh (обе стоили ложных «отправлено»)](skills/hh-auto-apply/SKILL.md#грабли-переписки-hh-обе-стоили-ложных-отправлено)
+- [Анкеты на самом hh (не путать с Google Forms)](skills/hh-auto-apply/SKILL.md#анкеты-на-самом-hh-не-путать-с-google-forms)
 - [Как вотчер ищет анкеты (не сужать!)](skills/hh-auto-apply/SKILL.md#как-вотчер-ищет-анкеты-не-сужать)
 - [Грабли Google Forms](skills/hh-auto-apply/SKILL.md#грабли-google-forms)
 - [Профиль поиска (что нужно владельцу)](skills/hh-auto-apply/SKILL.md#профиль-поиска-что-нужно-владельцу)
@@ -2541,6 +2618,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [ГОСТ-style Reports and Source-Backed PDFs](vendor-skills/productivity/document-production-workflows/SKILL.md#гост-style-reports-and-source-backed-pdfs)
 - [PDF and OCR](vendor-skills/productivity/document-production-workflows/SKILL.md#pdf-and-ocr)
 - [Meeting and Contract Pipelines](vendor-skills/productivity/document-production-workflows/SKILL.md#meeting-and-contract-pipelines)
+- [University admission packets (motivation letters and portfolios)](vendor-skills/productivity/document-production-workflows/SKILL.md#university-admission-packets-motivation-letters-and-portfolios)
 - [Pitfalls](vendor-skills/productivity/document-production-workflows/SKILL.md#pitfalls)
 - [Verification Checklist](vendor-skills/productivity/document-production-workflows/SKILL.md#verification-checklist)
 
@@ -2636,12 +2714,18 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 
 ## `vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md` · [?]
 - [Unfilled signature dates and delivery terms](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#unfilled-signature-dates-and-delivery-terms)
+- [Local DOCX intake](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#local-docx-intake)
 - [Core workflow](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#core-workflow)
 - [Exactness and user overrides](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#exactness-and-user-overrides)
 - [Specification safeguards](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#specification-safeguards)
 - [Overwrite and duplicate prevention](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#overwrite-and-duplicate-prevention)
 - [User-facing response](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#user-facing-response)
 - [Reference](vendor-skills/productivity/prostye-postavki-incoming-contracts/SKILL.md#reference)
+
+## `vendor-skills/productivity/prostye-postavki-incoming-contracts/references/incomplete-contract-field-saving.md` · [?]
+- [Когда применять](vendor-skills/productivity/prostye-postavki-incoming-contracts/references/incomplete-contract-field-saving.md#когда-применять)
+- [Порядок](vendor-skills/productivity/prostye-postavki-incoming-contracts/references/incomplete-contract-field-saving.md#порядок)
+- [Проверка цен и количеств](vendor-skills/productivity/prostye-postavki-incoming-contracts/references/incomplete-contract-field-saving.md#проверка-цен-и-количеств)
 
 ## `vendor-skills/productivity/prostye-postavki-incoming-contracts/references/verification-patterns.md` · [?]
 - [Historical parsed-item field mapping](vendor-skills/productivity/prostye-postavki-incoming-contracts/references/verification-patterns.md#historical-parsed-item-field-mapping)
@@ -2829,6 +2913,19 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Official dynamic source pattern](vendor-skills/research/research-intelligence-workflows/references/kfu-admissions-program-budget-research.md#official-dynamic-source-pattern)
 - [Output pattern for program ranking](vendor-skills/research/research-intelligence-workflows/references/kfu-admissions-program-budget-research.md#output-pattern-for-program-ranking)
 - [2026 KFU example rows observed in one session](vendor-skills/research/research-intelligence-workflows/references/kfu-admissions-program-budget-research.md#2026-kfu-example-rows-observed-in-one-session)
+
+## `vendor-skills/research/research-intelligence-workflows/references/kfu-motivation-letter-38-04-02.md` · [?]
+- [Official sources](vendor-skills/research/research-intelligence-workflows/references/kfu-motivation-letter-38-04-02.md#official-sources)
+- [2023 detailed programme — relevant pages](vendor-skills/research/research-intelligence-workflows/references/kfu-motivation-letter-38-04-02.md#2023-detailed-programme-relevant-pages)
+- [Response pattern](vendor-skills/research/research-intelligence-workflows/references/kfu-motivation-letter-38-04-02.md#response-pattern)
+- [Image-only-PDF extraction recipe](vendor-skills/research/research-intelligence-workflows/references/kfu-motivation-letter-38-04-02.md#image-only-pdf-extraction-recipe)
+
+## `vendor-skills/research/research-intelligence-workflows/references/kpfu-economics-data-analytics-2026.md` · [?]
+- [Official programme page](vendor-skills/research/research-intelligence-workflows/references/kpfu-economics-data-analytics-2026.md#official-programme-page)
+- [Curriculum evidence and confidence](vendor-skills/research/research-intelligence-workflows/references/kpfu-economics-data-analytics-2026.md#curriculum-evidence-and-confidence)
+- [Published core disciplines](vendor-skills/research/research-intelligence-workflows/references/kpfu-economics-data-analytics-2026.md#published-core-disciplines)
+- [Published electives](vendor-skills/research/research-intelligence-workflows/references/kpfu-economics-data-analytics-2026.md#published-electives)
+- [Fit analysis for AI-implementation value measurement](vendor-skills/research/research-intelligence-workflows/references/kpfu-economics-data-analytics-2026.md#fit-analysis-for-ai-implementation-value-measurement)
 
 ## `vendor-skills/research/research-intelligence-workflows/references/kpfu-official-curriculum-plan-research.md` · [?]
 - [Official source pattern](vendor-skills/research/research-intelligence-workflows/references/kpfu-official-curriculum-plan-research.md#official-source-pattern)

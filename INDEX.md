@@ -2,7 +2,7 @@
 id: index
 type: schema
 tags: [root, routing, entrypoint]
-updated: 2026-07-09
+updated: 2026-07-25
 secret_refs: []
 ---
 
@@ -75,6 +75,10 @@ every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
 
 - **Project work / "connect to X" / deploy X** → read `projects/registry.yaml`, find the project,
   load only `projects/<slug>/`. For credentials use the `secure-access` skill.
+- **Albery: ИИ-менеджер/ИИ-консультант ИУ, Telegram-воронка, «агент тупит/отпугивает клиентов»,
+  что уже исправлено и что делать следующим** →
+  `projects/albery/iu-consultant-recovery-plan.md` (**канонический статус и current next action**);
+  предметные правила воронки → `projects/albery/iu-funnel.md`.
 - **Простые поставки: MCP-инструкции, prompt-навигация, добавление новых MCP prompts/tools** →
   `projects/prostye-postavki/mcp.md` (карта `list_mcp_prompt_topics`, поиск `search_mcp_prompts`, полный текст через `get_mcp_prompt`).
 - **Add a new project** → use skill `skills/add-project/`.

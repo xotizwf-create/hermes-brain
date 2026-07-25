@@ -2,7 +2,7 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-07-04
+updated: 2026-07-25
 secret_refs: []
 ---
 
@@ -10,6 +10,10 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
+
+## 2026-07-25
+
+- 2026-07-25 — **Для восстановления ИИ-консультанта воронки ИУ создан один канонический междиалоговый план** (`projects/albery/iu-consultant-recovery-plan.md`). По просьбе владельца зафиксированы обезличенный production-аудит, подтверждённые и отсутствующие возможности, целевая архитектура, инварианты, фазы P0–P5, атомарные задачи со статусами и зависимостями, критерии приёмки, evidence/decision/implementation logs, риски и ровно один `current next action` (`IU-P0-01` — минимальный безопасный набор возможностей). План связан из корневого `INDEX.md`, manifest и overview Albery; `iu-funnel.md` явно оставлен предметным справочником, а не источником статуса.
 
 ## 2026-07-23
 

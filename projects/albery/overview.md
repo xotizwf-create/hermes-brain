@@ -3,7 +3,7 @@ id: albery-overview
 type: project
 project: albery
 tags: [overview]
-updated: 2026-06-04
+updated: 2026-07-25
 secret_refs: []
 ---
 
@@ -32,6 +32,10 @@ A separate Hermes agent also runs on the same Albery server and is dedicated onl
 ## Current state
 Active. Near-realtime Bitrix task sync (outgoing webhook), incremental Zoom recording sync,
 Zoom webhooks. Big external sync cron runs daily 18:00 Europe/Moscow.
+
+For all work on the client-facing Telegram agent and the IU funnel, read
+[iu-consultant-recovery-plan.md](iu-consultant-recovery-plan.md) first. It is the only canonical
+source for implementation status, evidence, decisions and the current next action.
 
 ## Critical external dependencies
 - Bitrix Marketplace subscription is mandatory for Albery. Without an active Marketplace subscription in Bitrix, message delivery and pulling information from Bitrix will not work reliably / may stop working entirely.

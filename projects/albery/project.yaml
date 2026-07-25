@@ -31,6 +31,7 @@ secret_refs:
 
 links:
   - overview.md
+  - iu-consultant-recovery-plan.md  # canonical status/current next action for the IU AI consultant recovery
   - servers.md
   - deploy.md
   - runbook.md

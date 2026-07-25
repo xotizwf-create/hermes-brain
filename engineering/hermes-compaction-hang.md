@@ -1,7 +1,7 @@
 ---
 id: hermes-compaction-hang
 type: engineering
-tags: [hermes, gateway, compression, compaction, groq, codex, watchdog, incident, 217]
+tags: [hermes, gateway, compression, compaction, groq, codex, watchdog, incident, "217"]
 updated: 2026-07-22
 secret_refs: []
 ---
