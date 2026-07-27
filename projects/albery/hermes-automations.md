@@ -3,7 +3,7 @@ id: albery-hermes-automations
 type: project
 project: albery
 tags: [albery, hermes, cron, zoom, owner-report, bitrix, reference]
-updated: 2026-06-13
+updated: 2026-07-27
 secret_refs: []
 ---
 
@@ -50,6 +50,13 @@ secret_refs: []
   Если задач 0 — строка «Задач не выделено.» и финальный вопрос не задаётся. Если обработано несколько созвонов — каждый отдельным блоком через разделитель «———».
 
   Полный отчёт по контракту (краткая суть, риски, поведенческие факторы, диагностика и т.д.) живёт **только в БД** (`analytical_note` + `raw_json.ai_report.analysis`) и доступен через UI Albery / MCP `get_zoom_call_transcript`. В Telegram он не дублируется.
+
+  > ⛔ **С 27.07.2026 согласование в Telegram из этой цепочки убрано (владелец).** Задачи
+  > ставит сам Албери: системный cron `*/5` → `/usr/local/bin/albery-zoom-dispatch-watch` →
+  > модуль `zoom_dispatch_watch` в репозитории Albery. Тумблер `ZOOM_AUTO_DISPATCH_ENABLED`,
+  > окно `ZOOM_AUTO_DISPATCH_MAX_AGE_HOURS` (24 ч — чтобы включение не выстрелило хвостом
+  > задач по давним встречам). **Любой сбой отправки становится задачей в Битриксе на
+  > владельца**, а не строкой в логе. Описание ниже — как это работало ДО 27.07.2026.
 
   **На ответ «ставь» (Phase 2 — отправка в Битрикс).** Hermes в Telegram-сессии **НЕ создаёт по одной мелкой задаче через `create_bitrix_task`** — он использует existing UI dispatcher (тот же код, что и кнопка «Отправка задач» в Albery UI):
   1. `list_pending_zoom_operational_dispatches()` без аргументов — возвращает массив `pending` ТОЛЬКО за сегодня (Europe/Moscow). Это именно те созвоны, которые владелец видел в недавней сводке.
