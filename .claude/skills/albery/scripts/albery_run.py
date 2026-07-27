@@ -32,6 +32,7 @@ ENV_FILE = Path(__file__).resolve().parents[5] / "Albery" / ".env"
 ALBERY_HOST = "186.246.7.32"
 VAULT_ENV = "/opt/hermes/secure/projects/albery/.env"
 REMOTE_DIR = "/root/claude_tasks"
+BASE64_LIMIT_BYTES = 60_000  # больше — не строкой в команде, а файлом через SFTP
 PY = {"albery": "/var/www/albery/.venv/bin/python", "main": "python3"}
 
 
@@ -87,6 +88,45 @@ def run(target: str, command: str) -> int:
     return code
 
 
+def put_large(target: str, local: Path) -> int:
+    """Крупный файл: SFTP на 217, оттуда (если цель Albery) scp на 186 паролем из сейфа."""
+    env = load_env()
+    host, user, password = env.get("IP"), env.get("USER", "root"), env.get("PASSWORD")
+    if not host or not password:
+        sys.exit(f"IP / PASSWORD не заданы в {ENV_FILE.name}")
+
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    try:
+        client.connect(host, username=user, password=password, timeout=30)
+        client.exec_command(f"mkdir -p {REMOTE_DIR}")[1].channel.recv_exit_status()
+        sftp = client.open_sftp()
+        try:
+            sftp.put(str(local), f"{REMOTE_DIR}/{local.name}")
+        finally:
+            sftp.close()
+    except Exception as exc:  # noqa: BLE001
+        sys.exit(f"не удалось положить файл на 217: {type(exc).__name__}: {exc}")
+    finally:
+        client.close()
+
+    if target == "main":
+        print(f"uploaded: {REMOTE_DIR}/{local.name}")
+        return 0
+
+    hop = (
+        f"mkdir -p {REMOTE_DIR}; PW=$(mktemp); chmod 600 "'"$PW"; '
+        f'grep "^PASSWORD=" {VAULT_ENV} | cut -d= -f2- > "$PW"; '
+        f'sshpass -f "$PW" scp -o StrictHostKeyChecking=no -o ConnectTimeout=15 '
+        f"{REMOTE_DIR}/{local.name} root@{ALBERY_HOST}:{REMOTE_DIR}/{local.name}; "
+        'rc=$?; shred -u "$PW" 2>/dev/null || rm -f "$PW"; exit $rc'
+    )
+    code = run("main", hop)
+    if code == 0:
+        print(f"uploaded: {REMOTE_DIR}/{local.name}")
+    return code
+
+
 def main() -> int:
     argv = sys.argv[1:]
     if len(argv) < 3 or argv[0] not in ("exec", "script", "put") or argv[1] not in ("albery", "main"):
@@ -106,6 +146,10 @@ def main() -> int:
 
     remote_path = f"{REMOTE_DIR}/{local.name}"
     if mode == "put":
+        if local.stat().st_size > BASE64_LIMIT_BYTES:
+            # Крупный файл (dist фронта) base64-строкой не отправить: команда такого
+            # размера рвёт SSH-сессию. Идёт файлом — SFTP до 217, оттуда scp на 186.
+            return put_large(target, local)
         return run(target, f"mkdir -p {REMOTE_DIR} && {upload_cmd(local)} && "
                            f"echo uploaded: {remote_path}")
 
