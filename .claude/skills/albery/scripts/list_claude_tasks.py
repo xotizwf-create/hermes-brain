@@ -8,7 +8,9 @@ webhook берётся из `/var/www/albery/.env`.
 комментариев и — главное для командной работы — СОСТОЯНИЕ ЗАМКА: свободна, занята другим
 агентом или уже моя.
 
-Usage: list_claude_tasks.py [--tag Claude] [--all] [--agent "Claude Code/<сессия>"]
+Тег сверяется по содержанию: «Claude», «#Claude», «claude-code» — всё это очередь.
+
+Usage: list_claude_tasks.py [--tag claude] [--all] [--agent "Claude Code/<сессия>"]
 """
 from __future__ import annotations
 
@@ -19,26 +21,17 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import claim_lock as lock  # noqa: E402
 
-CLOSED_STATUSES = {"5"}  # 5 = завершена; 2/3/4/6 = ждёт/выполняется, 7 = отклонена
-
 
 def main() -> int:
     args = sys.argv[1:]
-    tag = args[args.index("--tag") + 1] if "--tag" in args else "Claude"
+    tag = args[args.index("--tag") + 1] if "--tag" in args else lock.QUEUE_TAG_WORD
     me = args[args.index("--agent") + 1] if "--agent" in args else None
     include_closed = "--all" in args
 
-    res = lock.call("tasks.task.list", {
-        "filter": {"TAG": tag},
-        "select": ["ID", "TITLE", "DESCRIPTION", "CREATED_BY", "RESPONSIBLE_ID", "STATUS",
-                   "TAGS", "DEADLINE", "CREATED_DATE", "CLOSED_DATE", "GROUP_ID"],
-        "order": {"ID": "asc"},
-    })
-    tasks = (res.get("result") or {}).get("tasks") or []
-    if not include_closed:
-        tasks = [t for t in tasks if str(t.get("status")) not in CLOSED_STATUSES]
+    tasks = lock.find_queue_tasks(tag, include_closed=include_closed)
 
-    print(f"ЗАДАЧИ С ТЕГОМ «{tag}»: {len(tasks)}{'' if include_closed else ' (открытых)'}\n")
+    print(f"ЗАДАЧИ С ТЕГОМ «{tag}» (любое написание): {len(tasks)}"
+          f"{'' if include_closed else ' (открытых)'}\n")
     free = []
     for t in tasks:
         tid = int(t["id"])
@@ -59,7 +52,7 @@ def main() -> int:
 
         print("=" * 78)
         print(f"ЗАДАЧА #{tid}: {t.get('title')}")
-        print(f"СОСТОЯНИЕ: {state}")
+        print(f"СОСТОЯНИЕ: {state} · теги: {lock.tag_titles(t)}")
         print(f"постановщик={t.get('createdBy')} ответственный={t.get('responsibleId')} "
               f"статус={t.get('status')} дедлайн={t.get('deadline')} создана={t.get('createdDate')}")
         print(f"ссылка: https://albery.bitrix24.ru/company/personal/user/"

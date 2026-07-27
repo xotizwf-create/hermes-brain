@@ -22,6 +22,10 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 
 ENV_PATH = "/var/www/albery/.env"
+QUEUE_TAG_WORD = "claude"   # ищется как часть тега: «Claude», «#Claude», «claude-code» — всё подойдёт
+SKIP_STATUSES = {"5", "7"}  # 5 — завершена, 7 — отклонена; такие в очередь не берём
+TASK_SELECT = ["ID", "TITLE", "DESCRIPTION", "CREATED_BY", "RESPONSIBLE_ID", "STATUS",
+               "TAGS", "DEADLINE", "CREATED_DATE", "CLOSED_DATE", "GROUP_ID"]
 CLAIM_PREFIX = "🔒 ВЗЯЛ В РАБОТУ:"
 RELEASE_PREFIX = "🔓 ОСВОБОДИЛ ЗАДАЧУ:"
 # Чужие агенты могут писать по-человечески, без наших префиксов — это тоже считаем захватом.
@@ -48,6 +52,65 @@ def call(method: str, payload: dict) -> dict:
         headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=60) as resp:
         return json.load(resp)
+
+
+def tag_titles(task: dict) -> list[str]:
+    """Теги задачи приходят то словарём {id: {...}}, то списком — обе формы встречаются."""
+    tags = task.get("tags") or task.get("TAGS") or {}
+    if isinstance(tags, dict):
+        values = tags.values()
+    elif isinstance(tags, list):
+        values = tags
+    else:
+        return []
+    out = []
+    for item in values:
+        title = item.get("title") or item.get("TITLE") if isinstance(item, dict) else item
+        if title:
+            out.append(str(title))
+    return out
+
+
+def has_queue_tag(task: dict, word: str = QUEUE_TAG_WORD) -> bool:
+    """Тег сверяется по СОДЕРЖАНИЮ, без учёта решётки и регистра: владелец пишет и «Claude»,
+    и «#Claude» — для очереди это один и тот же тег."""
+    word = word.strip().lstrip("#").lower()
+    return any(word in t.strip().lstrip("#").strip().lower() for t in tag_titles(task))
+
+
+def find_queue_tasks(word: str = QUEUE_TAG_WORD, include_closed: bool = False) -> list[dict]:
+    """Задачи очереди — ЛЮБОЕ написание тега.
+
+    Портал не умеет искать по части тега: `{'%TAG': ...}` ведёт себя как точное совпадение,
+    список значений в фильтре (`{'TAG': [...]}`) возвращает пусто, а метода перечисления
+    тегов нет (`tasks.tag.list` → 404). Поэтому открытые задачи просматриваются постранично,
+    а теги сверяются в коде — так «#Claude» больше не теряется (27.07.2026: три задачи
+    владельца были невидимы, потому что фильтр искал ровно «Claude»).
+    """
+    found: dict[int, dict] = {}
+    start = 0
+    while True:
+        page = call("tasks.task.list", {"filter": {"!STATUS": 5}, "select": TASK_SELECT,
+                                        "order": {"ID": "asc"}, "start": start})
+        tasks = (page.get("result") or {}).get("tasks") or []
+        for task in tasks:
+            if has_queue_tag(task, word) and str(task.get("status")) not in SKIP_STATUSES:
+                found[int(task["id"])] = task
+        nxt = page.get("next")
+        if not tasks or nxt in (None, "", start):
+            break
+        start = int(nxt)
+
+    if include_closed:
+        # Закрытых на портале тысячи — их постранично не листаем, спрашиваем точные написания.
+        base = word.strip().lstrip("#")
+        for variant in {base, base.capitalize(), f"#{base}", f"#{base.capitalize()}"}:
+            page = call("tasks.task.list", {"filter": {"TAG": variant}, "select": TASK_SELECT,
+                                            "order": {"ID": "asc"}})
+            for task in (page.get("result") or {}).get("tasks") or []:
+                found[int(task["id"])] = task
+
+    return [found[key] for key in sorted(found)]
 
 
 def live_comments(task_id: int) -> list[dict]:
