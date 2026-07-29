@@ -1,0 +1,8 @@
+{
+  "name": "Premium Profit Calculator",
+  "description": "A sleek, multi-step luxury calculator for business profit, margins, and commissions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
