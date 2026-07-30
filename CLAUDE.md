@@ -142,17 +142,21 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   gateway journal for silent degradations (SOUL-blocked / codex `token_invalidated` / aux-provider
   unhealthy / compression-fail / media-drop) → Telegram **only if** something crossed a threshold
   (quiet otherwise). Catches "the model got dumb" before the owner has to notice.
-- `hh-auto-apply` — **hourly** (job `cfbbc44317be`): поиск вакансий hh.ru — внедрение ИИ/агентов,
-  вся Россия, ЗП от 100к; письма (Groq `openai/gpt-oss-120b`); мониторинг ЛС (новые сообщения → TG,
-  отказы — молча). **Сейчас `mode: review`** — кандидаты идут владельцу в TG на одобрение
-  («норм» → `--apply-ids`, «не норм» → `hh_feedback.json` в промпт); автоотклики включатся после
-  «фильтр норм» (`mode: apply`). Ночью (вне 8–23 МСК) автоотклики не шлются, review/ЛС работают.
-  Skill: `hh-auto-apply`. Старый `hh-ai-business-automation-watch` (every 2h) живёт отдельно.
+- `hh-auto-apply` (job `4463f177db4e`) — **НА ПАУЗЕ с 2026-07-30** по решению владельца («мешают»).
+  Поиск вакансий hh.ru — внедрение ИИ/агентов, только удалёнка, ЗП-порог снят; письма
+  (Groq `openai/gpt-oss-120b`); мониторинг ЛС. В конфиге остаётся `mode: apply` (автоотклики
+  разрешены владельцем 2026-07-21), но без cron конвейер сам не запускается. Возобновление —
+  `hermes cron resume 4463f177db4e`, только по явной просьбе. Запуск вручную и правила:
+  skill `hh-auto-apply` (канон) + `.claude/skills/hh-auto-apply/` (обёртка для Claude Code).
+  Старые задания `cfbbc44317be`, `hh-ai-business-automation-watch`, `hh-ai-jobs-watch` — тоже paused.
+- `hh-forms-watch` — **hourly** (job `5faacfd11aee`), активен: следит за ответами работодателей
+  в ЛС hh (отказы — молча). Паузу 2026-07-30 не затрагивала.
 - `hermes-compaction-watchdog` — **каждые 5 мин, СИСТЕМНЫЙ cron** (не `hermes cron`, иначе
   завис бы вместе с агентом): ловит зависание gateway в петле сжатия контекста, шлёт владельцу
   тревогу напрямую через Bot API и на повторе сам перезапускает службу. Разбор причины и
   проверки: `engineering/hermes-compaction-hang.md`.
-- `leadgen-watch` — **hourly** (с 2026-07-12, no-agent): мониторинг проектов на FL.ru +
+- `leadgen-watch` (job `d2a9a1f5abca`) — **НА ПАУЗЕ с 2026-07-30** вместе с `hh-auto-apply`
+  (решение владельца). Было hourly (с 2026-07-12, no-agent): мониторинг проектов на FL.ru +
   freelance.ru + 6 публичных TG-каналов → Groq-фильтр + черновик отклика → кандидаты
   владельцу в TG (review-only, ночью 23–8 МСК копит pending). Skill: `leadgen-watch`.
 
