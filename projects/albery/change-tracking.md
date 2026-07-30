@@ -3,7 +3,7 @@ id: albery-change-tracking
 type: project
 project: albery
 tags: [albery, process, bitrix, change-log, engineering-discipline]
-updated: 2026-07-16
+updated: 2026-07-31
 secret_refs: []
 ---
 
@@ -255,3 +255,31 @@ cs.tool_complete_bitrix_task({
 - **Задача Bitrix:** №2362, комментарий результата №37802.
 - **Бэкап:** `/var/backups/albery/code/pre-calculator-join-20260730_230821.tar.gz`.
 - **Откат:** `git revert 0a36715`.
+
+## 2026-07-30 — ИИ ведёт диалог до явного вызова менеджера
+
+- **Проблема:** в диалоге №501 Александр Никитенко после заполнения анкеты выбрал `Да`,
+  нажал «Задать вопрос» и спросил: «Какая у вас комиссия?». В 23:17 МСК вместо ответа
+  ИИ бот сообщил о передаче запроса менеджеру. После повторных нажатий кнопок ответ ИИ
+  всё же пришёл с задержкой.
+- **Root cause:** постановка AI-ответа ошибочно зависела от рабочих часов менеджеров, а
+  широкая after-hours-ветка перехватывала любой вопрос и выполняла постоянный `ai → human`
+  handoff даже при `manager_requested=false`. Повторные кнопки возвращали управление ИИ,
+  поэтому поведение выглядело случайным, хотя было детерминированной гонкой состояний.
+- **Исправление:** ИИ отвечает круглосуточно; постоянный `human`-режим включается только
+  после явного вызова менеджера. Неявные эскалации ставят `needs_human`, но не блокируют
+  следующие ответы. При явном вызове клавиатура убирается. `/menu`, `/start` и переход в
+  меню отменяют ожидание, сообщают «Диалог с менеджером отменён. Вы вернулись в главное
+  меню.» и возвращают `control_mode=ai`. Неявная проверка файла сохраняет меню. Durable
+  delivery action теперь несёт `source_key`, при этом старые записи поддержаны lookup.
+- **Коммит:** `13e9c6f171f9edb8cbfe281f82b95edcbb21b079` —
+  https://github.com/xotizwf-create/Albery/commit/13e9c6f171f9edb8cbfe281f82b95edcbb21b079
+- **Проверка:** `scripts/predeploy_check.py` — 1707 passed, 28 skipped; pyflakes,
+  compile/import clean. CI Python 3.10/PostgreSQL 14, Python 3.12/PostgreSQL 16, frontend
+  и Security audit зелёные. На проде `deploy_smoke.py`: `SMOKE OK`; `albery-tg`,
+  `albery`, `hermes-gateway` active; свежий error-журнал пуст; шесть контрольных очередей
+  равны нулю. Read-only smoke на реальном диалоге №501: `support=active,
+  schedule_ai=True, service_reply=0`; тестовое сообщение клиенту не отправлялось.
+- **Задача Bitrix:** №2410, комментарий результата №37810.
+- **Бэкап:** `/var/backups/albery/code/pre-iu-explicit-manager-handoff-20260730_234827.tar.gz`.
+- **Откат:** `git revert 13e9c6f`.
