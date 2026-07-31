@@ -283,3 +283,39 @@ cs.tool_complete_bitrix_task({
 - **Задача Bitrix:** №2410, комментарий результата №37810.
 - **Бэкап:** `/var/backups/albery/code/pre-iu-explicit-manager-handoff-20260730_234827.tar.gz`.
 - **Откат:** `git revert 13e9c6f`.
+
+## 2026-07-31 — защита UI от автопереводчика и белого экрана
+
+- **Проблема:** на `/agent-funnels/536` пользователь увидел полностью белую страницу.
+  Консоль Chrome показала React `NotFoundError` на `insertBefore`: целевой узел уже не
+  являлся дочерним. Одновременно встроенный Google Translate пытался загрузить свой
+  stylesheet и получал отказ действующей CSP.
+- **Root cause:** русскоязычный SPA был объявлен как `lang=en` и разрешал перевод.
+  Chrome/Edge Translator заменяет текстовые DOM-узлы внутри React root; следующий
+  polling/state update обращался к уже удалённому узлу и падал в commit-фазе.
+  Корневого fallback для ошибки render или загрузки динамического чанка не было.
+- **Исправление:** документ объявлен русским; на `html`, `body` и `#root` закреплены
+  `translate=no` и `notranslate`, добавлен официальный `meta google=notranslate`.
+  CSP не ослаблялась. `RootErrorBoundary` показывает адаптивный экран восстановления
+  вместо белой страницы, а bootstrap имеет отдельный DOM-fallback на случай сбоя
+  dynamic import до первого React-render. Контрактные тесты закрепляют обе защиты.
+- **Дополнительный дефект тестов:** первый CI после наступления 31 июля обнаружил
+  четыре DB-теста, смешивавшие фиксированное 30 июля с реальным текущим временем.
+  Тестовые timestamps полностью зафиксированы, поэтому Telegram reply window больше
+  не превращает их в календарную мину.
+- **Коммиты:** `1004385ccb400bf736904d39623d8caf83a5725c` и
+  `23b6600693419e82c73f512bfa527d38eae0e52e` —
+  https://github.com/xotizwf-create/Albery/commit/1004385ccb400bf736904d39623d8caf83a5725c,
+  https://github.com/xotizwf-create/Albery/commit/23b6600693419e82c73f512bfa527d38eae0e52e
+- **Проверка:** TypeScript и production build clean; профильные 47 passed; полный
+  локальный predeploy — 1709 passed, 28 skipped. Полное рабочее окно проверено в
+  Chrome/Edge на 320/360/390/768/1366/1440/1920 px: `SEVERE=0`, overflow отсутствует,
+  переводчику доступны 0 узлов, после polling UI жив. Принудительные render error и
+  blocked dynamic chunk показали два recovery-screen. Branch и main CI, обе
+  PostgreSQL-матрицы, frontend и Security audit зелёные. На проде `SMOKE OK`, три
+  службы active, шесть очередей и три error-журнала равны нулю. Живой browser smoke
+  `https://m4s.ru/agent-funnels/536` прошёл в Chrome/Edge на 320–1440 px.
+- **Задача Bitrix:** №2418, комментарий результата №38180.
+- **Бэкап:** `/var/backups/albery/code/pre-ui-translate-dom-20260731_100355.tar.gz`;
+  быстрый UI-откат — `/var/www/albery/Интерфейс/dist.bak-ui-20260731_103417`.
+- **Откат:** `git revert 23b6600 1004385`.
