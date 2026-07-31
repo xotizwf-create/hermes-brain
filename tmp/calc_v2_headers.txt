@@ -1,0 +1,18 @@
+HTTP/1.1 200 OK
+Server: nginx/1.18.0 (Ubuntu)
+Date: Wed, 29 Jul 2026 11:15:57 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 712
+Connection: keep-alive
+Content-Disposition: inline; filename=index.html
+Last-Modified: Wed, 29 Jul 2026 11:04:51 GMT
+Cache-Control: no-cache
+ETag: "1785323091.0-712-1447432225"
+Accept-Ranges: bytes
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'
+
