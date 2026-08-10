@@ -150,6 +150,19 @@ Report market id, price/probability, liquidity/volume context, and retrieval tim
 
 Preserve link structure and provenance when building local wikis. Do not invent missing citations.
 
+## Marketplace Product Comparisons (ergonomic chairs and similar durable goods)
+
+When choosing between marketplace listings, do not rank products from feature count or seller wording alone. Use this sequence:
+
+1. Resolve short/redirect links to the exact product title and SKU; if the marketplace blocks reading, search the exact title/SKU and verify with at least one manufacturer or second marketplace page.
+2. Separate **declared specification** (load rating, adjustments, materials) from **evidence of durability** (owner reports after months, service history, warranty terms).
+3. Read review aggregates and individual long-form reviews. Identify *repeated* failures — e.g. squeak, play/looseness, gas-lift, mechanism, fabric/mesh — and do not turn a single report into a mass-defect claim.
+4. For daily-use furniture, examine the warranty by component: frame, mechanism/gas-lift, upholstery. A headline warranty is not necessarily coverage for the likely failure.
+5. Translate the buyer's real priority into a recommendation: more adjustments and initial comfort may conflict with a proven service network, fewer moving joints, and long-term repairability. State that trade-off explicitly.
+6. For ergonomic chairs, avoid claiming universal comfort. Tie fit to height, weight, thigh length, desk height, and tolerance of lumbar support; recommend a return/fit check where possible.
+
+For a concise decision, state the winner first, then the one-sentence reason and the condition that would reverse the choice. If the user later asks for a thorough review, provide a sourced comparison table and clearly label uncertainty.
+
 ## Pitfalls
 
 - Treating a search result title as if the paper was read.
