@@ -2,7 +2,7 @@
 id: section-index
 type: schema
 tags: [routing, index, generated, sections]
-updated: 2026-07-25
+updated: 2026-08-10
 secret_refs: []
 ---
 
@@ -12,6 +12,21 @@ Greppable map of every knowledge doc → its H2/H3 sections. **Grep a keyword he
 
 Regenerate after editing docs: `python scripts/build_section_index.py` (parallel to `build_registry.py`).
 
+
+## `.claude/skills/albery/SKILL.md` · [skill] albery
+- [Доступ](.claude/skills/albery/SKILL.md#доступ)
+- [Цикл](.claude/skills/albery/SKILL.md#цикл)
+- [1. Осмотреться (обязательно, до всего)](.claude/skills/albery/SKILL.md#1-осмотреться-обязательно-до-всего)
+- [2. Забрать очередь](.claude/skills/albery/SKILL.md#2-забрать-очередь)
+- [3. Взять задачу в работу (захват)](.claude/skills/albery/SKILL.md#3-взять-задачу-в-работу-захват)
+- [4. Разобрать задачу](.claude/skills/albery/SKILL.md#4-разобрать-задачу)
+- [5. Выполнить с максимальной безопасностью](.claude/skills/albery/SKILL.md#5-выполнить-с-максимальной-безопасностью)
+- [6. Проверить — коротко и по делу](.claude/skills/albery/SKILL.md#6-проверить-коротко-и-по-делу)
+- [7. Написать результат в задачу и закрыть](.claude/skills/albery/SKILL.md#7-написать-результат-в-задачу-и-закрыть)
+- [8. Инженерный журнал](.claude/skills/albery/SKILL.md#8-инженерный-журнал)
+- [9. Мини-отчёт владельцу в Telegram](.claude/skills/albery/SKILL.md#9-мини-отчёт-владельцу-в-telegram)
+- [Грабли этого портала (проверено боем)](.claude/skills/albery/SKILL.md#грабли-этого-портала-проверено-боем)
+- [Идентификаторы](.claude/skills/albery/SKILL.md#идентификаторы)
 
 ## `.claude/skills/graphify/SKILL.md` · [skill] graphify
 - [Usage](.claude/skills/graphify/SKILL.md#usage)
@@ -34,6 +49,11 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [For /graphify add and --watch](.claude/skills/graphify/SKILL.md#for-graphify-add-and---watch)
 - [For the commit hook and native CLAUDE.md integration](.claude/skills/graphify/SKILL.md#for-the-commit-hook-and-native-claudemd-integration)
 - [Honesty Rules](.claude/skills/graphify/SKILL.md#honesty-rules)
+
+## `.claude/skills/hh-auto-apply/SKILL.md` · [skill] hh-auto-apply
+- [Как запускать](.claude/skills/hh-auto-apply/SKILL.md#как-запускать)
+- [Обязательные проверки](.claude/skills/hh-auto-apply/SKILL.md#обязательные-проверки)
+- [Cron](.claude/skills/hh-auto-apply/SKILL.md#cron)
 
 ## `connectors/albery.md` · [connector] mcp, albery, bitrix, zoom, company-knowledge, reports
 - [Назначение](connectors/albery.md#назначение)
@@ -219,6 +239,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Reference pattern — `prostye-postavki` CI (the template to copy)](engineering/testing.md#reference-pattern-prostye-postavki-ci-the-template-to-copy)
 
 ## `logs/changelog.md` · [log] changelog
+- [2026-07-31](logs/changelog.md#2026-07-31)
+- [2026-07-30](logs/changelog.md#2026-07-30)
+- [2026-07-29](logs/changelog.md#2026-07-29)
 - [2026-07-25](logs/changelog.md#2026-07-25)
 - [2026-07-23](logs/changelog.md#2026-07-23)
 - [2026-07-16](logs/changelog.md#2026-07-16)
@@ -270,6 +293,12 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [2026-06-10 — dotfile-blind listing → false "secrets store is empty" conclusion](logs/mistakes.md#2026-06-10-dotfile-blind-listing-false-secrets-store-is-empty-conclusion)
 - [2026-05-30 — tar-sync didn't exclude `.env`, leaked secrets into server backups](logs/mistakes.md#2026-05-30-tar-sync-didnt-exclude-env-leaked-secrets-into-server-backups)
 - [2026-05-29 — legacy import marked "UTF-8 clean" but was mojibake](logs/mistakes.md#2026-05-29-legacy-import-marked-utf-8-clean-but-was-mojibake)
+
+## `logs/pc-mirror-2026-07-31.md` · [log] migration, github, backup, albery
+- [Основные репозитории](logs/pc-mirror-2026-07-31.md#основные-репозитории)
+- [Незавершённые исходники](logs/pc-mirror-2026-07-31.md#незавершённые-исходники)
+- [Полезные локальные артефакты](logs/pc-mirror-2026-07-31.md#полезные-локальные-артефакты)
+- [Восстановление на другом ПК](logs/pc-mirror-2026-07-31.md#восстановление-на-другом-пк)
 
 ## `logs/session-2026-05-30-integrations.md` · [log] session, instruction, mcp, connectors, read-links, google, oauth, overview
 - [1. Подключение MCP-серверов (скилл `connect-mcp`)](logs/session-2026-05-30-integrations.md#1-подключение-mcp-серверов-скилл-connect-mcp)
@@ -414,6 +443,13 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Как создавать (технически, проверено 2026-07-13)](projects/albery/change-tracking.md#как-создавать-технически-проверено-2026-07-13)
 - [Грабли и правила (набито в этой сессии)](projects/albery/change-tracking.md#грабли-и-правила-набито-в-этой-сессии)
 - [Пример — сессия 2026-07-13 (4 изменения)](projects/albery/change-tracking.md#пример-сессия-2026-07-13-4-изменения)
+- [2026-07-30 — автор переноса сделок ИУ закреплён за ИИ-агентом](projects/albery/change-tracking.md#2026-07-30-автор-переноса-сделок-иу-закреплён-за-ии-агентом)
+- [2026-07-30 — вопрос клиенту перед передачей заполненной анкеты менеджеру](projects/albery/change-tracking.md#2026-07-30-вопрос-клиенту-перед-передачей-заполненной-анкеты-менеджеру)
+- [2026-07-30 — постоянный выбор после просмотра заполненной анкеты](projects/albery/change-tracking.md#2026-07-30-постоянный-выбор-после-просмотра-заполненной-анкеты)
+- [2026-07-30 — восстановление ответов в старых диалогах Telegram-бота ИУ](projects/albery/change-tracking.md#2026-07-30-восстановление-ответов-в-старых-диалогах-telegram-бота-иу)
+- [2026-07-31 — сообщение из калькулятора переведено на актуальный сценарий анкеты](projects/albery/change-tracking.md#2026-07-31-сообщение-из-калькулятора-переведено-на-актуальный-сценарий-анкеты)
+- [2026-07-30 — ИИ ведёт диалог до явного вызова менеджера](projects/albery/change-tracking.md#2026-07-30-ии-ведёт-диалог-до-явного-вызова-менеджера)
+- [2026-07-31 — защита UI от автопереводчика и белого экрана](projects/albery/change-tracking.md#2026-07-31-защита-ui-от-автопереводчика-и-белого-экрана)
 
 ## `projects/albery/decisions.md` · [project] decisions, adr
 - [2026-05-29 — Brain extracted to isolated repo](projects/albery/decisions.md#2026-05-29-brain-extracted-to-isolated-repo)
@@ -503,7 +539,16 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [P4 — измеримое качество, shadow и canary](projects/albery/iu-consultant-recovery-plan.md#p4-измеримое-качество-shadow-и-canary)
 - [P5 — осторожное расширение автономии](projects/albery/iu-consultant-recovery-plan.md#p5-осторожное-расширение-автономии)
 - [Текущее следующее действие](projects/albery/iu-consultant-recovery-plan.md#текущее-следующее-действие)
-- [`IU-P0-02 — убрать принудительную анкету; ответ-first и один CTA`](projects/albery/iu-consultant-recovery-plan.md#iu-p0-02-убрать-принудительную-анкету-ответ-first-и-один-cta)
+- [`IU-P0-03 — гарантировать клиентский ответ при сбое и управляемую передачу человеку`](projects/albery/iu-consultant-recovery-plan.md#iu-p0-03-гарантировать-клиентский-ответ-при-сбое-и-управляемую-передачу-человеку)
+- [Перестройка 2026-07-26 (фаза `R`)](projects/albery/iu-consultant-recovery-plan.md#перестройка-2026-07-26-фаза-r)
+- [Что построено (ветка `iu-rebuild`, 9 коммитов)](projects/albery/iu-consultant-recovery-plan.md#что-построено-ветка-iu-rebuild-9-коммитов)
+- [Ключевые проектные решения](projects/albery/iu-consultant-recovery-plan.md#ключевые-проектные-решения)
+- [Задачи фазы](projects/albery/iu-consultant-recovery-plan.md#задачи-фазы)
+- [Разбор тестов старого протокола (`IU-R-07`)](projects/albery/iu-consultant-recovery-plan.md#разбор-тестов-старого-протокола-iu-r-07)
+- [Живой прогон на production 2026-07-26 (`876e917`)](projects/albery/iu-consultant-recovery-plan.md#живой-прогон-на-production-2026-07-26-876e917)
+- [Что ещё не сделано](projects/albery/iu-consultant-recovery-plan.md#что-ещё-не-сделано)
+- [Блокеры выкатки](projects/albery/iu-consultant-recovery-plan.md#блокеры-выкатки)
+- [Чего перестройка НЕ делает](projects/albery/iu-consultant-recovery-plan.md#чего-перестройка-не-делает)
 - [Decision log](projects/albery/iu-consultant-recovery-plan.md#decision-log)
 - [`D-001` — один канонический план](projects/albery/iu-consultant-recovery-plan.md#d-001-один-канонический-план)
 - [`D-002` — консультант первой линии до прохождения quality gates](projects/albery/iu-consultant-recovery-plan.md#d-002-консультант-первой-линии-до-прохождения-quality-gates)
@@ -518,6 +563,9 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 
 ## `projects/albery/iu-funnel.md` · [project] iu, воронка, telegram, crm, договор, контракт, шаблон, лидогенерация, wildberries, reference
 - [Что это](projects/albery/iu-funnel.md#что-это)
+- [Откуда лиды попадают в воронку (два входа, с 27.07.2026)](projects/albery/iu-funnel.md#откуда-лиды-попадают-в-воронку-два-входа-с-27072026)
+- [Правило одной карточки (как устроен дедуп)](projects/albery/iu-funnel.md#правило-одной-карточки-как-устроен-дедуп)
+- [Как читается список обращений (владелец, 27.07.2026)](projects/albery/iu-funnel.md#как-читается-список-обращений-владелец-27072026)
 - [Стадии воронки (после чистки 23.07.2026)](projects/albery/iu-funnel.md#стадии-воронки-после-чистки-23072026)
 - [Поля сделки, которыми пользуется агент](projects/albery/iu-funnel.md#поля-сделки-которыми-пользуется-агент)
 - [Нумерация договоров](projects/albery/iu-funnel.md#нумерация-договоров)
@@ -525,7 +573,10 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [PDF](projects/albery/iu-funnel.md#pdf)
 - [Правила поведения агента (оплачены тестовыми прогонами владельца)](projects/albery/iu-funnel.md#правила-поведения-агента-оплачены-тестовыми-прогонами-владельца)
 - [Инструменты воронки](projects/albery/iu-funnel.md#инструменты-воронки)
-- [Что осталось (на 23.07.2026)](projects/albery/iu-funnel.md#что-осталось-на-23072026)
+- [Откуда клиентский агент берёт факты (29.07.2026)](projects/albery/iu-funnel.md#откуда-клиентский-агент-берёт-факты-29072026)
+- [Форма ответа клиенту (эталон владельца, 29.07.2026)](projects/albery/iu-funnel.md#форма-ответа-клиенту-эталон-владельца-29072026)
+- [Чего код НЕ делает с текстом ответа](projects/albery/iu-funnel.md#чего-код-не-делает-с-текстом-ответа)
+- [Что осталось (на 29.07.2026)](projects/albery/iu-funnel.md#что-осталось-на-29072026)
 
 ## `projects/albery/knowledge-rag.md` · [project] albery, mcp, rag, search, knowledge, postgres, optimization, reference
 - [Зачем чанкинг (Ступень A)](projects/albery/knowledge-rag.md#зачем-чанкинг-ступень-a)
@@ -535,6 +586,16 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Самообновление (ничего руками не надо)](projects/albery/knowledge-rag.md#самообновление-ничего-руками-не-надо)
 - [Деплой (бэкенд-only, правило #7)](projects/albery/knowledge-rag.md#деплой-бэкенд-only-правило-7)
 - [Ступень B — семантика (эмбеддинги), не сделано](projects/albery/knowledge-rag.md#ступень-b-семантика-эмбеддинги-не-сделано)
+
+## `projects/albery/openline-channel.md` · [project] albery, открытая линия, битрикс, бот, воронка, иу, канал, удалено, reference
+- [Почему вырезали (владелец, 27.07.2026)](projects/albery/openline-channel.md#почему-вырезали-владелец-27072026)
+- [Зачем канал строился (26.07.2026, задача 2108)](projects/albery/openline-channel.md#зачем-канал-строился-26072026-задача-2108)
+- [Главные факты о механике (проверено прогонами 26.07.2026)](projects/albery/openline-channel.md#главные-факты-о-механике-проверено-прогонами-26072026)
+- [Как читать чат линии (живые строки с портала)](projects/albery/openline-channel.md#как-читать-чат-линии-живые-строки-с-портала)
+- [Что построено](projects/albery/openline-channel.md#что-построено)
+- [Грабли, оплаченные прогонами](projects/albery/openline-channel.md#грабли-оплаченные-прогонами)
+- [Как испытывать канал, не трогая клиентов](projects/albery/openline-channel.md#как-испытывать-канал-не-трогая-клиентов)
+- [Состояние на 27.07.2026 — канала нет](projects/albery/openline-channel.md#состояние-на-27072026-канала-нет)
 
 ## `projects/albery/operations-playbook.md` · [project] albery, hermes, operations, playbook, groq, owner-weekly, troubleshooting, reference
 - [0. Где живёт Albery-Hermes (база)](projects/albery/operations-playbook.md#0-где-живёт-albery-hermes-база)
@@ -946,6 +1007,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Default — `fetch_url.py` (full content, no token cost)](skills/read-links/SKILL.md#default-fetch_urlpy-full-content-no-token-cost)
 - [When to use the native tools instead](skills/read-links/SKILL.md#when-to-use-the-native-tools-instead)
 - [Google access — the agent reads the owner's Drive (OAuth, read-only)](skills/read-links/SKILL.md#google-access-the-agent-reads-the-owners-drive-oauth-read-only)
+- [Dynamic catalogues and product selection](skills/read-links/SKILL.md#dynamic-catalogues-and-product-selection)
 - [Rules](skills/read-links/SKILL.md#rules)
 - [Pointers](skills/read-links/SKILL.md#pointers)
 
@@ -2670,6 +2732,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 ## `vendor-skills/productivity/obo-mne/SKILL.md` · [?]
 - [Назначение](vendor-skills/productivity/obo-mne/SKILL.md#назначение)
 - [Исходный текст](vendor-skills/productivity/obo-mne/SKILL.md#исходный-текст)
+- [Саммари для вакансии](vendor-skills/productivity/obo-mne/SKILL.md#саммари-для-вакансии)
 - [Правило работы с текстом](vendor-skills/productivity/obo-mne/SKILL.md#правило-работы-с-текстом)
 
 ## `vendor-skills/productivity/owner-communication-style/SKILL.md` · [?]
@@ -2906,6 +2969,7 @@ Regenerate after editing docs: `python scripts/build_section_index.py` (parallel
 - [Blog/RSS Monitoring](vendor-skills/research/research-intelligence-workflows/SKILL.md#blogrss-monitoring)
 - [Prediction Markets](vendor-skills/research/research-intelligence-workflows/SKILL.md#prediction-markets)
 - [Knowledge Bases / LLM Wiki](vendor-skills/research/research-intelligence-workflows/SKILL.md#knowledge-bases-llm-wiki)
+- [Marketplace Product Comparisons (ergonomic chairs and similar durable goods)](vendor-skills/research/research-intelligence-workflows/SKILL.md#marketplace-product-comparisons-ergonomic-chairs-and-similar-durable-goods)
 - [Pitfalls](vendor-skills/research/research-intelligence-workflows/SKILL.md#pitfalls)
 - [Verification Checklist](vendor-skills/research/research-intelligence-workflows/SKILL.md#verification-checklist)
 

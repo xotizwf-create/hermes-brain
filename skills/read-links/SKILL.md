@@ -46,6 +46,17 @@ sharing**. Docs/Slides → text, Sheets → all tabs as CSV (`--gid` for one tab
   `connectors/google-workspace.md`. Login script: `scripts/google_oauth_login.py` (run on the PC).
 - A **service account** is supported as an alternative (then docs are shared with the agent's e-mail).
 
+## Dynamic catalogues and product selection
+
+When the owner gives a filtered catalogue and a technical specification / hard price ceiling:
+
+1. Extract every explicit requirement from the attachment or message first. Separate **mandatory** requirements from useful but non-critical details.
+2. Open the filtered catalogue in the browser to confirm that filters applied and to identify its product-card links.
+3. If browser snapshots truncate a long catalogue, fetch its HTML directly with a realistic user agent and parse product URLs from the page. Then request product pages in parallel and compare **price plus all verifiable technical fields**. Do not rely on a search snippet or the first plausible card.
+4. Identify the exact-specification baseline even if it is over budget. This makes the trade-off checkable.
+5. For the final recommendation, distinguish: confirmed matches; documented deviations; and fields not stated by the seller. Never infer omitted specifications (for example, cable length, glass thickness, filter or protection features) from a similar model.
+6. State the live displayed price, stock status if present, a direct product link, and whether the budget ceiling is met. If no exact match exists within budget, say so plainly and recommend the closest verifiable alternative with its deviations.
+
 ## Rules
 - Owner-facing replies in Russian, no technical noise (paths, commands, stack traces) — the manager
   already prints clean Russian; relay it. (`profile/communication.md`.)
