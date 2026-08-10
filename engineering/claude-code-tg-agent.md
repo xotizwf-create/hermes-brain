@@ -2,7 +2,7 @@
 id: claude-code-tg-agent
 type: engineering
 tags: [agent, claude-code, telegram, server, "217", runbook]
-updated: 2026-06-25
+updated: 2026-08-10
 secret_refs: []
 ---
 
@@ -21,6 +21,20 @@ can diagnose and fix Hermes. Business MCP tools were intentionally **not** added
   long-polling + spawns `claude -p`). PM2 boot-persistence is enabled (`systemctl is-enabled pm2-root`
   → `enabled`; `pm2 save` done) so it survives reboot. Logs: `pm2 logs claude-tg`.
 - **Binary:** `claude` 2.x at `/usr/bin/claude` (npm global, Node 22). State: `/root/claude-agent/state.json`.
+
+## ⚠ Status 2026-08-10 — this account is blocked at the organization level
+
+Both auth paths for `alexxandr.nikitenko@gmail.com` (the ambient login in `/root/.claude` **and** the
+long-lived token used by the bridge) return the same HTTP **403**: «Your organization has disabled
+Claude subscription access for Claude Code · Use an Anthropic API key instead, or ask your admin to
+enable access». So the Telegram agent cannot answer, and the `claude-code-limit-refresh` cron has been
+firing without refreshing anything. PM2 still shows `claude-tg` **online** and the bridge log holds only
+Telegram network noise — nothing here surfaces the outage, which is why it went unnoticed.
+
+Not a token problem: rotating the token changes nothing. Fixes are either enabling Claude Code for that
+account's organization in the Anthropic Console, or moving the work to another account (the owner's
+`xotizwf@gmail.com` account answers normally — see the multi-account limit refresh in
+`skills/reminders-and-watchers/references/silent-technical-cron.md`).
 
 ## Identity — "1-to-1 with the owner's IDE Claude"
 - **Same Claude account** as the owner's local Claude Code (org `9a7c49c2-...`,

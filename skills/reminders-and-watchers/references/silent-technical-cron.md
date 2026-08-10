@@ -15,9 +15,29 @@ Use this for periodic technical keepalive/refresh actions that should run quietl
 
 ## Example: Claude Code limit-window refresh
 
+Live on 217 as job `claude-code-limit-refresh` (`359c8c2c7cab`). Versioned source:
+`scripts/claude_limit_refresh.sh` in this repo, deployed to `/root/.hermes/scripts/`.
+
 Server timezone may be UTC. For 06:00 / 11:00 / 16:00 МСК, use cron `0 3,8,13 * * *` on a UTC scheduler.
 
-Minimal script shape:
+**Multiple accounts (since 2026-08-10).** The script refreshes every connected account in one run:
+the historical account through the ordinary login in `/root/.claude`, and any additional account
+through `<secure>/claude_code/accounts/<slug>/oauth_token` (a long-lived token from
+`claude setup-token`, mode 600) with its own `HOME` under `/root/claude-accounts/<slug>` — two
+accounts sharing one `HOME` overwrite each other's login. Add one with
+`python scripts/add_claude_account.py <slug>`; no cron edit is needed. Exit code = number of
+accounts that failed, so one dead account never hides the others.
+
+Two traps worth keeping (both hit on 2026-08-10):
+
+- **Give the CLI `</dev/null`.** Without it `claude` waits ~3 s for stdin and exits non-zero when the
+  script is run by hand over SSH — the manual check would report a failure that cron never has.
+- **Account-level refusals arrive in stdout, not stderr.** A 403 («organization has disabled Claude
+  subscription access») or an exhausted limit comes back as the JSON result body while stderr stays
+  empty, so an alert built only from stderr says «Код: 1» and nothing else. Parse
+  `api_error_status` + `result` from the JSON before giving up.
+
+Minimal script shape (single-account original, kept as the pattern skeleton):
 
 ```bash
 #!/usr/bin/env bash

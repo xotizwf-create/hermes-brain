@@ -2,7 +2,7 @@
 id: changelog
 type: log
 tags: [changelog]
-updated: 2026-08-05
+updated: 2026-08-10
 secret_refs: []
 ---
 
@@ -10,6 +10,10 @@ secret_refs: []
 
 Append-only, newest on top. Every approved change to the brain gets one line.
 Ротация: записи прошлых месяцев уходят в `archive/changelog-YYYY-MM.md`, когда лог разрастается.
+
+## 2026-08-10
+
+- 2026-08-10 — **Обновление окна лимитов Claude Code стало многоаккаунтным; попутно найдено, что действующий аккаунт заблокирован организацией.** Владелец попросил привязать к заданию `claude-code-limit-refresh` (`359c8c2c7cab`, `0 3,8,13 * * *` UTC = 06:00/11:00/16:00 МСК) второй аккаунт, оставив первый. Скрипт `/root/.hermes/scripts/claude_limit_refresh.sh` переписан на обход всех подключённых аккаунтов за один прогон и заведён в репо как версионируемый источник (`scripts/claude_limit_refresh.sh`): исторический аккаунт идёт обычным входом из `/root/.claude`, дополнительные — токеном из `<secure>/claude_code/accounts/<slug>/oauth_token` (600) со СВОЕЙ `HOME` в `/root/claude-accounts/<slug>` (общая HOME = входы затирают друг друга); код возврата = число неудачных аккаунтов, поэтому один мёртвый не скрывает остальные; расписание не менялось. Добавлен `scripts/add_claude_account.py` — подключение аккаунта одной командой, токен вводится скрытым приглашением и уходит по SFTP (не попадает ни в аргументы, ни в историю шелла, ни в логи sshd). **Две ловушки, найденные живым прогоном:** (1) без `</dev/null` CLI ждёт stdin 3 с и возвращает ненулевой код при ручном запуске по SSH — ручная проверка врала бы про поломку, которой у cron нет; (2) отказ уровня аккаунта приходит телом JSON в stdout при ПУСТОМ stderr, из-за чего алерт сообщал только «Код: 1» — теперь разбираются `api_error_status` + `result`. Именно это и вскрыло главное: оба пути аутентификации `alexxandr.nikitenko@gmail.com` (вход в `/root/.claude` и long-lived токен моста) отдают **403 «Your organization has disabled Claude subscription access for Claude Code»** — то есть Telegram-агент `@GoogleDeck_Bot` отвечать не может, а обновление окна лимитов давно уходило впустую, при этом PM2 показывает `claude-tg` online и в логах моста только сетевой шум Telegram. Зафиксировано в `engineering/claude-code-tg-agent.md`, грабли — в `skills/reminders-and-watchers/references/silent-technical-cron.md`. Ротацией токена не лечится. Второй аккаунт (`xotizwf@gmail.com`, живой) ждёт `claude setup-token` от владельца — механизм до этого момента работает ровно как одноаккаунтный. Бэкап прежнего скрипта: `/root/.hermes/scripts/claude_limit_refresh.sh.bak-multiacct-20260810_164053`. Попутно замечено: `/` на 217 занят на 95% (846 МБ свободно).
 
 ## 2026-07-31
 
