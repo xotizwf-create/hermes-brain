@@ -27,9 +27,13 @@ can diagnose and fix Hermes. Business MCP tools were intentionally **not** added
 Both auth paths for `alexxandr.nikitenko@gmail.com` (the ambient login in `/root/.claude` **and** the
 long-lived token used by the bridge) return the same HTTP **403**: «Your organization has disabled
 Claude subscription access for Claude Code · Use an Anthropic API key instead, or ask your admin to
-enable access». So the Telegram agent cannot answer, and the `claude-code-limit-refresh` cron has been
-firing without refreshing anything. PM2 still shows `claude-tg` **online** and the bridge log holds only
-Telegram network noise — nothing here surfaces the outage, which is why it went unnoticed.
+enable access». So the Telegram agent cannot answer.
+
+**The block is fresh, not long-standing.** The `claude-code-limit-refresh` job still recorded
+`last_status: ok` at 13:00 UTC and returned the 403 at 13:38 UTC the same day, so the access was
+switched off between those two points (16:00–16:38 МСК). Nothing on the box shows the outage by
+itself: PM2 keeps `claude-tg` **online** and the bridge log holds only Telegram network noise — the
+agent looks alive right up until someone asks it something.
 
 Not a token problem: rotating the token changes nothing. Fixes are either enabling Claude Code for that
 account's organization in the Anthropic Console, or moving the work to another account (the owner's
