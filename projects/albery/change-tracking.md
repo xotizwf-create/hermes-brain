@@ -3,7 +3,7 @@ id: albery-change-tracking
 type: project
 project: albery
 tags: [albery, process, bitrix, change-log, engineering-discipline]
-updated: 2026-07-31
+updated: 2026-08-05
 secret_refs: []
 ---
 
@@ -319,3 +319,40 @@ cs.tool_complete_bitrix_task({
 - **Бэкап:** `/var/backups/albery/code/pre-ui-translate-dom-20260731_100355.tar.gz`;
   быстрый UI-откат — `/var/www/albery/Интерфейс/dist.bak-ui-20260731_103417`.
 - **Откат:** `git revert 23b6600 1004385`.
+
+## 2026-08-05 — закрытые каналы и закрытые групповые чаты Telegram
+
+- **Запрос владельца:** «нужно добавить возможность просмотра закрытых каналов и закрытых
+  групповых чатов в тг», смотреть с аккаунта @AlberyAIManager (выданы api_id/api_hash).
+- **Root cause:** у закрытого чата нет `@username` — нет ни ссылки `t.me/<имя>`, ни веб-превью
+  `t.me/s/<имя>`, а новости читались ровно из превью. MTProto-сессия умела только перечислить
+  диалоги и собрать посты каналов; прочитать конкретный чат было нечем.
+- **Сделано:** `tg_userbot` (пометка `closed`, `read_chat`, `join_chat`, единый `collect_posts`,
+  время МСК); MCP `list_telegram_chats` / `read_telegram_chat` / `join_telegram_chat` — все
+  OWNER_ONLY; включены ТОЛЬКО у `novostnoy-agent` (решение владельца 05.08): в каталоге
+  конструктора они есть у всех агентов, но доступ даёт список `agents.tools`. Исключение —
+  `agent-razrabotchik`: тир developer с незамороженным списком получает весь реестр по
+  пресету. `get_tg_news` через сессию; `/chats`
+  печатает id закрытых, `/add_channel` их принимает; `Telethon` закреплён в requirements.
+- **Ловушки:** telethon создаёт `.session` при первом подключении, поэтому `session_ready()`
+  теперь проверяет реальную авторизацию (кэш 5 мин), а не наличие файла; скрипт входа печатал
+  заглушку вместо фактического канала доставки кода.
+- **Вход:** код Telegram не доставлял (`SendCodeUnavailableError` на досылке; api_id
+  зарегистрирован на посторонний аккаунт — вероятный, но недоказуемый фактор). Подключились по
+  QR: `.venv/bin/python scripts/tg_userbot_login.py qr`, ссылка пишется в `.tg_qr_url`, токен
+  пересоздаётся только перед истечением (иначе сканируется протухший и Telegram отвечает
+  «неверный QR»).
+- **Коммиты:** `0ff5012`, `ca73513`, `c7be24c` —
+  https://github.com/xotizwf-create/Albery/commit/0ff5012,
+  https://github.com/xotizwf-create/Albery/commit/ca73513,
+  https://github.com/xotizwf-create/Albery/commit/c7be24c
+- **Проверка:** ворота 1734 passed / 30 skipped; новый `test_tg_closed_chats.py` — 27 тестов,
+  24 падали на коде до правки. На проде: 80 чатов (50 каналов, 7 групп, 23 личных), закрытых 1;
+  «WБизнес💜🤍» прочитан по id (1.3 с) и найден по названию (2.0 с), поиск «Стамбул» → 3
+  совпадения; `get_tg_news` через сессию — 26 каналов / 237 постов за 19.5 с. Закрытых групп у
+  аккаунта нет, все 7 групп публичные.
+- **Задачи Bitrix:** 2540 (инструменты), 2544 (честная проверка сессии), 2546 (подключение
+  сессии + живая проверка); комментарии-результаты 40184, 40300, 40312.
+- **Бэкап:** `.env` — `/root/.hermes/secure/albery.env.bak.tgapi-20260805`.
+- **Откат:** `git revert c7be24c ca73513 0ff5012`; удалить `/var/www/albery/.tg_userbot.session`
+  и отозвать устройство в Telegram → Настройки → Устройства.

@@ -46,3 +46,7 @@ _weekly_*
 
 # graphify knowledge graph output (generated, rebuildable via `graphify update .`)
 graphify-out/
+
+# Рантайм-логи посторонних процессов: в мозге хранится знание, а не вывод программ.
+logs/*.err.log
+logs/*.out.log
