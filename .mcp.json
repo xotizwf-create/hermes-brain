@@ -1,0 +1,41 @@
+{
+  "$comment": [
+    "MCP-серверы проекта: подключены для Claude Code, живут в git и едут вместе с репозиторием.",
+    "Ключи здесь НЕ хранятся — только ссылки на переменные окружения (правило: секретов в",
+    "коммитах не бывает). Ключ задаётся один раз на машине: setx FIRECRAWL_API_KEY \"...\"",
+    "Серверы без ключа (playwright, sequential-thinking, context7) работают сразу."
+  ],
+  "mcpServers": {
+    "playwright": {
+      "$comment": "Браузер под управлением модели: открыть страницу, кликнуть, заполнить, снять содержимое.",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "sequential-thinking": {
+      "$comment": "Пошаговое рассуждение с ветвлением и пересмотром шагов — для длинных разборов.",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "context7": {
+      "$comment": "Актуальная документация библиотек по их версии: меньше выдумок про API.",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "firecrawl": {
+      "$comment": "Сбор и разбор сайтов: обход, поиск, извлечение структурированных данных. Нужен ключ.",
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "env": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+      }
+    },
+    "perplexity": {
+      "$comment": "Веб-поиск с ответом и ссылками. Нужен ключ.",
+      "command": "npx",
+      "args": ["-y", "server-perplexity-ask"],
+      "env": {
+        "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}"
+      }
+    }
+  }
+}
