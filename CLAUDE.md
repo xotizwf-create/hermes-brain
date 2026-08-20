@@ -82,6 +82,11 @@ project + generated `registry.yaml`) · `connectors/` (gmail, calendar, drive, b
   export), via `fetch_url.py`; native `browser`/`web_search` for JS/search.
 - `markitdown-docs` — convert local PDF/Word/Excel/PowerPoint files to compact Markdown with
   Microsoft MarkItDown before analysis, so binary documents do not burn model context.
+- `prompt-master` — внешний скилл (github.com/nidhinjs/prompt-master, MIT, 11.5k★): пишет
+  готовый к вставке промпт под конкретный ИИ-инструмент или чинит присланный. Взят без правок,
+  происхождение и разбор содержимого — `skills/prompt-master/SOURCE.md`. **Только для Claude Code
+  здесь; агентам Албери НЕ подключён** (27k символов вернули бы промпт к весу, от которого
+  уходили 2026-08-20).
 - `aislop-code-quality` — run scanaislop/aislop after AI code edits or during review to catch
   narrative comments, dead code, unsafe casts, swallowed exceptions, duplicate helpers, and other
   agentic code slop; use only safe mechanical fixes unless explicitly approved.

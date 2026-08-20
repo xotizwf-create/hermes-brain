@@ -105,6 +105,11 @@ every brain doc → its H2/H3 sections (`path#anchor`). Regenerate after edits:
 - **Изометрия / аксонометрия / «начерти деталь по ГОСТ» (владелец присылает чертёж)** →
   skill `skills/iso-drawing/` (библиотека `iso_gost.py`: ГОСТ 2.317 на А4 с рамкой,
   основной надписью и размерами; эталон — `detail22_demo.py`; результат PDF в outbox).
+- **Написать / починить / переделать промпт под конкретный ИИ-инструмент** (Claude, GPT, Cursor,
+  Midjourney, Sora, кодовые агенты) → skill `skills/prompt-master/` (внешний, MIT, происхождение
+  и проверка в `SOURCE.md`). Справочники `references/` читать по одному и только по нужде.
+  У агентов Албери НЕ подключён — по решению владельца 2026-08-20 прод не трогали, чтобы не
+  вернуть промпт к прежнему весу.
 - **Read local PDF / Word / Excel / PowerPoint files** → skill `skills/markitdown-docs/`;
   convert with Microsoft MarkItDown first, then inspect the generated Markdown.
 - **Google account access (Calendar / Drive / Docs / Sheets / Gmail), re-auth, scopes** → skill
