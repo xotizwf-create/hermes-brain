@@ -13,6 +13,7 @@ Append-only, newest on top. Every approved change to the brain gets one line.
 
 ## 2026-08-22
 
+- 2026-08-22 — **«Линия»: новый адаптивный дизайн админки опубликован на сайте и в Telegram.** Макет из локальной `Дизайн админки/` использован только как визуальный источник; production-компоненты в `app/admin/` продолжают работать с настоящей авторизацией, PostgreSQL, подписками, платежами и рефералами. Общая дизайн-система подключена к web и Telegram Mini App, добавлены реальные страницы платежей/специалистов/состояния системы и мобильные режимы до 390 px. GitHub-коммит `defbb89`; production-релиз `/opt/liniya/releases/defbb89`, откат `/opt/liniya/releases/63b30fb`. Проверка: lint, production build, 60/60 тестов, signed Telegram admin API с реальными данными, обе публичные админ-страницы HTTP 200, оба systemd-сервиса active, новых error-журналов нет.
 - 2026-08-22 — **«Линия» добавлена в маршрутную карту проектов.** Зафиксированы локальный репозиторий и GitHub, production `91.220.109.145` / `liteexams.ru`, immutable releases `/opt/liniya/releases` + `/opt/liniya/current`, два systemd-сервиса, Caddy, PostgreSQL `liniya_booking`, notification/backup timers, безопасное местонахождение SSH-реквизитов (только имена ключей, без значений) и обязательное правило: из-за 1.9 GB RAM без swap сборка/полные тесты выполняются только off-box.
 
 ## 2026-08-21

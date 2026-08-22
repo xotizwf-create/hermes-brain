@@ -27,5 +27,10 @@ secret_refs: [proj/liniya/ssh/root, proj/liniya/server/env, proj/liniya/database
 - 2 CPU, 1895 MB RAM, about 1246 MB available, no swap, about 23 GB disk free.
 - Host is constrained: never build or run full tests on production. Run the mandatory universal server preflight before every server operation.
 
+## Last verified release
+- Active on 2026-08-22: `/opt/liniya/releases/defbb89` (`Connect responsive admin design`).
+- Preserved rollback release: `/opt/liniya/releases/63b30fb`.
+- Post-deploy checks: public web admin and Telegram admin returned HTTP 200; signed Telegram admin analytics returned real summary, payments and registry data; both Liniya services were active with no new error-level journal entries.
+
 ## Safe connectivity check
 Read credentials inside the connecting process, never interpolate the password into command arguments. After connecting, check resources, service status, active symlink and HTTP health before any mutation.
