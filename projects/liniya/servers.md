@@ -28,10 +28,10 @@ secret_refs: [proj/liniya/ssh/root, proj/liniya/server/env, proj/liniya/database
 - Host is constrained: never build or run full tests on production. Run the mandatory universal server preflight before every server operation.
 
 ## Last verified release
-- Active on 2026-08-22: `/opt/liniya/releases/ce7189c` (`Refresh shared product styles in Telegram`, follows registration draft and schedule implementation `c8c67e3`).
-- Preserved rollback release: `/opt/liniya/releases/c067409`.
+- Active on 2026-08-22: `/opt/liniya/releases/7068e70` (`Match admin dashboard to approved desktop reference`).
+- Preserved rollback release: `/opt/liniya/releases/ce7189c`.
 - Pre-migration backup: `/opt/liniya/backups/liniya-20260822-085924.dump`.
-- Post-deploy checks: public product, master/client/menu/booking and both admin routes returned HTTP 200; Telegram master HTML returned `Cache-Control: no-store`; versioned production CSS contained the flexible registration schedule styles; transactional multi-interval SQL smoke passed under the `liniya` role and rollback restored original rows; both services were active with no new error-level journal entries.
+- Post-deploy checks: all web-admin sections and `/telegram/admin` returned HTTP 200; the live versioned bundle contained `desktop-reference-20260822-v1`, the centered 1120px shell, compact user modal, and phone bottom navigation; both services were active with no new error-level journal entries. No database migration was required.
 
 ## Safe connectivity check
 Read credentials inside the connecting process, never interpolate the password into command arguments. After connecting, check resources, service status, active symlink and HTTP health before any mutation.

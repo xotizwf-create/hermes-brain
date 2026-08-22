@@ -24,4 +24,4 @@ secret_refs: []
 - Local repo: `G:\OneDrive\Рабочий стол\Мои проекты\Сервис для записи`
 
 ## Current state
-Production is live. Web app, Telegram poller, Caddy, PostgreSQL, notification timer and daily backup timer were active on 2026-08-22. The active release was commit `ce7189c`.
+Production is live. Web app, Telegram poller, Caddy, PostgreSQL, notification timer and daily backup timer were active on 2026-08-22. The active release is commit `7068e70`; rollback is `ce7189c`.
