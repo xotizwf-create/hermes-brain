@@ -59,6 +59,24 @@ projects:
   connectors:
   - telegram
   path: projects/hermes-brain/
+- id: liniya
+  name: Линия — сервис записи
+  status: active
+  summary: Telegram-first сервис онлайн-записи для частных специалистов с публичной
+    записью, кабинетами, подписками, платежами, рефералами и админ-аналитикой.
+  tags:
+  - web
+  - react
+  - telegram
+  - booking
+  - postgres
+  - payments
+  - referrals
+  repo: https://github.com/xotizwf-create/liniya-booking-service.git
+  production_host: 91.220.109.145
+  connectors:
+  - telegram
+  path: projects/liniya/
 - id: prostye-postavki
   name: Простые поставки
   status: active
