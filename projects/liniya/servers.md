@@ -28,8 +28,8 @@ secret_refs: [proj/liniya/ssh/root, proj/liniya/server/env, proj/liniya/database
 - Host is constrained: never build or run full tests on production. Run the mandatory universal server preflight before every server operation.
 
 ## Last verified release
-- Active on 2026-08-22: `/opt/liniya/releases/32c8d98` (`Rebuild admin for phone layouts`).
-- Preserved rollback release: `/opt/liniya/releases/b0f8b23`.
+- Active on 2026-08-22: `/opt/liniya/releases/b667079` (`Bust stale admin stylesheet caches`, follows mobile rebuild `32c8d98`).
+- Preserved rollback release: `/opt/liniya/releases/32c8d98`.
 - Pre-migration backup: `/opt/liniya/backups/liniya-20260822-085924.dump`.
 - Post-deploy checks: public web referral admin and Telegram admin returned HTTP 200; signed Telegram admin analytics exposed the payout registry; the new table is owned by the application role; both Liniya services were active with no new error-level journal entries.
 
